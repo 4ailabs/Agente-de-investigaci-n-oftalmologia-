@@ -3,6 +3,7 @@ import { InvestigationState, ResearchStep, Source } from './types';
 import { createResearchPlanPrompt, createExecuteStepPrompt, createFinalReportPrompt } from './constants';
 import { generateContent } from './services/geminiService';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Spinner from './components/Spinner';
 import ExplanationModal from './components/ExplanationModal';
 import ReactMarkdown from 'react-markdown';
@@ -30,64 +31,127 @@ ${clinicalInfo.trim()}`;
   const isFormInvalid = isLoading || !clinicalInfo.trim() || !age.trim() || !sex.trim();
 
   return (
-     <main className="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold text-slate-800 mb-2">Paso 1: Iniciar Nueva Investigación</h2>
-          <p className="text-sm text-slate-500 mb-4">
-            Introduce los datos del paciente y la consulta clínica. El agente usará esta información para crear un plan de investigación personalizado.
-          </p>
-          <form onSubmit={handleSubmit} className="space-y-6">
+     <main className="max-w-4xl mx-auto py-8 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-br from-white to-blue-50/30 p-8 rounded-2xl shadow-xl border border-blue-100">
+          {/* Header Section */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl mb-4 shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Iniciar Nueva Investigación Clínica</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto">
+              Complete la información del paciente para que nuestro agente de IA especializado en oftalmología cree un plan de investigación personalizado basado en evidencia médica.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Patient Demographics Section */}
+            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-slate-800">Datos Demográficos del Paciente</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <h3 className="text-md font-medium text-slate-700 mb-2">Datos Demográficos del Paciente</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                     <div>
-                        <label htmlFor="age" className="block text-sm font-medium text-slate-700">Edad</label>
+                  <label htmlFor="age" className="block text-sm font-medium text-slate-700 mb-2">
+                    Edad <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
                         <input
                             type="number"
                             id="age"
                             value={age}
                             onChange={(e) => setAge(e.target.value)}
-                            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
                             placeholder="Ej: 72"
                             required
                         />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <span className="text-slate-400 text-sm">años</span>
+                    </div>
+                  </div>
                      </div>
                      <div>
-                        <label htmlFor="sex" className="block text-sm font-medium text-slate-700">Sexo</label>
+                  <label htmlFor="sex" className="block text-sm font-medium text-slate-700 mb-2">
+                    Sexo <span className="text-red-500">*</span>
+                  </label>
                          <select
                             id="sex"
                             value={sex}
                             onChange={(e) => setSex(e.target.value)}
-                            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
                             required
                         >
-                            <option value="" disabled>Seleccionar...</option>
+                    <option value="" disabled>Seleccionar sexo...</option>
                             <option value="Masculino">Masculino</option>
                             <option value="Femenino">Femenino</option>
                         </select>
                      </div>
                 </div>
             </div>
+
+            {/* Clinical Information Section */}
+            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-slate-800">Información Clínica</h3>
+            </div>
             <div>
-                <label htmlFor="clinical-info" className="block text-sm font-medium text-slate-700">Síntomas y Antecedentes Clínicos</label>
+                <label htmlFor="clinical-info" className="block text-sm font-medium text-slate-700 mb-2">
+                  Síntomas y Antecedentes Clínicos <span className="text-red-500">*</span>
+                </label>
                  <textarea
                     id="clinical-info"
                     value={clinicalInfo}
                     onChange={(e) => setClinicalInfo(e.target.value)}
                     rows={6}
-                    className="mt-1 w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                    placeholder="Ej: Paciente con historial de glaucoma presenta una disminución súbita de la visión en el ojo derecho..."
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm resize-none"
+                  placeholder="Describa detalladamente los síntomas, antecedentes médicos relevantes, medicamentos actuales, y cualquier información clínica importante. Ej: Paciente de 65 años con diabetes tipo 2 presenta visión borrosa progresiva en ambos ojos durante las últimas 2 semanas, acompañada de dolor ocular intermitente..."
                     required
                 />
+                <div className="mt-2 text-xs text-slate-500">
+                  <span className="inline-flex items-center">
+                    <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                    Sea lo más específico posible para obtener mejores resultados
+                  </span>
+                </div>
+              </div>
             </div>
            
+            {/* Submit Button */}
+            <div className="pt-4">
             <button
               type="submit"
               disabled={isFormInvalid}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed"
-            >
-              {isLoading ? <><Spinner /><span className="ml-2">Creando Plan...</span></> : 'Iniciar Investigación'}
+                className="w-full flex justify-center items-center py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100"
+              >
+                {isLoading ? (
+                  <>
+                    <Spinner />
+                    <span className="ml-3">Creando Plan de Investigación...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Iniciar Investigación Clínica
+                  </>
+                )}
             </button>
+            </div>
           </form>
         </div>
     </main>
@@ -112,6 +176,7 @@ const App: React.FC = () => {
   const [activeView, setActiveView] = useState<{ type: 'step' | 'report'; id: number | null }>({ type: 'step', id: 1 });
   const [showExplanation, setShowExplanation] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [copiedStepId, setCopiedStepId] = useState<number | null>(null);
 
   const handleStartInvestigation = async (query: string) => {
     setInvestigation({
@@ -121,6 +186,7 @@ const App: React.FC = () => {
         isGenerating: true,
         error: null,
         finalReport: null,
+        finalReportSources: null,
         isGeneratingReport: false,
     });
     setActiveView({ type: 'step', id: 1 });
@@ -170,6 +236,9 @@ const App: React.FC = () => {
     const prompt = createExecuteStepPrompt(investigation.originalQuery, investigation.plan, currentStepInfo);
     
     const { text: resultText, sources: resultSources } = await generateContent(prompt, true);
+    
+    // Debug: Log sources to console
+    console.log('Sources received:', resultSources);
 
     setInvestigation(prev => {
         if (!prev) return null;
@@ -203,14 +272,14 @@ const App: React.FC = () => {
     const completedSteps = investigation.plan.filter(step => step.status === 'completed');
     const prompt = createFinalReportPrompt(investigation.originalQuery, completedSteps);
     
-    const { text: reportText } = await generateContent(prompt, false);
+    const { text: reportText, sources: reportSources } = await generateContent(prompt, true);
 
     setInvestigation(prev => {
         if (!prev) return null;
         if (reportText.startsWith('Ocurrió un error:')) {
             return {...prev, error: reportText, isGeneratingReport: false };
         }
-        return {...prev, finalReport: reportText, isGeneratingReport: false };
+        return {...prev, finalReport: reportText, finalReportSources: reportSources, isGeneratingReport: false };
     });
   };
   
@@ -221,6 +290,30 @@ const App: React.FC = () => {
         setTimeout(() => setIsCopied(false), 2000);
       });
     }
+  };
+
+  const handleCopyStep = (stepId: number) => {
+    if (!investigation) return;
+    
+    const step = investigation.plan.find(s => s.id === stepId);
+    if (!step || !step.result) return;
+
+    // Crear contenido formateado para copiar
+    let contentToCopy = `Paso ${step.id}: ${step.title}\n\n`;
+    contentToCopy += step.result;
+    
+    if (step.sources && step.sources.length > 0) {
+      contentToCopy += `\n\nFuentes consultadas:\n`;
+      step.sources.forEach((source, index) => {
+        contentToCopy += `${index + 1}. ${source.web.title || source.web.uri}\n`;
+        contentToCopy += `   ${source.web.uri}\n\n`;
+      });
+    }
+
+    navigator.clipboard.writeText(contentToCopy).then(() => {
+      setCopiedStepId(stepId);
+      setTimeout(() => setCopiedStepId(null), 2000);
+    });
   };
 
 
@@ -234,7 +327,7 @@ const App: React.FC = () => {
         return {
             title: "Reporte Clínico Final",
             content: investigation.finalReport,
-            sources: null,
+            sources: investigation.finalReportSources,
             status: investigation.isGeneratingReport ? 'in-progress' : 'completed',
         };
     }
@@ -249,146 +342,430 @@ const App: React.FC = () => {
   }, [investigation, activeView]);
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 flex flex-col">
       <Header onShowExplanation={() => setShowExplanation(true)} />
       {showExplanation && <ExplanationModal onClose={() => setShowExplanation(false)} />}
+      <div className="flex-1">
       {!investigation ? (
         <InitialQueryInput 
           onSubmit={handleStartInvestigation} 
           isLoading={investigation?.isGenerating ?? false}
         />
       ) : investigation.isGenerating && investigation.plan.length === 0 ? (
-         <div className="flex items-center justify-center h-64">
+           <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+             <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 max-w-md w-full text-center">
+               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-pulse shadow-lg">
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                 </svg>
+               </div>
+               <h3 className="text-xl font-bold text-slate-800 mb-2 animate-pulse">Creando Plan de Investigación</h3>
+               <p className="text-slate-600 mb-6">Nuestro agente de IA está analizando el caso y diseñando un plan de investigación personalizado...</p>
+               <div className="flex items-center justify-center space-x-3">
            <Spinner />
-           <span className="ml-3 text-slate-500">Creando plan de investigación...</span>
+                 <span className="text-slate-500 font-medium">Procesando información...</span>
+               </div>
+               <div className="mt-6 bg-blue-50 p-4 rounded-lg">
+                 <div className="flex items-start space-x-3">
+                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                     <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                   </svg>
+                   <div className="text-left">
+                     <p className="text-sm text-blue-800 font-medium">¿Qué está haciendo el agente?</p>
+                     <p className="text-xs text-blue-700 mt-1">Analizando síntomas, identificando diagnósticos diferenciales y creando un plan de investigación paso a paso basado en evidencia médica.</p>
+                   </div>
+                 </div>
+               </div>
+             </div>
          </div>
       ) : (
-        <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+          <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
                 {/* Left Column: Control Panel */}
-                <div className="md:col-span-4 lg:col-span-3">
-                    <div className="bg-white p-4 rounded-lg shadow-md sticky top-24">
-                        <div className="pb-4 border-b border-slate-200">
-                             <div className="flex justify-between items-center">
-                                <h2 className="text-sm font-semibold text-slate-800">Investigación Actual</h2>
-                                <button onClick={handleReset} className="text-xs text-blue-600 hover:text-blue-800">
-                                    Nuevo
+                <div className="lg:col-span-4">
+                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-6 rounded-2xl shadow-xl border border-slate-200 sticky top-28 z-10">
+                        {/* Header */}
+                        <div className="pb-6 border-b border-slate-200">
+                             <div className="flex justify-between items-center mb-3">
+                                <div className="flex items-center">
+                                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                        </svg>
+                                    </div>
+                                    <h2 className="text-lg font-semibold text-slate-800">Investigación Actual</h2>
+                                </div>
+                                <button 
+                                    onClick={handleReset} 
+                                    className="flex items-center px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Nueva
                                 </button>
                              </div>
-                             <p className="mt-1 text-xs text-slate-500 line-clamp-2" title={investigation.originalQuery}>{investigation.originalQuery}</p>
+                             <div className="bg-blue-50 p-3 rounded-lg">
+                                 <p className="text-sm text-slate-700 line-clamp-3" title={investigation.originalQuery}>
+                                     {investigation.originalQuery}
+                                 </p>
+                             </div>
                         </div>
 
-                        <nav className="my-4">
-                            <ul className="space-y-1">
+                        {/* Progress Indicator */}
+                        <div className="my-6">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium text-slate-700">Progreso</span>
+                                <span className="text-sm text-slate-500">
+                                    {investigation.plan.filter(step => step.status === 'completed').length} / {investigation.plan.length}
+                                </span>
+                            </div>
+                            <div className="w-full bg-slate-200 rounded-full h-2">
+                                <div 
+                                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-300"
+                                    style={{ 
+                                        width: `${(investigation.plan.filter(step => step.status === 'completed').length / investigation.plan.length) * 100}%` 
+                                    }}
+                                ></div>
+                            </div>
+                        </div>
+
+                        {/* Navigation */}
+                        <nav className="mb-6">
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-sm font-semibold text-slate-700">Pasos de Investigación</h3>
+                                <div className="flex items-center space-x-1 text-xs text-slate-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Haz clic para ver</span>
+                                </div>
+                            </div>
+                            <ul className="space-y-2">
                                 {investigation.plan.map(step => (
                                     <li key={step.id}>
+                                        <div className="flex items-center space-x-2">
                                         <button 
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
-                                            disabled={step.status === 'pending' || step.status === 'in-progress'}
-                                            className={`w-full text-left flex items-center p-2 rounded-md text-sm transition-colors ${
+                                                disabled={step.status === 'pending'}
+                                                className={`flex-1 text-left flex items-start p-3 rounded-xl text-sm transition-all duration-200 min-w-0 ${
                                                 activeView.type === 'step' && activeView.id === step.id 
-                                                ? 'bg-blue-50 text-blue-700 font-semibold' 
-                                                : 'text-slate-700 hover:bg-slate-100 disabled:text-slate-400 disabled:hover:bg-transparent disabled:cursor-not-allowed'
+                                                    ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-semibold border border-blue-200 shadow-sm' 
+                                                    : step.status === 'completed'
+                                                    ? 'text-slate-700 hover:bg-slate-100 hover:shadow-sm'
+                                                    : step.status === 'in-progress'
+                                                    ? 'text-slate-500 hover:bg-slate-50 cursor-wait'
+                                                    : 'text-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed'
                                             }`}
                                         >
-                                           <StatusIcon status={step.status} />
-                                           <span className="ml-3 truncate">{step.title}</span>
+                                           <div className="flex-shrink-0 mt-0.5">
+                                               <StatusIcon status={step.status} />
+                                           </div>
+                                           <div className="flex-1 min-w-0 ml-3">
+                                               <span className="block text-left break-words leading-tight">{step.title}</span>
+                                           </div>
+                                           <div className="flex items-center space-x-1 flex-shrink-0 ml-2">
+                                               {step.status === 'completed' && (
+                                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                   </svg>
+                                               )}
+                                               {step.status === 'in-progress' && (
+                                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                   </svg>
+                                               )}
+                                               {step.status === 'pending' && (
+                                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                   </svg>
+                                               )}
+                                           </div>
+                                            </button>
+                                            {step.status === 'completed' && (
+                                                <button
+                                                    onClick={() => handleCopyStep(step.id)}
+                                                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                                                    title="Copiar este paso"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg>
                                         </button>
+                                            )}
+                                        </div>
                                     </li>
                                 ))}
                                 {investigation.finalReport && (
                                      <li>
                                         <button 
                                             onClick={() => setActiveView({ type: 'report', id: null })}
-                                            className={`w-full text-left flex items-center p-2 rounded-md text-sm transition-colors ${
+                                            className={`w-full text-left flex items-center p-3 rounded-xl text-sm transition-all duration-200 ${
                                                 activeView.type === 'report'
-                                                ? 'bg-green-50 text-green-700 font-semibold' 
+                                                ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 font-semibold border border-green-200 shadow-sm' 
                                                 : 'text-slate-700 hover:bg-slate-100'
                                             }`}
                                         >
-                                           <StatusIcon status={'completed'} />
+                                           <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                                               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                               </svg>
+                                           </div>
                                            <span className="ml-3">Reporte Final</span>
+                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                           </svg>
                                         </button>
                                     </li>
                                 )}
                             </ul>
+                            
+                            {/* Legend */}
+                            <div className="mt-4 p-3 bg-slate-50 rounded-lg">
+                                <div className="text-xs text-slate-600 mb-2 font-medium">Estados:</div>
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <span>Completado</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                        <span>En progreso</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
+                                        <span>Pendiente</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                        <span>Error</span>
+                                    </div>
+                                </div>
+                            </div>
                         </nav>
 
-                        <div className="pt-4 border-t border-slate-200">
+                        {/* Action Buttons */}
+                        <div className="pt-6 border-t border-slate-200 space-y-3">
                             {investigation.currentStep < investigation.plan.length && (
                                 <button
                                     onClick={handleExecuteNextStep}
                                     disabled={investigation.isGenerating}
-                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed"
+                                    className="w-full flex justify-center items-center py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200"
                                 >
-                                    {investigation.isGenerating ? <><Spinner /><span className="ml-2">Ejecutando...</span></> : `Ejecutar Paso ${investigation.currentStep + 1}`}
+                                    {investigation.isGenerating ? (
+                                        <>
+                                            <Spinner />
+                                            <span className="ml-2">Ejecutando...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                            Ejecutar Paso {investigation.currentStep + 1}
+                                        </>
+                                    )}
                                 </button>
                             )}
                             {investigation.currentStep >= investigation.plan.length && !investigation.finalReport && (
                                 <button
                                     onClick={handleGenerateReport}
                                     disabled={investigation.isGeneratingReport}
-                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-green-300 disabled:cursor-not-allowed"
+                                    className="w-full flex justify-center items-center py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:from-green-700 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200"
                                 >
-                                    {investigation.isGeneratingReport ? <><Spinner /><span className="ml-2">Generando...</span></> : 'Generar Reporte Final'}
+                                    {investigation.isGeneratingReport ? (
+                                        <>
+                                            <Spinner />
+                                            <span className="ml-2">Generando...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Generar Reporte Final
+                                        </>
+                                    )}
                                 </button>
                             )}
                         </div>
-                         {investigation.error && <p className="text-red-500 text-xs mt-2 p-2 bg-red-50 rounded">{investigation.error}</p>}
+                         
+                         {investigation.error && (
+                             <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                 <div className="flex items-start">
+                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500 mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                     </svg>
+                                     <p className="text-red-700 text-xs">{investigation.error}</p>
+                                 </div>
+                             </div>
+                         )}
                     </div>
                 </div>
 
                 {/* Right Column: Content Display */}
-                <div className="md:col-span-8 lg:col-span-9">
-                    <div className="bg-white p-6 rounded-lg shadow-md min-h-[60vh]">
+                <div className="lg:col-span-8 relative z-0">
+                    <div className="bg-gradient-to-br from-white to-slate-50/30 p-8 rounded-2xl shadow-xl border border-slate-200 min-h-[70vh]">
                         {activeContent ? (
                             <div>
-                                <div className="flex justify-between items-center mb-4">
-                                    <h2 className="text-xl font-bold text-slate-900">{activeContent.title}</h2>
+                                {/* Header */}
+                                <div className="flex justify-between items-start mb-6">
+                                    <div className="flex-1">
+                                        <div className="flex items-center mb-2">
+                                            {activeView.type === 'step' ? (
+                                                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                                    </svg>
+                                                </div>
+                                            ) : (
+                                                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                            <div>
+                                                <h2 className="text-2xl font-bold text-slate-900">{activeContent.title}</h2>
+                                                <div className="flex items-center mt-1">
+                                                    <StatusIcon status={activeContent.status as ResearchStep['status']} />
+                                                    <span className="ml-2 text-sm text-slate-600">
+                                                        {activeContent.status === 'completed' ? 'Completado' : 
+                                                         activeContent.status === 'in-progress' ? 'En progreso' : 
+                                                         activeContent.status === 'error' ? 'Error' : 'Pendiente'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        {activeView.type === 'step' && activeContent.status === 'completed' && (
+                                            <button
+                                                onClick={() => handleCopyStep(activeView.id!)}
+                                                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                <span>{copiedStepId === activeView.id ? '¡Copiado!' : 'Copiar Paso'}</span>
+                                            </button>
+                                        )}
                                     {activeView.type === 'report' && investigation.finalReport && (
                                         <button
                                             onClick={handleCopyReport}
-                                            className="flex items-center space-x-2 text-sm px-3 py-1.5 rounded-md transition-colors bg-slate-200 hover:bg-slate-300 text-slate-700"
+                                                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                               <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                             </svg>
-                                            <span>{isCopied ? '¡Copiado!' : 'Copiar Reporte (Markdown)'}</span>
+                                                <span>{isCopied ? '¡Copiado!' : 'Copiar Reporte'}</span>
                                         </button>
                                     )}
-                                </div>
-                                {activeContent.status === 'in-progress' ? (
-                                    <div className="flex flex-col items-center justify-center h-48 text-slate-500">
-                                        <Spinner/>
-                                        <p className="mt-3">Procesando, por favor espera...</p>
                                     </div>
-                                ) : activeContent.content ? (
-                                     <div className="prose prose-slate prose-sm max-w-none text-slate-800">
+                                </div>
+
+                                {/* Content */}
+                                {activeContent.status === 'in-progress' ? (
+                                    <div className="flex flex-col items-center justify-center h-64 text-slate-500">
+                                        <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
+                                        <Spinner/>
+                                        </div>
+                                        <p className="text-lg font-medium">Procesando información...</p>
+                                        <p className="text-sm mt-1">Por favor espera mientras analizamos los datos</p>
+                                    </div>
+                                ) : activeContent.content && activeContent.content.trim() ? (
+                                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                        <div className="prose prose-slate prose-xl max-w-none text-slate-800 leading-relaxed prose-headings:text-slate-900 prose-headings:font-bold prose-p:text-base prose-p:leading-7 prose-strong:text-slate-900 prose-strong:font-semibold prose-ul:text-base prose-ol:text-base prose-li:text-base prose-li:leading-7">
                                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{activeContent.content}</ReactMarkdown>
+                                        </div>
                                     </div>
                                 ) : (
-                                    <div className="text-center text-slate-500 py-12">
-                                        <p>Este paso aún no se ha ejecutado.</p>
+                                    <div className="text-center text-slate-500 py-16">
+                                        <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                            </svg>
+                                        </div>
+                                        <p className="text-lg font-medium">Este paso aún no se ha ejecutado</p>
+                                        <p className="text-sm mt-1">Ejecuta el paso desde el panel de control</p>
                                     </div>
                                 )}
+
+                                {/* Medical Disclaimers */}
+                                {activeView.type === 'report' && (
+                                    <div className="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                                        <div className="flex items-start space-x-3">
+                                            <div className="flex-shrink-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                                </svg>
+                                            </div>
+                                            <div className="flex-1">
+                                                <h4 className="text-sm font-semibold text-amber-800 mb-2">Avisos Médicos Importantes</h4>
+                                                <div className="text-sm text-amber-700 space-y-1">
+                                                    <p>⚠️ <strong>IMPORTANTE:</strong> Este análisis es generado por IA y no reemplaza el juicio clínico profesional.</p>
+                                                    <p>👨‍⚕️ <strong>SUPERVISIÓN MÉDICA REQUERIDA:</strong> Todas las recomendaciones deben ser validadas por un médico calificado.</p>
+                                                    <p>🚫 <strong>NO ES DIAGNÓSTICO:</strong> Este análisis no constituye un diagnóstico médico definitivo.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Sources */}
                                 {activeContent.sources && activeContent.sources.length > 0 && (
-                                    <div className="mt-6">
-                                        <h4 className="text-sm font-bold text-slate-600 uppercase tracking-wider">Fuentes Consultadas</h4>
-                                        <ul className="mt-2 list-decimal list-inside space-y-2 bg-slate-50 p-4 rounded-md">
+                                    <div className="mt-8">
+                                        <div className="flex items-center mb-4">
+                                            <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </div>
+                                            <h4 className="text-lg font-semibold text-slate-800">Fuentes Consultadas</h4>
+                                            <span className="ml-2 px-2 py-1 bg-indigo-100 text-indigo-600 text-xs font-medium rounded-full">
+                                                {activeContent.sources.length} fuente{activeContent.sources.length !== 1 ? 's' : ''}
+                                            </span>
+                                        </div>
+                                        <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                                            <ul className="space-y-4">
                                             {activeContent.sources.map((source, index) => (
-                                                <li key={index} className="text-sm">
-                                                    <a href={source.web.uri} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline" title={source.web.title || source.web.uri}>
+                                                    <li key={index} className="flex items-start group">
+                                                        <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium mr-4 mt-1">
+                                                            {index + 1}
+                                                        </span>
+                                                        <div className="flex-1 min-w-0">
+                                                            <a 
+                                                                href={source.web.uri} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer" 
+                                                                className="block text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors group-hover:bg-blue-50 p-2 rounded-lg -m-2"
+                                                                title={`Abrir: ${source.web.uri}`}
+                                                            >
                                                         {source.web.title || source.web.uri}
                                                     </a>
+                                                            <div className="mt-1 flex items-center text-xs text-slate-500">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                                </svg>
+                                                                <span className="truncate">{source.web.uri}</span>
+                                                            </div>
+                                                        </div>
                                                 </li>
                                             ))}
                                         </ul>
+                                        </div>
                                     </div>
                                 )}
                             </div>
                         ) : (
-                            <div className="flex items-center justify-center h-full text-slate-500">
-                                <p>Selecciona un paso para ver los detalles.</p>
+                            <div className="flex flex-col items-center justify-center h-full text-slate-500 py-16">
+                                <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                    </svg>
+                                </div>
+                                <p className="text-lg font-medium">Selecciona un paso para ver los detalles</p>
+                                <p className="text-sm mt-1">Usa el panel de navegación para explorar la investigación</p>
                             </div>
                         )}
                     </div>
@@ -396,6 +773,8 @@ const App: React.FC = () => {
             </div>
         </main>
       )}
+      </div>
+      <Footer />
     </div>
   );
 };
