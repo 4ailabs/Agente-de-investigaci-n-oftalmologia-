@@ -1,0 +1,5 @@
+{
+  "name": "Agente de Investigación Clínica de IA",
+  "description": "Un agente de IA para la síntesis de evidencia clínica. Realiza búsquedas en la web priorizando fuentes de alta autoridad, explora diagnósticos diferenciales, analiza la fisiopatología y sintetiza los hallazgos en un reporte clínico accionable con referencias.",
+  "requestFramePermissions": []
+}
