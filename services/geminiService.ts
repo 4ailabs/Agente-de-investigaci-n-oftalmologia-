@@ -5,10 +5,11 @@ let ai: GoogleGenAI | null = null;
 
 const getAI = (): GoogleGenAI => {
   if (!ai) {
-    if (!process.env.API_KEY) {
-      throw new Error("API_KEY no está configurada en las variables de entorno.");
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("GEMINI_API_KEY no está configurada en las variables de entorno.");
     }
-    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    ai = new GoogleGenAI({ apiKey });
   }
   return ai;
 };
