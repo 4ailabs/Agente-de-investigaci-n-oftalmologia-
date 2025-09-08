@@ -23,5 +23,6 @@ export interface InvestigationState {
   isGenerating: boolean;
   error: string | null;
   finalReport: string | null;
+  finalReportSources: Source[] | null;
   isGeneratingReport: boolean;
 }

@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { MedicalValidationService } from "../medicalValidation";
 
 let ai: GoogleGenAI | null = null;
 
@@ -15,6 +16,20 @@ const getAI = (): GoogleGenAI => {
 export interface GenerationResult {
     text: string;
     sources: { web: { uri: string; title: string; } }[] | null;
+    quality?: {
+        overallQuality: 'high' | 'medium' | 'low';
+        highQualityCount: number;
+        mediumQualityCount: number;
+        lowQualityCount: number;
+        recommendations: string[];
+    };
+    contradictions?: {
+        hasConflicts: boolean;
+        conflicts: any[];
+        resolution: string;
+        confidence: 'high' | 'medium' | 'low';
+    };
+    disclaimers?: string;
 }
 
 export const generateContent = async (prompt: string, useSearch: boolean = false): Promise<GenerationResult> => {
@@ -41,10 +56,34 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
           }))
       : null;
 
-    return {
+    // Validar y mejorar fuentes si se usó búsqueda
+    let enhancedResult: GenerationResult = {
         text: response.text,
         sources,
     };
+
+    if (useSearch && sources) {
+        const validation = await MedicalValidationService.validateAndEnhanceSources(sources);
+        enhancedResult = {
+            text: response.text,
+            sources: validation.validatedSources,
+            quality: {
+                overallQuality: validation.quality.length > 0 ? 
+                    validation.quality.filter(q => q.level === 'high').length >= validation.quality.length * 0.7 ? 'high' :
+                    validation.quality.filter(q => q.level === 'high' || q.level === 'medium').length >= validation.quality.length * 0.5 ? 'medium' : 'low'
+                    : 'low',
+                highQualityCount: validation.quality.filter(q => q.level === 'high').length,
+                mediumQualityCount: validation.quality.filter(q => q.level === 'medium').length,
+                lowQualityCount: validation.quality.filter(q => q.level === 'low').length,
+                recommendations: validation.quality.filter(q => q.level === 'low').length > 0 ? 
+                    [`Se encontraron ${validation.quality.filter(q => q.level === 'low').length} fuentes de baja calidad. Se recomienda buscar evidencia adicional.`] : []
+            },
+            contradictions: validation.contradictions,
+            disclaimers: validation.disclaimers
+        };
+    }
+
+    return enhancedResult;
 
   } catch (error) {
     console.error("Error al generar contenido:", error);
