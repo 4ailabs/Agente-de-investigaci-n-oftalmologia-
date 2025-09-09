@@ -9,8 +9,9 @@ import useSwipeGesture from './hooks/useSwipeGesture';
 
 // Lazy load heavy components
 const ExplanationModal = lazy(() => import('./components/ExplanationModal'));
-const ReactMarkdown = lazy(() => import('react-markdown'));
-const remarkGfm = lazy(() => import('remark-gfm'));
+// Import ReactMarkdown normally since it's needed for step rendering
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const InitialQueryInput: React.FC<{
   onSubmit: (query: string) => void;
@@ -453,7 +454,7 @@ const App: React.FC = () => {
                              </div>
                              <div className="bg-blue-50 p-2 lg:p-3 rounded-lg">
                                  <div className="text-xs lg:text-sm text-slate-700 space-y-1">
-                                     {investigation.originalQuery.split('\n---\n').map((section, index) => {
+                                     {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
                                          if (index === 0) {
                                              // Patient demographics (first line)
                                              return (
@@ -474,7 +475,9 @@ const App: React.FC = () => {
                                                  </div>
                                              );
                                          }
-                                     })}
+                                     }) : (
+                                         <div className="text-xs text-slate-500">Cargando información del caso...</div>
+                                     )}
                                  </div>
                              </div>
                         </div>
@@ -531,9 +534,9 @@ const App: React.FC = () => {
                                            <div className="flex-1 min-w-0 ml-2 lg:ml-3">
                                                <div className="flex items-center justify-between">
                                                    <span className="text-left break-words leading-tight pr-2">
-                                                       <span className="hidden lg:inline">{step.title}</span>
+                                                       <span className="hidden lg:inline">{step.title || 'Paso sin título'}</span>
                                                        <span className="lg:hidden">
-                                                           {step.title.length > 60 ? `${step.title.substring(0, 60)}...` : step.title}
+                                                           {step.title && step.title.length > 60 ? `${step.title.substring(0, 60)}...` : (step.title || 'Paso sin título')}
                                                        </span>
                                                    </span>
                                                    <div className="flex items-center space-x-1 flex-shrink-0">
@@ -778,12 +781,6 @@ const App: React.FC = () => {
                                 ) : activeContent.content && activeContent.content.trim() ? (
                                     <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                                         <div className="prose prose-slate prose-xl max-w-none text-slate-800 leading-relaxed prose-headings:text-slate-900 prose-headings:font-bold prose-p:text-base prose-p:leading-7 prose-strong:text-slate-900 prose-strong:font-semibold prose-ul:text-base prose-ol:text-base prose-li:text-base prose-li:leading-7">
-                                        <Suspense fallback={
-                                          <div className="flex justify-center items-center py-8">
-                                            <Spinner />
-                                            <span className="ml-3 text-slate-600">Procesando contenido...</span>
-                                          </div>
-                                        }>
                                           <ReactMarkdown 
                                             remarkPlugins={[remarkGfm]}
                                             components={{
@@ -798,7 +795,6 @@ const App: React.FC = () => {
                                           >
                                             {activeContent.content}
                                           </ReactMarkdown>
-                                        </Suspense>
                                         </div>
                                     </div>
                                 ) : (

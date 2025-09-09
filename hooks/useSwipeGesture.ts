@@ -30,63 +30,79 @@ export const useSwipeGesture = (
     if (!element) return;
 
     const handleTouchStart = (e: TouchEvent) => {
-      setTouchEnd(null);
-      setTouchStart({
-        x: e.targetTouches[0].clientX,
-        y: e.targetTouches[0].clientY
-      });
+      if (e.targetTouches && e.targetTouches.length > 0) {
+        setTouchEnd(null);
+        setTouchStart({
+          x: e.targetTouches[0].clientX,
+          y: e.targetTouches[0].clientY
+        });
+      }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (preventScroll) {
-        e.preventDefault();
+      if (e.targetTouches && e.targetTouches.length > 0) {
+        if (preventScroll) {
+          e.preventDefault();
+        }
+        setTouchEnd({
+          x: e.targetTouches[0].clientX,
+          y: e.targetTouches[0].clientY
+        });
       }
-      setTouchEnd({
-        x: e.targetTouches[0].clientX,
-        y: e.targetTouches[0].clientY
-      });
     };
 
     const handleTouchEnd = () => {
       if (!touchStart || !touchEnd) return;
 
-      const deltaX = touchStart.x - touchEnd.x;
-      const deltaY = touchStart.y - touchEnd.y;
-      const absDeltaX = Math.abs(deltaX);
-      const absDeltaY = Math.abs(deltaY);
+      try {
+        const deltaX = touchStart.x - touchEnd.x;
+        const deltaY = touchStart.y - touchEnd.y;
+        const absDeltaX = Math.abs(deltaX);
+        const absDeltaY = Math.abs(deltaY);
 
-      // Determine if this is a horizontal or vertical swipe
-      if (absDeltaX > absDeltaY) {
-        // Horizontal swipe
-        if (absDeltaX > threshold) {
-          if (deltaX > 0) {
-            onSwipeLeft?.();
-          } else {
-            onSwipeRight?.();
+        // Determine if this is a horizontal or vertical swipe
+        if (absDeltaX > absDeltaY) {
+          // Horizontal swipe
+          if (absDeltaX > threshold) {
+            if (deltaX > 0) {
+              onSwipeLeft?.();
+            } else {
+              onSwipeRight?.();
+            }
+          }
+        } else {
+          // Vertical swipe
+          if (absDeltaY > threshold) {
+            if (deltaY > 0) {
+              onSwipeUp?.();
+            } else {
+              onSwipeDown?.();
+            }
           }
         }
-      } else {
-        // Vertical swipe
-        if (absDeltaY > threshold) {
-          if (deltaY > 0) {
-            onSwipeUp?.();
-          } else {
-            onSwipeDown?.();
-          }
-        }
+      } catch (error) {
+        console.warn('Swipe gesture error:', error);
       }
     };
 
-    element.addEventListener('touchstart', handleTouchStart, { passive: !preventScroll });
-    element.addEventListener('touchmove', handleTouchMove, { passive: !preventScroll });
-    element.addEventListener('touchend', handleTouchEnd);
+    try {
+      element.addEventListener('touchstart', handleTouchStart, { passive: !preventScroll });
+      element.addEventListener('touchmove', handleTouchMove, { passive: !preventScroll });
+      element.addEventListener('touchend', handleTouchEnd, { passive: true });
+    } catch (error) {
+      console.warn('Failed to add touch event listeners:', error);
+    }
 
     return () => {
-      element.removeEventListener('touchstart', handleTouchStart);
-      element.removeEventListener('touchmove', handleTouchMove);
-      element.removeEventListener('touchend', handleTouchEnd);
+      try {
+        element.removeEventListener('touchstart', handleTouchStart);
+        element.removeEventListener('touchmove', handleTouchMove);
+        element.removeEventListener('touchend', handleTouchEnd);
+      } catch (error) {
+        console.warn('Failed to remove touch event listeners:', error);
+      }
     };
-  }, [ref, touchStart, touchEnd, threshold, preventScroll, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
+  }, [threshold, preventScroll, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
 
   return { touchStart, touchEnd };
 };
