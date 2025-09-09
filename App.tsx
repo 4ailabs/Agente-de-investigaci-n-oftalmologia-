@@ -31,8 +31,8 @@ ${clinicalInfo.trim()}`;
   const isFormInvalid = isLoading || !clinicalInfo.trim() || !age.trim() || !sex.trim();
 
   return (
-     <main className="max-w-4xl mx-auto py-8 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-white to-blue-50/30 p-8 rounded-2xl shadow-xl border border-blue-100">
+     <main className="max-w-4xl mx-auto py-4 lg:py-8 px-4 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-br from-white to-blue-50/30 p-4 lg:p-8 rounded-2xl shadow-xl border border-blue-100">
           {/* Header Section */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl mb-4 shadow-lg">
@@ -57,7 +57,7 @@ ${clinicalInfo.trim()}`;
                 </div>
                 <h3 className="text-lg font-semibold text-slate-800">Datos Demográficos del Paciente</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
             <div>
                   <label htmlFor="age" className="block text-sm font-medium text-slate-700 mb-2">
                     Edad <span className="text-red-500">*</span>
@@ -380,10 +380,10 @@ const App: React.FC = () => {
          </div>
       ) : (
           <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 relative">
                 {/* Left Column: Control Panel */}
-                <div className="lg:col-span-4">
-                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-6 rounded-2xl shadow-xl border border-slate-200 sticky top-28 z-10">
+                <div className="lg:col-span-4 order-2 lg:order-1">
+                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-4 lg:p-6 rounded-2xl shadow-xl border border-slate-200 lg:sticky lg:top-28 z-10">
                         {/* Header */}
                         <div className="pb-6 border-b border-slate-200">
                              <div className="flex justify-between items-center mb-3">
@@ -448,7 +448,7 @@ const App: React.FC = () => {
                                         <button 
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
                                                 disabled={step.status === 'pending'}
-                                                className={`flex-1 text-left flex items-start p-3 rounded-xl text-sm transition-all duration-200 min-w-0 ${
+                                                className={`flex-1 text-left flex items-start p-3 rounded-xl text-sm transition-all duration-200 min-w-0 w-full ${
                                                 activeView.type === 'step' && activeView.id === step.id 
                                                     ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-semibold border border-blue-200 shadow-sm' 
                                                     : step.status === 'completed'
@@ -604,8 +604,8 @@ const App: React.FC = () => {
                 </div>
 
                 {/* Right Column: Content Display */}
-                <div className="lg:col-span-8 relative z-0">
-                    <div className="bg-gradient-to-br from-white to-slate-50/30 p-8 rounded-2xl shadow-xl border border-slate-200 min-h-[70vh]">
+                <div className="lg:col-span-8 relative z-0 order-1 lg:order-2">
+                    <div className="bg-gradient-to-br from-white to-slate-50/30 p-4 lg:p-8 rounded-2xl shadow-xl border border-slate-200 min-h-[50vh] lg:min-h-[70vh]">
                         {activeContent ? (
                             <div>
                                 {/* Header */}
