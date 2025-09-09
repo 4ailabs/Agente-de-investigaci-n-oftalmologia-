@@ -428,46 +428,68 @@ const App: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 relative">
                 {/* Left Column: Control Panel */}
                 <div className="lg:col-span-4 order-2 lg:order-1">
-                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-3 lg:p-6 rounded-xl lg:rounded-2xl shadow-lg lg:shadow-xl border border-slate-200 lg:sticky lg:top-28 z-10">
+                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-2 lg:p-6 rounded-lg lg:rounded-2xl shadow-md lg:shadow-xl border border-slate-200 lg:sticky lg:top-28 z-10">
                         {/* Header */}
-                        <div className="pb-4 lg:pb-6 border-b border-slate-200">
-                             <div className="flex justify-between items-center mb-3">
+                        <div className="pb-2 lg:pb-6 border-b border-slate-200">
+                             <div className="flex justify-between items-center mb-2 lg:mb-3">
                                 <div className="flex items-center">
-                                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-2 lg:mr-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-5 lg:w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                         </svg>
                                     </div>
-                                    <h2 className="text-lg font-semibold text-slate-800">Investigación Actual</h2>
+                                    <h2 className="text-sm lg:text-lg font-semibold text-slate-800">Investigación Actual</h2>
                                 </div>
                                 <button 
                                     onClick={handleReset} 
-                                    className="flex items-center px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+                                    className="flex items-center px-2 lg:px-3 py-1 lg:py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                     </svg>
-                                    Nueva
+                                    <span className="hidden lg:inline">Nueva</span>
+                                    <span className="lg:hidden">🔄</span>
                                 </button>
                              </div>
-                             <div className="bg-blue-50 p-3 rounded-lg">
-                                 <p className="text-sm text-slate-700 line-clamp-3" title={investigation.originalQuery}>
-                                     {investigation.originalQuery}
-                                 </p>
+                             <div className="bg-blue-50 p-2 lg:p-3 rounded-lg">
+                                 <div className="text-xs lg:text-sm text-slate-700 space-y-1">
+                                     {investigation.originalQuery.split('\n---\n').map((section, index) => {
+                                         if (index === 0) {
+                                             // Patient demographics (first line)
+                                             return (
+                                                 <div key={index} className="font-medium text-blue-800 text-xs">
+                                                     👤 {section.trim()}
+                                                 </div>
+                                             );
+                                         } else {
+                                             // Clinical symptoms (truncated)
+                                             const symptoms = section.replace('Síntomas y Antecedentes Clínicos:', '').trim();
+                                             const truncated = symptoms.length > 120 ? symptoms.substring(0, 120) + '...' : symptoms;
+                                             return (
+                                                 <div key={index} className="text-slate-600">
+                                                     <div className="text-xs font-medium text-slate-500 mb-1">📋 Síntomas:</div>
+                                                     <div className="text-xs leading-tight" title={symptoms}>
+                                                         {truncated}
+                                                     </div>
+                                                 </div>
+                                             );
+                                         }
+                                     })}
+                                 </div>
                              </div>
                         </div>
 
                         {/* Progress Indicator */}
-                        <div className="my-6">
+                        <div className="my-4 lg:my-6">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-slate-700">Progreso</span>
-                                <span className="text-sm text-slate-500">
-                                    {investigation.plan.filter(step => step.status === 'completed').length} / {investigation.plan.length}
+                                <span className="text-xs lg:text-sm font-medium text-slate-700">Progreso</span>
+                                <span className="text-xs lg:text-sm text-slate-500 font-mono">
+                                    {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length}
                                 </span>
                             </div>
-                            <div className="w-full bg-slate-200 rounded-full h-2">
+                            <div className="w-full bg-slate-200 rounded-full h-1.5 lg:h-2">
                                 <div 
-                                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-300"
+                                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-1.5 lg:h-2 rounded-full transition-all duration-300"
                                     style={{ 
                                         width: `${(investigation.plan.filter(step => step.status === 'completed').length / investigation.plan.length) * 100}%` 
                                     }}
@@ -476,24 +498,24 @@ const App: React.FC = () => {
                         </div>
 
                         {/* Navigation */}
-                        <nav className="mb-6">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm font-semibold text-slate-700">Pasos de Investigación</h3>
-                                <div className="flex items-center space-x-1 text-xs text-slate-500">
+                        <nav className="mb-4 lg:mb-6">
+                            <div className="flex items-center justify-between mb-2 lg:mb-3">
+                                <h3 className="text-xs lg:text-sm font-semibold text-slate-700">Pasos de Investigación</h3>
+                                <div className="hidden lg:flex items-center space-x-1 text-xs text-slate-500">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     <span>Haz clic para ver</span>
                                 </div>
                             </div>
-                            <ul className="space-y-2">
+                            <ul className="space-y-1 lg:space-y-2">
                                 {investigation.plan.map(step => (
                                     <li key={step.id}>
-                                        <div className="flex items-center space-x-2">
+                                        <div className="flex items-center space-x-1 lg:space-x-2">
                                         <button 
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
                                                 disabled={step.status === 'pending'}
-                                                className={`flex-1 text-left flex items-start p-3 rounded-lg lg:rounded-xl text-sm transition-all duration-200 min-w-0 w-full min-h-[56px] ${
+                                                className={`flex-1 text-left flex items-start p-2 lg:p-3 rounded-lg lg:rounded-xl text-xs lg:text-sm transition-all duration-200 min-w-0 w-full min-h-[48px] lg:min-h-[56px] ${
                                                 activeView.type === 'step' && activeView.id === step.id 
                                                     ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-semibold border border-blue-200 shadow-sm' 
                                                     : step.status === 'completed'
@@ -503,28 +525,35 @@ const App: React.FC = () => {
                                                     : 'text-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed'
                                             }`}
                                         >
-                                           <div className="flex-shrink-0 mt-0.5">
+                                           <div className="flex-shrink-0 mt-0.5 lg:mt-0">
                                                <StatusIcon status={step.status} />
                                            </div>
-                                           <div className="flex-1 min-w-0 ml-3">
-                                               <span className="block text-left break-words leading-tight">{step.title}</span>
-                                           </div>
-                                           <div className="flex items-center space-x-1 flex-shrink-0 ml-2">
-                                               {step.status === 'completed' && (
-                                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                                   </svg>
-                                               )}
-                                               {step.status === 'in-progress' && (
-                                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                                   </svg>
-                                               )}
-                                               {step.status === 'pending' && (
-                                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                   </svg>
-                                               )}
+                                           <div className="flex-1 min-w-0 ml-2 lg:ml-3">
+                                               <div className="flex items-center justify-between">
+                                                   <span className="text-left break-words leading-tight pr-2">
+                                                       <span className="hidden lg:inline">{step.title}</span>
+                                                       <span className="lg:hidden">
+                                                           {step.title.length > 60 ? `${step.title.substring(0, 60)}...` : step.title}
+                                                       </span>
+                                                   </span>
+                                                   <div className="flex items-center space-x-1 flex-shrink-0">
+                                                       {step.status === 'completed' && (
+                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-4 lg:w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                           </svg>
+                                                       )}
+                                                       {step.status === 'in-progress' && (
+                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-4 lg:w-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                               <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                           </svg>
+                                                       )}
+                                                       {step.status === 'pending' && (
+                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-4 lg:w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                               <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                           </svg>
+                                                       )}
+                                                   </div>
+                                               </div>
                                            </div>
                                             </button>
                                             {step.status === 'completed' && (
@@ -545,19 +574,19 @@ const App: React.FC = () => {
                                      <li>
                                         <button 
                                             onClick={() => setActiveView({ type: 'report', id: null })}
-                                            className={`w-full text-left flex items-center p-3 rounded-lg lg:rounded-xl text-sm transition-all duration-200 min-h-[56px] ${
+                                            className={`w-full text-left flex items-center p-2 lg:p-3 rounded-lg lg:rounded-xl text-xs lg:text-sm transition-all duration-200 min-h-[48px] lg:min-h-[56px] ${
                                                 activeView.type === 'report'
                                                 ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 font-semibold border border-green-200 shadow-sm' 
                                                 : 'text-slate-700 hover:bg-slate-100'
                                             }`}
                                         >
-                                           <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                                               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                           <div className="w-4 h-4 lg:w-5 lg:h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                               <svg xmlns="http://www.w3.org/2000/svg" className="h-2.5 w-2.5 lg:h-3 lg:w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                </svg>
                                            </div>
-                                           <span className="ml-3">Reporte Final</span>
-                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                           <span className="ml-2 lg:ml-3 flex-1">Reporte Final</span>
+                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-4 lg:w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                            </svg>
                                         </button>
@@ -565,37 +594,37 @@ const App: React.FC = () => {
                                 )}
                             </ul>
                             
-                            {/* Legend */}
-                            <div className="mt-4 p-3 bg-slate-50 rounded-lg">
-                                <div className="text-xs text-slate-600 mb-2 font-medium">Estados:</div>
-                                <div className="grid grid-cols-2 gap-2 text-xs">
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <span>Completado</span>
+                            {/* Legend - Mobile Compact */}
+                            <div className="mt-3 lg:mt-4 p-2 lg:p-3 bg-slate-50 rounded-lg">
+                                <div className="text-xs text-slate-600 mb-2 font-medium hidden lg:block">Estados:</div>
+                                <div className="grid grid-cols-2 lg:grid-cols-2 gap-1 lg:gap-2 text-xs">
+                                    <div className="flex items-center space-x-1.5 lg:space-x-2">
+                                        <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                                        <span className="truncate">Completado</span>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                                        <span>En progreso</span>
+                                    <div className="flex items-center space-x-1.5 lg:space-x-2">
+                                        <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-blue-500 rounded-full animate-pulse flex-shrink-0"></div>
+                                        <span className="truncate">En progreso</span>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
-                                        <span>Pendiente</span>
+                                    <div className="flex items-center space-x-1.5 lg:space-x-2">
+                                        <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-slate-400 rounded-full flex-shrink-0"></div>
+                                        <span className="truncate">Pendiente</span>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                                        <span>Error</span>
+                                    <div className="flex items-center space-x-1.5 lg:space-x-2">
+                                        <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-red-500 rounded-full flex-shrink-0"></div>
+                                        <span className="truncate">Error</span>
                                     </div>
                                 </div>
                             </div>
                         </nav>
 
                         {/* Action Buttons */}
-                        <div className="pt-6 border-t border-slate-200 space-y-3">
+                        <div className="pt-3 lg:pt-6 border-t border-slate-200 space-y-2 lg:space-y-3">
                             {investigation.currentStep < investigation.plan.length && (
                                 <button
                                     onClick={handleExecuteNextStep}
                                     disabled={investigation.isGenerating}
-                                    className="w-full flex justify-center items-center py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200"
+                                    className="w-full flex justify-center items-center py-2.5 lg:py-3 px-3 lg:px-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-lg lg:rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 text-sm lg:text-base"
                                 >
                                     {investigation.isGenerating ? (
                                         <>
@@ -616,7 +645,7 @@ const App: React.FC = () => {
                                 <button
                                     onClick={handleGenerateReport}
                                     disabled={investigation.isGeneratingReport}
-                                    className="w-full flex justify-center items-center py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:from-green-700 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200"
+                                    className="w-full flex justify-center items-center py-2.5 lg:py-3 px-3 lg:px-4 bg-gradient-to-r from-green-600 to-emerald-700 text-white font-semibold rounded-lg lg:rounded-xl shadow-lg hover:from-green-700 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 text-sm lg:text-base"
                                 >
                                     {investigation.isGeneratingReport ? (
                                         <>
