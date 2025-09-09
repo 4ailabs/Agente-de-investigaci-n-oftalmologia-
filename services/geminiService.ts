@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { MedicalValidationService } from "../medicalValidation";
+import { MedicalValidationService } from "../medicalValidation.js";
 
 let ai: GoogleGenAI | null = null;
 
