@@ -7,7 +7,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 relative"
+        className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-4 lg:p-6 relative mx-4"
         onClick={e => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <button 
@@ -20,7 +20,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </svg>
         </button>
         
-        <h2 className="text-2xl font-bold text-slate-900 mb-4">Agente de Investigación Clínica de Oftalmología</h2>
+        <h2 className="text-lg lg:text-2xl font-bold text-slate-900 mb-4">Agente de Investigación Clínica de Oftalmología</h2>
         
         <div className="prose prose-sm max-w-none text-slate-800">
           <p>
