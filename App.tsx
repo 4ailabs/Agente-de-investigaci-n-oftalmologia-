@@ -31,22 +31,22 @@ ${clinicalInfo.trim()}`;
   const isFormInvalid = isLoading || !clinicalInfo.trim() || !age.trim() || !sex.trim();
 
   return (
-     <main className="max-w-4xl mx-auto py-3 lg:py-8 px-3 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-white to-blue-50/30 p-3 lg:p-8 rounded-2xl shadow-xl border border-blue-100">
+     <main className="max-w-4xl mx-auto py-2 lg:py-8 px-2 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-br from-white to-blue-50/30 p-3 lg:p-8 rounded-xl lg:rounded-2xl shadow-lg lg:shadow-xl border border-blue-100">
           {/* Header Section */}
-          <div className="text-center mb-6 lg:mb-8">
-            <div className="inline-flex items-center justify-center w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl mb-3 lg:mb-4 shadow-lg">
+          <div className="text-center mb-4 lg:mb-8">
+            <div className="inline-flex items-center justify-center w-10 h-10 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl lg:rounded-2xl mb-2 lg:mb-4 shadow-lg">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h2 className="text-lg lg:text-2xl font-bold text-slate-900 mb-2">Iniciar Nueva Investigación Clínica</h2>
-            <p className="text-sm lg:text-base text-slate-600 max-w-2xl mx-auto">
+            <h2 className="text-base lg:text-2xl font-bold text-slate-900 mb-2">Iniciar Nueva Investigación Clínica</h2>
+            <p className="text-xs lg:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
               Complete la información del paciente para que nuestro agente de IA especializado en oftalmología cree un plan de investigación personalizado basado en evidencia médica.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-8">
             {/* Patient Demographics Section */}
             <div className="bg-white p-4 lg:p-6 rounded-xl border border-slate-200 shadow-sm">
               <div className="flex items-center mb-4">
@@ -57,7 +57,7 @@ ${clinicalInfo.trim()}`;
                 </div>
                 <h3 className="text-lg font-semibold text-slate-800">Datos Demográficos del Paciente</h3>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-6">
+              <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
             <div>
                   <label htmlFor="age" className="block text-sm font-medium text-slate-700 mb-2">
                     Edad <span className="text-red-500">*</span>
@@ -68,7 +68,7 @@ ${clinicalInfo.trim()}`;
                             id="age"
                             value={age}
                             onChange={(e) => setAge(e.target.value)}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base min-h-[44px]"
+                      className="w-full px-4 py-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base min-h-[56px]"
                             placeholder="Ej: 72"
                             required
                         />
@@ -135,7 +135,7 @@ ${clinicalInfo.trim()}`;
             <button
               type="submit"
               disabled={isFormInvalid}
-                className="w-full flex justify-center items-center py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 min-h-[48px] text-base"
+                className="w-full flex justify-center items-center py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 min-h-[56px] text-base"
               >
                 {isLoading ? (
                   <>
