@@ -2,6 +2,11 @@ import React, { useState, useMemo, Suspense, lazy, useRef } from 'react';
 import { InvestigationState, ResearchStep, Source } from './types';
 import { createResearchPlanPrompt, createExecuteStepPrompt, createFinalReportPrompt } from './constants';
 import { generateContent } from './services/geminiService';
+import { MedicalContextEngine, MedicalContext } from './contextEngineering';
+import { MedicalValidationService, DisclaimerGenerator } from './medicalValidation';
+import { EnhancedMedicalReasoning, ClinicalReasoning, ReasoningIntegration } from './enhancedReasoning';
+import { OphthalmologyKnowledgeGraph } from './ophthalmologyKnowledge';
+import { QualityAssuranceEngine, QualityCheck } from './qualityAssurance';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Spinner, { MobileLoadingCard } from './components/Spinner';
@@ -182,10 +187,43 @@ const App: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [copiedStepId, setCopiedStepId] = useState<number | null>(null);
   
+  // Medical Context Engine State
+  const [medicalContext, setMedicalContext] = useState<MedicalContext | null>(null);
+  
+  // Enhanced Medical Reasoning State
+  const [clinicalReasoning, setClinicalReasoning] = useState<ClinicalReasoning | null>(null);
+  
+  // Quality Assurance State
+  const [qualityChecks, setQualityChecks] = useState<QualityCheck[]>([]);
+  
   // Refs for swipe gesture
   const contentRef = useRef<HTMLDivElement>(null);
 
   const handleStartInvestigation = async (query: string) => {
+    // Initialize medical context from query
+    const initialContext = MedicalContextEngine.parseInitialContext(query);
+    setMedicalContext(initialContext);
+
+    // Extract patient information for enhanced reasoning
+    const patientInfo = {
+      age: initialContext.patientProfile.age,
+      sex: initialContext.patientProfile.sex,
+      history: initialContext.patientProfile.medicalHistory
+    };
+    
+    // Generate initial clinical reasoning
+    const symptoms = initialContext.clinicalFindings.chiefComplaint.split(',').map(s => s.trim());
+    const findings = initialContext.clinicalFindings.reviewOfSystems;
+    
+    const initialReasoning = EnhancedMedicalReasoning.synthesizeReasoning(
+      symptoms,
+      patientInfo,
+      findings,
+      ['initial_query'] // Initial evidence quality
+    );
+    
+    setClinicalReasoning(initialReasoning);
+
     setInvestigation({
         originalQuery: query,
         plan: [],
@@ -198,7 +236,17 @@ const App: React.FC = () => {
     });
     setActiveView({ type: 'step', id: 1 });
 
-    const prompt = createResearchPlanPrompt(query);
+    // Enhanced prompt with medical context, clinical reasoning AND knowledge graph
+    const contextSummary = MedicalContextEngine.generateContextSummary(initialContext);
+    const reasoningSummary = ReasoningIntegration.formatReasoningForPrompt(initialReasoning);
+    
+    // Extract relevant ophthalmology knowledge
+    const suspectedDiagnoses = initialReasoning.differentialDiagnoses.slice(0, 3).map(d => d.diagnosis);
+    const knowledgeGraphData = OphthalmologyKnowledgeGraph.extractRelevantKnowledge(symptoms, suspectedDiagnoses);
+    
+    const enhancedQuery = `${query}\n\n### CONTEXTO MÉDICO INICIAL ###\n${contextSummary}\n\n${reasoningSummary}\n\n${knowledgeGraphData}`;
+    
+    const prompt = createResearchPlanPrompt(enhancedQuery);
     const { text: planResponse } = await generateContent(prompt, false);
 
     if (planResponse.startsWith('Ocurrió un error:')) {
@@ -240,12 +288,31 @@ const App: React.FC = () => {
     });
 
     const currentStepInfo = investigation.plan[currentStepIndex];
-    const prompt = createExecuteStepPrompt(investigation.originalQuery, investigation.plan, currentStepInfo);
+    
+    // Enhanced prompt with preserved medical context
+    let enhancedOriginalQuery = investigation.originalQuery;
+    if (medicalContext) {
+      const contextSummary = MedicalContextEngine.generateContextSummary(medicalContext);
+      enhancedOriginalQuery = `${investigation.originalQuery}\n\n### CONTEXTO MÉDICO ACTUALIZADO ###\n${contextSummary}`;
+    }
+    
+    const prompt = createExecuteStepPrompt(enhancedOriginalQuery, investigation.plan, currentStepInfo);
     
     const { text: resultText, sources: resultSources } = await generateContent(prompt, true);
     
-    // Debug: Log sources to console
-    console.log('Sources received:', resultSources);
+    // Validate and enhance sources with medical validation
+    const { validatedSources, quality, contradictions } = await MedicalValidationService.validateAndEnhanceSources(resultSources);
+
+    // Perform quality assurance check
+    const qualityCheck = QualityAssuranceEngine.performQualityCheck(
+      currentStepIndex + 1,
+      currentStepInfo.title,
+      resultText,
+      validatedSources
+    );
+
+    // Store quality check results
+    setQualityChecks(prev => [...prev, qualityCheck]);
 
     setInvestigation(prev => {
         if (!prev) return null;
@@ -257,9 +324,22 @@ const App: React.FC = () => {
             return {...prev, plan: newPlan, isGenerating: false, error: resultText };
         }
 
+        // Update medical context with new findings
+        if (medicalContext) {
+          const updatedContext = MedicalContextEngine.updateContext(medicalContext, resultText, validatedSources, quality);
+          setMedicalContext(updatedContext);
+        }
+
+        // Include quality metrics in the result if quality is concerning
+        let finalResult = resultText;
+        if (qualityCheck.metrics.overallQuality < 0.8 && qualityCheck.issues.length > 0) {
+          const qualityReport = QualityAssuranceEngine.formatQualityReport(qualityCheck);
+          finalResult += `\n\n---\n\n### NOTA DE CALIDAD ###\n${qualityReport}`;
+        }
+
         newPlan[currentStepIndex].status = 'completed';
-        newPlan[currentStepIndex].result = resultText;
-        newPlan[currentStepIndex].sources = resultSources;
+        newPlan[currentStepIndex].result = finalResult;
+        newPlan[currentStepIndex].sources = validatedSources;
         
         return {
             ...prev,
@@ -277,16 +357,31 @@ const App: React.FC = () => {
     setActiveView({ type: 'report', id: null });
     
     const completedSteps = investigation.plan.filter(step => step.status === 'completed');
-    const prompt = createFinalReportPrompt(investigation.originalQuery, completedSteps);
+    
+    // Enhanced prompt with final medical context
+    let enhancedQuery = investigation.originalQuery;
+    if (medicalContext) {
+      const finalContextSummary = MedicalContextEngine.generateContextSummary(medicalContext);
+      enhancedQuery = `${investigation.originalQuery}\n\n### CONTEXTO MÉDICO FINAL ###\n${finalContextSummary}`;
+    }
+    
+    const prompt = createFinalReportPrompt(enhancedQuery, completedSteps);
     
     const { text: reportText, sources: reportSources } = await generateContent(prompt, true);
+
+    // Validate and enhance report sources
+    const { validatedSources, disclaimers } = await MedicalValidationService.validateAndEnhanceSources(reportSources);
 
     setInvestigation(prev => {
         if (!prev) return null;
         if (reportText.startsWith('Ocurrió un error:')) {
             return {...prev, error: reportText, isGeneratingReport: false };
         }
-        return {...prev, finalReport: reportText, finalReportSources: reportSources, isGeneratingReport: false };
+        
+        // Add medical disclaimers to the final report
+        const reportWithDisclaimers = `${reportText}\n\n---\n\n## Disclaimers Médicos\n\n${disclaimers}`;
+        
+        return {...prev, finalReport: reportWithDisclaimers, finalReportSources: validatedSources, isGeneratingReport: false };
     });
   };
   
