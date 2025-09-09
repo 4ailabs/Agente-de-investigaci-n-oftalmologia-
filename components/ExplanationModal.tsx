@@ -7,12 +7,12 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-4 lg:p-6 relative mx-4"
+        className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-3 lg:p-6 relative mx-2 lg:mx-4"
         onClick={e => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <button 
           onClick={onClose} 
-          className="absolute top-4 right-4 text-slate-500 hover:text-slate-800"
+          className="absolute top-3 right-3 lg:top-4 lg:right-4 text-slate-500 hover:text-slate-800 p-2 rounded-lg hover:bg-slate-100 min-h-[40px] min-w-[40px]"
           aria-label="Cerrar"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

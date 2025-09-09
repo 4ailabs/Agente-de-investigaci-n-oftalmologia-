@@ -379,13 +379,13 @@ const App: React.FC = () => {
              </div>
          </div>
       ) : (
-          <main className="max-w-7xl mx-auto py-4 lg:py-8 px-3 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-8 relative">
+          <main className="max-w-7xl mx-auto py-2 lg:py-8 px-2 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 relative">
                 {/* Left Column: Control Panel */}
                 <div className="lg:col-span-4 order-2 lg:order-1">
-                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-4 lg:p-6 rounded-2xl shadow-xl border border-slate-200 lg:sticky lg:top-28 z-10">
+                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-3 lg:p-6 rounded-xl lg:rounded-2xl shadow-lg lg:shadow-xl border border-slate-200 lg:sticky lg:top-28 z-10">
                         {/* Header */}
-                        <div className="pb-6 border-b border-slate-200">
+                        <div className="pb-4 lg:pb-6 border-b border-slate-200">
                              <div className="flex justify-between items-center mb-3">
                                 <div className="flex items-center">
                                     <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
@@ -448,7 +448,7 @@ const App: React.FC = () => {
                                         <button 
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
                                                 disabled={step.status === 'pending'}
-                                                className={`flex-1 text-left flex items-start p-3 rounded-xl text-sm transition-all duration-200 min-w-0 w-full ${
+                                                className={`flex-1 text-left flex items-start p-3 rounded-lg lg:rounded-xl text-sm transition-all duration-200 min-w-0 w-full min-h-[56px] ${
                                                 activeView.type === 'step' && activeView.id === step.id 
                                                     ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-semibold border border-blue-200 shadow-sm' 
                                                     : step.status === 'completed'
@@ -485,7 +485,7 @@ const App: React.FC = () => {
                                             {step.status === 'completed' && (
                                                 <button
                                                     onClick={() => handleCopyStep(step.id)}
-                                                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                                                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors min-h-[40px] min-w-[40px]"
                                                     title="Copiar este paso"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -500,7 +500,7 @@ const App: React.FC = () => {
                                      <li>
                                         <button 
                                             onClick={() => setActiveView({ type: 'report', id: null })}
-                                            className={`w-full text-left flex items-center p-3 rounded-xl text-sm transition-all duration-200 ${
+                                            className={`w-full text-left flex items-center p-3 rounded-lg lg:rounded-xl text-sm transition-all duration-200 min-h-[56px] ${
                                                 activeView.type === 'report'
                                                 ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 font-semibold border border-green-200 shadow-sm' 
                                                 : 'text-slate-700 hover:bg-slate-100'
@@ -605,11 +605,11 @@ const App: React.FC = () => {
 
                 {/* Right Column: Content Display */}
                 <div className="lg:col-span-8 relative z-0 order-1 lg:order-2">
-                    <div className="bg-gradient-to-br from-white to-slate-50/30 p-4 lg:p-8 rounded-2xl shadow-xl border border-slate-200 min-h-[50vh] lg:min-h-[70vh]">
+                    <div className="bg-gradient-to-br from-white to-slate-50/30 p-3 lg:p-8 rounded-xl lg:rounded-2xl shadow-lg lg:shadow-xl border border-slate-200 min-h-[50vh] lg:min-h-[70vh]">
                         {activeContent ? (
                             <div>
                                 {/* Header */}
-                                <div className="flex justify-between items-start mb-6">
+                                <div className="flex justify-between items-start mb-4 lg:mb-6">
                                     <div className="flex-1">
                                         <div className="flex items-center mb-2">
                                             {activeView.type === 'step' ? (
