@@ -1,13 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense, lazy, useRef } from 'react';
 import { InvestigationState, ResearchStep, Source } from './types';
 import { createResearchPlanPrompt, createExecuteStepPrompt, createFinalReportPrompt } from './constants';
 import { generateContent } from './services/geminiService';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Spinner from './components/Spinner';
-import ExplanationModal from './components/ExplanationModal';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import Spinner, { MobileLoadingCard } from './components/Spinner';
+import useSwipeGesture from './hooks/useSwipeGesture';
+
+// Lazy load heavy components
+const ExplanationModal = lazy(() => import('./components/ExplanationModal'));
+const ReactMarkdown = lazy(() => import('react-markdown'));
+const remarkGfm = lazy(() => import('remark-gfm'));
 
 const InitialQueryInput: React.FC<{
   onSubmit: (query: string) => void;
@@ -68,7 +71,7 @@ ${clinicalInfo.trim()}`;
                             id="age"
                             value={age}
                             onChange={(e) => setAge(e.target.value)}
-                      className="w-full px-4 py-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base min-h-[56px]"
+                      className="w-full px-4 py-3 lg:py-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base min-h-[48px] lg:min-h-[56px]"
                             placeholder="Ej: 72"
                             required
                         />
@@ -85,7 +88,7 @@ ${clinicalInfo.trim()}`;
                             id="sex"
                             value={sex}
                             onChange={(e) => setSex(e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base min-h-[48px] lg:min-h-[56px]"
                             required
                         >
                     <option value="" disabled>Seleccionar sexo...</option>
@@ -115,7 +118,7 @@ ${clinicalInfo.trim()}`;
                     value={clinicalInfo}
                     onChange={(e) => setClinicalInfo(e.target.value)}
                     rows={6}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm resize-none"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm lg:text-base resize-none min-h-[120px]"
                   placeholder="Describa detalladamente los síntomas, antecedentes médicos relevantes, medicamentos actuales, y cualquier información clínica importante. Ej: Paciente de 65 años con diabetes tipo 2 presenta visión borrosa progresiva en ambos ojos durante las últimas 2 semanas, acompañada de dolor ocular intermitente..."
                     required
                 />
@@ -177,6 +180,9 @@ const App: React.FC = () => {
   const [showExplanation, setShowExplanation] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [copiedStepId, setCopiedStepId] = useState<number | null>(null);
+  
+  // Refs for swipe gesture
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleStartInvestigation = async (query: string) => {
     setInvestigation({
@@ -321,6 +327,56 @@ const App: React.FC = () => {
       setInvestigation(null);
   }
 
+  // Navigation functions for swipe gestures
+  const navigateToNextStep = () => {
+    if (!investigation) return;
+    
+    if (activeView.type === 'step') {
+      const currentStepId = activeView.id;
+      const maxStepId = investigation.plan.length;
+      
+      if (currentStepId && currentStepId < maxStepId) {
+        // Go to next step
+        const nextStep = investigation.plan.find(step => step.id === currentStepId + 1);
+        if (nextStep && nextStep.status !== 'pending') {
+          setActiveView({ type: 'step', id: currentStepId + 1 });
+        }
+      } else if (currentStepId === maxStepId && investigation.finalReport) {
+        // Go to final report
+        setActiveView({ type: 'report', id: null });
+      }
+    }
+  };
+
+  const navigateToPreviousStep = () => {
+    if (!investigation) return;
+    
+    if (activeView.type === 'report') {
+      // Go back to last step
+      const lastStep = investigation.plan[investigation.plan.length - 1];
+      if (lastStep && lastStep.status === 'completed') {
+        setActiveView({ type: 'step', id: lastStep.id });
+      }
+    } else if (activeView.type === 'step') {
+      const currentStepId = activeView.id;
+      if (currentStepId && currentStepId > 1) {
+        // Go to previous step
+        const prevStep = investigation.plan.find(step => step.id === currentStepId - 1);
+        if (prevStep && prevStep.status === 'completed') {
+          setActiveView({ type: 'step', id: currentStepId - 1 });
+        }
+      }
+    }
+  };
+
+  // Setup swipe gestures for mobile navigation
+  useSwipeGesture(contentRef, {
+    threshold: 100,
+    onSwipeLeft: navigateToNextStep,
+    onSwipeRight: navigateToPreviousStep,
+    preventScroll: false
+  });
+
   const activeContent = useMemo(() => {
     if (!investigation) return null;
     if (activeView.type === 'report') {
@@ -344,7 +400,18 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 flex flex-col">
       <Header onShowExplanation={() => setShowExplanation(true)} />
-      {showExplanation && <ExplanationModal onClose={() => setShowExplanation(false)} />}
+      {showExplanation && (
+        <Suspense fallback={
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+            <div className="bg-white rounded-lg shadow-xl p-8 flex flex-col items-center">
+              <Spinner />
+              <p className="mt-4 text-slate-600">Cargando guía...</p>
+            </div>
+          </div>
+        }>
+          <ExplanationModal onClose={() => setShowExplanation(false)} />
+        </Suspense>
+      )}
       <div className="flex-1">
       {!investigation ? (
         <InitialQueryInput 
@@ -352,32 +419,10 @@ const App: React.FC = () => {
           isLoading={investigation?.isGenerating ?? false}
         />
       ) : investigation.isGenerating && investigation.plan.length === 0 ? (
-           <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
-             <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 max-w-md w-full text-center">
-               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-pulse shadow-lg">
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                 </svg>
-               </div>
-               <h3 className="text-xl font-bold text-slate-800 mb-2 animate-pulse">Creando Plan de Investigación</h3>
-               <p className="text-slate-600 mb-6">Nuestro agente de IA está analizando el caso y diseñando un plan de investigación personalizado...</p>
-               <div className="flex items-center justify-center space-x-3">
-           <Spinner />
-                 <span className="text-slate-500 font-medium">Procesando información...</span>
-               </div>
-               <div className="mt-6 bg-blue-50 p-4 rounded-lg">
-                 <div className="flex items-start space-x-3">
-                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                     <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                   </svg>
-                   <div className="text-left">
-                     <p className="text-sm text-blue-800 font-medium">¿Qué está haciendo el agente?</p>
-                     <p className="text-xs text-blue-700 mt-1">Analizando síntomas, identificando diagnósticos diferenciales y creando un plan de investigación paso a paso basado en evidencia médica.</p>
-                   </div>
-                 </div>
-               </div>
-             </div>
-         </div>
+         <MobileLoadingCard 
+           title="Creando Plan de Investigación"
+           description="Nuestro agente de IA está analizando el caso y diseñando un plan de investigación personalizado basado en evidencia médica."
+         />
       ) : (
           <main className="max-w-7xl mx-auto py-2 lg:py-8 px-2 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 relative">
@@ -485,7 +530,7 @@ const App: React.FC = () => {
                                             {step.status === 'completed' && (
                                                 <button
                                                     onClick={() => handleCopyStep(step.id)}
-                                                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors min-h-[40px] min-w-[40px]"
+                                                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                                                     title="Copiar este paso"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -605,7 +650,35 @@ const App: React.FC = () => {
 
                 {/* Right Column: Content Display */}
                 <div className="lg:col-span-8 relative z-0 order-1 lg:order-2">
-                    <div className="bg-gradient-to-br from-white to-slate-50/30 p-3 lg:p-8 rounded-xl lg:rounded-2xl shadow-lg lg:shadow-xl border border-slate-200 min-h-[50vh] lg:min-h-[70vh]">
+                    <div 
+                      ref={contentRef}
+                      className="bg-gradient-to-br from-white to-slate-50/30 p-3 lg:p-8 rounded-xl lg:rounded-2xl shadow-lg lg:shadow-xl border border-slate-200 min-h-[50vh] lg:min-h-[70vh] relative"
+                    >
+                        {/* Mobile Swipe Indicators - only show on mobile */}
+                        <div className="block lg:hidden absolute top-1/2 left-2 transform -translate-y-1/2 text-slate-300 z-10">
+                          {investigation && activeView.type === 'step' && activeView.id && activeView.id > 1 && (
+                            <div className="flex items-center animate-pulse">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                              </svg>
+                              <span className="text-xs ml-1">Anterior</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="block lg:hidden absolute top-1/2 right-2 transform -translate-y-1/2 text-slate-300 z-10">
+                          {investigation && (
+                            (activeView.type === 'step' && activeView.id && activeView.id < investigation.plan.length && investigation.plan.find(s => s.id === activeView.id + 1)?.status !== 'pending') ||
+                            (activeView.type === 'step' && activeView.id === investigation.plan.length && investigation.finalReport)
+                          ) && (
+                            <div className="flex items-center animate-pulse">
+                              <span className="text-xs mr-1">Siguiente</span>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
                         {activeContent ? (
                             <div>
                                 {/* Header */}
@@ -676,7 +749,27 @@ const App: React.FC = () => {
                                 ) : activeContent.content && activeContent.content.trim() ? (
                                     <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                                         <div className="prose prose-slate prose-xl max-w-none text-slate-800 leading-relaxed prose-headings:text-slate-900 prose-headings:font-bold prose-p:text-base prose-p:leading-7 prose-strong:text-slate-900 prose-strong:font-semibold prose-ul:text-base prose-ol:text-base prose-li:text-base prose-li:leading-7">
-                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{activeContent.content}</ReactMarkdown>
+                                        <Suspense fallback={
+                                          <div className="flex justify-center items-center py-8">
+                                            <Spinner />
+                                            <span className="ml-3 text-slate-600">Procesando contenido...</span>
+                                          </div>
+                                        }>
+                                          <ReactMarkdown 
+                                            remarkPlugins={[remarkGfm]}
+                                            components={{
+                                              // Optimize for mobile rendering
+                                              h1: ({children}) => <h1 className="text-xl lg:text-2xl mb-4">{children}</h1>,
+                                              h2: ({children}) => <h2 className="text-lg lg:text-xl mb-3">{children}</h2>,
+                                              h3: ({children}) => <h3 className="text-base lg:text-lg mb-2">{children}</h3>,
+                                              p: ({children}) => <p className="text-sm lg:text-base mb-3 leading-6">{children}</p>,
+                                              ul: ({children}) => <ul className="text-sm lg:text-base mb-3 pl-4 space-y-1">{children}</ul>,
+                                              ol: ({children}) => <ol className="text-sm lg:text-base mb-3 pl-4 space-y-1">{children}</ol>
+                                            }}
+                                          >
+                                            {activeContent.content}
+                                          </ReactMarkdown>
+                                        </Suspense>
                                         </div>
                                     </div>
                                 ) : (

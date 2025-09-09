@@ -25,13 +25,46 @@ export default defineConfig(({ mode }) => {
         },
         rollupOptions: {
           output: {
-            manualChunks: {
-              vendor: ['react', 'react-dom'],
-              ui: ['react-markdown', 'remark-gfm'],
-              ai: ['@google/genai']
+            manualChunks: (id) => {
+              // React core - critical path
+              if (id.includes('react') && !id.includes('react-markdown')) {
+                return 'react-core';
+              }
+              
+              // Heavy markdown processing - lazy loaded
+              if (id.includes('react-markdown') || id.includes('remark-gfm')) {
+                return 'markdown';
+              }
+              
+              // AI/API functionality - lazy loaded
+              if (id.includes('@google/genai')) {
+                return 'ai';
+              }
+              
+              // Node modules - separate chunk
+              if (id.includes('node_modules')) {
+                return 'vendor';
+              }
+              
+              // Components that can be lazy loaded
+              if (id.includes('ExplanationModal')) {
+                return 'modal';
+              }
             },
-            chunkFileNames: 'assets/js/[name]-[hash].js',
-            entryFileNames: 'assets/js/[name]-[hash].js',
+            chunkFileNames: (chunkInfo) => {
+              // Different paths for different chunk types
+              const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId : 'unknown';
+              
+              if (facadeModuleId.includes('ExplanationModal') || chunkInfo.name === 'modal') {
+                return 'assets/js/lazy/[name]-[hash].js';
+              }
+              if (chunkInfo.name === 'markdown') {
+                return 'assets/js/lazy/[name]-[hash].js';
+              }
+              
+              return 'assets/js/[name]-[hash].js';
+            },
+            entryFileNames: 'assets/js/main-[hash].js',
             assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
           }
         },
