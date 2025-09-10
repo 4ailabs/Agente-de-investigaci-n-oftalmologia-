@@ -290,7 +290,7 @@ export class OphthalmologyKnowledgeGraph {
         commonSymptoms: [
           { symptom: 'Peripheral vision loss', frequency: 0.70, severity: 'moderate', timing: 'gradual', quality: 'Insidious onset, often unnoticed initially' },
           { symptom: 'Tunnel vision', frequency: 0.35, severity: 'severe', timing: 'progressive', quality: 'Advanced disease manifestation' },
-          { symptom: 'Halos around lights', frequency: 0.25, severity: 'mild', timing: 'episodic', quality: 'Associated with pressure elevation' }
+          { symptom: 'Halos around lights', frequency: 0.25, severity: 'mild', timing: 'progressive', quality: 'Associated with pressure elevation' }
         ],
         commonSigns: [
           { sign: 'Optic disc cupping', frequency: 0.90, sensitivity: 0.85, specificity: 0.80, examination: 'fundoscopy' },
