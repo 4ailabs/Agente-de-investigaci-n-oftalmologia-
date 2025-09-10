@@ -522,7 +522,7 @@ const App: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 relative">
                 {/* Left Column: Control Panel */}
                 <div className="lg:col-span-4 order-2 lg:order-1">
-                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-2 lg:p-6 rounded-lg lg:rounded-2xl shadow-md lg:shadow-xl border border-slate-200 lg:sticky lg:top-28 z-10">
+                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-2 lg:p-6 rounded-lg lg:rounded-2xl shadow-md lg:shadow-xl border border-slate-200 lg:sticky lg:top-28 z-20">
                         {/* Header */}
                         <div className="pb-2 lg:pb-6 border-b border-slate-200">
                              <div className="flex justify-between items-center mb-2 lg:mb-3">
