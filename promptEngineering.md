@@ -2,7 +2,7 @@
 
 ## Resumen Ejecutivo
 
-Este documento describe el sistema de prompt engineering implementado en el Agente de Investigación Clínica de Oftalmología, una aplicación que utiliza Google Gemini para realizar investigaciones médicas estructuradas y basadas en evidencia.
+Este documento describe el sistema de prompt engineering implementado en el Agente de Investigación Clínica de Oftalmología, una aplicación web que utiliza Google Gemini 2.5 Flash para realizar investigaciones médicas estructuradas y basadas en evidencia. La aplicación está optimizada para dispositivos móviles y desplegada en Vercel.
 
 ## Arquitectura del Sistema de Prompts
 
@@ -587,3 +587,120 @@ El sistema de prompt engineering implementado combina técnicas avanzadas de LLM
 - **Métricas de Calidad** para evaluación continua
 
 Este sistema representa un enfoque innovador para la aplicación de LLMs en investigación médica especializada, combinando la potencia de la IA con la rigurosidad requerida en el campo médico.
+
+## Arquitectura Técnica Actualizada (Diciembre 2024)
+
+### Stack Tecnológico
+
+**Frontend:**
+- **React 19.1.1** - Framework principal
+- **TypeScript 5.8.2** - Tipado estático
+- **Vite 6.2.0** - Build tool y dev server
+- **Tailwind CSS** - Framework de estilos
+- **React Markdown 9.0.1** - Renderizado de contenido
+
+**Backend/API:**
+- **Google Gemini 2.5 Flash** - Motor de IA
+- **@google/genai 1.17.0** - SDK oficial
+- **Búsqueda de Google** - Herramienta de investigación
+
+**Despliegue:**
+- **Vercel** - Plataforma de hosting
+- **Node.js 18.19.0** - Runtime (especificado en .nvmrc)
+- **Terser** - Minificación de código
+
+### Estructura de Archivos Actualizada
+
+```
+/
+├── App.tsx                          # Componente principal
+├── constants.ts                     # Prompts y configuraciones
+├── types.ts                         # Interfaces TypeScript
+├── services/
+│   └── geminiService.ts            # Servicio de IA
+├── components/
+│   ├── Header.tsx                  # Header responsive
+│   ├── Footer.tsx                  # Footer minimalista
+│   ├── ExplanationModal.tsx        # Modal de guía
+│   ├── Spinner.tsx                 # Componentes de carga
+│   ├── PromptForm.tsx              # Formulario inicial
+│   ├── GeneratedPromptDisplay.tsx  # Display de prompts
+│   └── ResultDisplay.tsx           # Display de resultados
+├── hooks/
+│   └── useSwipeGesture.ts          # Hook para gestos móviles
+├── contextEngineering.ts           # Gestión de contexto médico
+├── enhancedReasoning.ts            # Razonamiento clínico avanzado
+├── ophthalmologyKnowledge.ts       # Base de conocimiento oftalmológico
+├── qualityAssurance.ts             # Garantías de calidad
+├── medicalValidation.ts            # Validación de fuentes médicas
+├── vercel.json                     # Configuración de Vercel
+├── vite.config.ts                  # Configuración de Vite
+└── package.json                    # Dependencias del proyecto
+```
+
+### Optimizaciones de UX/UI Implementadas
+
+**Mobile First:**
+- **Header compacto** (56px altura fija)
+- **Navegación por gestos** (swipe izquierda/derecha)
+- **Modal bottom sheet** en móviles
+- **Botones táctiles** optimizados (44px mínimo)
+- **Tipografía responsive** (text-sm lg:text-base)
+
+**Desktop:**
+- **Layout de dos columnas** (sidebar + contenido)
+- **Modal centrado** tradicional
+- **Hover effects** y transiciones suaves
+- **Z-index optimizado** para evitar superposiciones
+
+### Características de Accesibilidad
+
+**Contraste:**
+- **Títulos oscuros** (text-slate-900) en fondos claros
+- **Enlaces visibles** con hover effects
+- **Iconos descriptivos** con aria-labels
+
+**Usabilidad:**
+- **Área táctil mínima** de 44px para botones
+- **Navegación por teclado** completa
+- **Feedback visual** en todas las interacciones
+- **Loading states** informativos
+
+### Sistema de Validación Médica
+
+**MedicalValidationService:**
+- **Scoring de autoridad** (0-100 puntos)
+- **Detección de contradicciones** entre fuentes
+- **Filtrado inteligente** de fuentes no confiables
+- **Evaluación de evidencia** (GRADE simplificado)
+
+**QualityAssuranceEngine:**
+- **Métricas de calidad** (precisión, evidencia, completitud)
+- **Patrones de detección** de problemas médicos
+- **Recomendaciones automáticas** de mejora
+
+### URLs de Producción
+
+**Aplicación Principal:**
+- **URL:** https://oftalmo-ai-4ailabs-projects.vercel.app
+- **Panel:** https://vercel.com/4ailabs-projects/oftalmo-ai
+- **Despliegue automático** desde GitHub
+
+### Mejoras Implementadas (Diciembre 2024)
+
+1. **Optimización móvil completa** con navegación por gestos
+2. **Sistema de validación médica** robusto
+3. **Context engineering** avanzado
+4. **Enlaces de fuentes** mejorados y clickables
+5. **Contraste de header** corregido
+6. **Tamaños de fuente** optimizados para legibilidad
+7. **Z-index** corregido para evitar superposiciones
+8. **Lazy loading** de componentes pesados
+9. **PWA capabilities** con manifest.json
+10. **Seguridad mejorada** con variables de entorno
+
+---
+
+**Última actualización:** Diciembre 2024  
+**Versión:** 1.0.0  
+**Desarrollado por:** 4 ailabs
