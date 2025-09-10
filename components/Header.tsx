@@ -30,7 +30,7 @@ const Header: React.FC<{ onShowExplanation: () => void }> = ({ onShowExplanation
                 </div>
                 
                 {/* Title */}
-                <h1 className="text-sm lg:text-2xl font-bold text-white lg:text-transparent lg:bg-gradient-to-r lg:from-slate-900 lg:to-slate-700 lg:bg-clip-text leading-tight truncate">
+                <h1 className="text-sm lg:text-2xl font-bold text-slate-900 lg:text-transparent lg:bg-gradient-to-r lg:from-slate-900 lg:to-slate-700 lg:bg-clip-text leading-tight truncate">
                   Agente de Investigación Clínica de Oftalmología
                 </h1>
             </div>
@@ -40,7 +40,7 @@ const Header: React.FC<{ onShowExplanation: () => void }> = ({ onShowExplanation
                 {/* Mobile button */}
                 <button 
                     onClick={onShowExplanation} 
-                    className="lg:hidden flex items-center justify-center w-12 h-12 text-white hover:bg-white/20 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px]"
+                    className="lg:hidden flex items-center justify-center w-12 h-12 text-slate-700 hover:bg-slate-100 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px]"
                     aria-label="Guía de uso"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
