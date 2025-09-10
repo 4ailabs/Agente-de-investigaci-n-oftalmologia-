@@ -546,12 +546,12 @@ const App: React.FC = () => {
                                 </button>
                              </div>
                              <div className="bg-blue-50 p-2 lg:p-3 rounded-lg">
-                                 <div className="text-xs lg:text-sm text-slate-700 space-y-1">
+                                 <div className="text-sm lg:text-base text-slate-700 space-y-1">
                                      {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
                                          if (index === 0) {
                                              // Patient demographics (first line)
                                              return (
-                                                 <div key={index} className="font-medium text-blue-800 text-xs">
+                                                 <div key={index} className="font-medium text-blue-800 text-sm">
                                                      👤 {section.trim()}
                                                  </div>
                                              );
@@ -561,15 +561,15 @@ const App: React.FC = () => {
                                              const truncated = symptoms.length > 120 ? symptoms.substring(0, 120) + '...' : symptoms;
                                              return (
                                                  <div key={index} className="text-slate-600">
-                                                     <div className="text-xs font-medium text-slate-500 mb-1">📋 Síntomas:</div>
-                                                     <div className="text-xs leading-tight" title={symptoms}>
+                                                     <div className="text-sm font-medium text-slate-500 mb-1">📋 Síntomas:</div>
+                                                     <div className="text-sm leading-tight" title={symptoms}>
                                                          {truncated}
                                                      </div>
                                                  </div>
                                              );
                                          }
                                      }) : (
-                                         <div className="text-xs text-slate-500">Cargando información del caso...</div>
+                                         <div className="text-sm text-slate-500">Cargando información del caso...</div>
                                      )}
                                  </div>
                              </div>
@@ -578,8 +578,8 @@ const App: React.FC = () => {
                         {/* Progress Indicator */}
                         <div className="my-4 lg:my-6">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs lg:text-sm font-medium text-slate-700">Progreso</span>
-                                <span className="text-xs lg:text-sm text-slate-500 font-mono">
+                                <span className="text-sm lg:text-base font-medium text-slate-700">Progreso</span>
+                                <span className="text-sm lg:text-base text-slate-500 font-mono">
                                     {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length}
                                 </span>
                             </div>
@@ -596,7 +596,7 @@ const App: React.FC = () => {
                         {/* Navigation */}
                         <nav className="mb-4 lg:mb-6">
                             <div className="flex items-center justify-between mb-2 lg:mb-3">
-                                <h3 className="text-xs lg:text-sm font-semibold text-slate-700">Pasos de Investigación</h3>
+                                <h3 className="text-sm lg:text-base font-semibold text-slate-700">Pasos de Investigación</h3>
                                 <div className="hidden lg:flex items-center space-x-1 text-xs text-slate-500">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -611,7 +611,7 @@ const App: React.FC = () => {
                                         <button 
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
                                                 disabled={step.status === 'pending'}
-                                                className={`flex-1 text-left flex items-start p-2 lg:p-3 rounded-lg lg:rounded-xl text-xs lg:text-sm transition-all duration-200 min-w-0 w-full min-h-[48px] lg:min-h-[56px] ${
+                                                className={`flex-1 text-left flex items-start p-2 lg:p-3 rounded-lg lg:rounded-xl text-sm lg:text-base transition-all duration-200 min-w-0 w-full min-h-[48px] lg:min-h-[56px] ${
                                                 activeView.type === 'step' && activeView.id === step.id 
                                                     ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-semibold border border-blue-200 shadow-sm' 
                                                     : step.status === 'completed'
@@ -670,7 +670,7 @@ const App: React.FC = () => {
                                      <li>
                                         <button 
                                             onClick={() => setActiveView({ type: 'report', id: null })}
-                                            className={`w-full text-left flex items-center p-2 lg:p-3 rounded-lg lg:rounded-xl text-xs lg:text-sm transition-all duration-200 min-h-[48px] lg:min-h-[56px] ${
+                                            className={`w-full text-left flex items-center p-2 lg:p-3 rounded-lg lg:rounded-xl text-sm lg:text-base transition-all duration-200 min-h-[48px] lg:min-h-[56px] ${
                                                 activeView.type === 'report'
                                                 ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 font-semibold border border-green-200 shadow-sm' 
                                                 : 'text-slate-700 hover:bg-slate-100'
@@ -873,7 +873,7 @@ const App: React.FC = () => {
                                     </div>
                                 ) : activeContent.content && activeContent.content.trim() ? (
                                     <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                        <div className="prose prose-slate prose-xl max-w-none text-slate-800 leading-relaxed prose-headings:text-slate-900 prose-headings:font-bold prose-p:text-base prose-p:leading-7 prose-strong:text-slate-900 prose-strong:font-semibold prose-ul:text-base prose-ol:text-base prose-li:text-base prose-li:leading-7">
+                                        <div className="prose prose-slate prose-xl max-w-none text-slate-800 leading-relaxed prose-headings:text-slate-900 prose-headings:font-bold prose-p:text-lg prose-p:leading-8 prose-strong:text-slate-900 prose-strong:font-semibold prose-ul:text-lg prose-ol:text-lg prose-li:text-lg prose-li:leading-8">
                                           <ReactMarkdown 
                                             remarkPlugins={[remarkGfm]}
                                             components={{
