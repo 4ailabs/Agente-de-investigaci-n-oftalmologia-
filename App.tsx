@@ -206,14 +206,16 @@ const App: React.FC = () => {
 
     // Extract patient information for enhanced reasoning
     const patientInfo = {
-      age: initialContext.patientProfile.age,
-      sex: initialContext.patientProfile.sex,
+      age: initialContext.patientProfile.age || 65, // Fallback age
+      sex: initialContext.patientProfile.sex || 'no especificado',
       history: initialContext.patientProfile.medicalHistory
     };
     
     // Generate initial clinical reasoning
-    const symptoms = initialContext.clinicalFindings.chiefComplaint.split(',').map(s => s.trim());
-    const findings = initialContext.clinicalFindings.reviewOfSystems;
+    const symptoms = initialContext.patientProfile.currentSymptoms.length > 0 
+      ? initialContext.patientProfile.currentSymptoms.map(s => s.description)
+      : ['síntomas no específicos']; // Fallback para casos sin síntomas detectados
+    const findings = Object.values(initialContext.clinicalFindings).filter(f => f !== null) as string[];
     
     const initialReasoning = EnhancedMedicalReasoning.synthesizeReasoning(
       symptoms,
@@ -330,12 +332,8 @@ const App: React.FC = () => {
           setMedicalContext(updatedContext);
         }
 
-        // Include quality metrics in the result if quality is concerning
-        let finalResult = resultText;
-        if (qualityCheck.metrics.overallQuality < 0.8 && qualityCheck.issues.length > 0) {
-          const qualityReport = QualityAssuranceEngine.formatQualityReport(qualityCheck);
-          finalResult += `\n\n---\n\n### NOTA DE CALIDAD ###\n${qualityReport}`;
-        }
+        // Use the result text directly without quality notes
+        const finalResult = resultText;
 
         newPlan[currentStepIndex].status = 'completed';
         newPlan[currentStepIndex].result = finalResult;
