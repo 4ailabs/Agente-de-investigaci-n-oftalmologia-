@@ -602,4 +602,69 @@ ${this.context.patientProfile.currentSymptoms
   resetContext(): void {
     this.context = this.initializeContext();
   }
+
+  // STATIC METHODS FOR INTEGRATION WITH EXISTING SYSTEM
+  static parseInitialContext(query: string): MedicalContext {
+    const engine = new MedicalContextEngine();
+    engine.parseInitialQuery(query);
+    return engine.getContext();
+  }
+
+  static generateContextSummary(context: MedicalContext): string {
+    const patientAge = context.patientProfile.age || 'unknown age';
+    const patientSex = context.patientProfile.sex || 'unknown sex';
+    
+    const topDiagnosis = context.workingDiagnoses[0];
+    const redFlags = context.redFlags.length > 0 ? 
+      `🚨 RED FLAGS: ${context.redFlags.map(rf => rf.finding).join(', ')}` : '';
+    
+    const involvedRegions = context.anatomicalRegions
+      .filter(r => r.involved)
+      .map(r => r.region)
+      .join(', ');
+
+    return `
+### MEDICAL CONTEXT SUMMARY ###
+**Patient:** ${patientAge}, ${patientSex}
+**Temporal Pattern:** ${context.temporalPattern.onset} onset, ${context.temporalPattern.course} course
+**Anatomical Regions:** ${involvedRegions || 'not specified'}
+**Primary Working Diagnosis:** ${topDiagnosis?.diagnosis || 'not established'} (${Math.round((topDiagnosis?.probability || 0) * 100)}% confidence)
+**Evidence Quality:** ${context.evidenceQuality.consensusLevel} consensus (${context.evidenceQuality.highQualitySources}/${context.evidenceQuality.totalSources} high-quality sources)
+${redFlags}
+
+**Key Clinical Findings:**
+${Object.entries(context.clinicalFindings)
+  .filter(([_, value]) => value !== null)
+  .map(([key, value]) => `- ${key}: ${value}`)
+  .join('\n')}
+
+**Current Symptom Profile:**
+${context.patientProfile.currentSymptoms
+  .map(s => `- ${s.description} (${s.severity}, ${s.duration})`)
+  .join('\n')}
+    `.trim();
+  }
+
+  static updateContext(
+    currentContext: MedicalContext,
+    newFindings: string,
+    sources: any[],
+    quality: any[]
+  ): MedicalContext {
+    const engine = new MedicalContextEngine();
+    engine.context = currentContext;
+    
+    // Create a mock research step with the new findings
+    const mockStep: ResearchStep = {
+      id: Date.now(),
+      title: 'Context Update',
+      status: 'completed',
+      result: newFindings,
+      prompt: '',
+      sources: sources
+    };
+    
+    engine.updateContextWithStepResult(mockStep);
+    return engine.getContext();
+  }
 }
