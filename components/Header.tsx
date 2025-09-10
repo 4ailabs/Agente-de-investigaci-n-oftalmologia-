@@ -2,7 +2,7 @@ import React from 'react';
 
 const Header: React.FC<{ onShowExplanation: () => void }> = ({ onShowExplanation }) => {
   return (
-    <header className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 sticky top-0 z-10 backdrop-blur-sm bg-white/95">
+    <header className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 lg:py-6">
         <div className="flex items-center justify-between h-14 lg:h-auto">
             {/* Logo and Title - Responsive */}
