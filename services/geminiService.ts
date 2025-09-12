@@ -253,6 +253,12 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     const response = await genAI.models.generateContent({
         model: 'gemini-1.5-flash',
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+            temperature: 0.1, // Baja temperatura para respuestas médicas precisas
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 8192, // Aumentado para análisis detallados
+        },
         ...(useSearch && { tools: [{
             googleSearchRetrieval: {
                 dynamicRetrievalConfig: {
