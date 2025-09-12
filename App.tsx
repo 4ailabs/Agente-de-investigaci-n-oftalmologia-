@@ -8,6 +8,7 @@ import { EnhancedMedicalReasoning, ClinicalReasoning, ReasoningIntegration } fro
 import { OphthalmologyKnowledgeGraph } from './ophthalmologyKnowledge';
 import { QualityAssuranceEngine, QualityCheck } from './qualityAssurance';
 import { localStorageService, StoredInvestigation } from './services/localStorageService';
+import { PDFService } from './services/pdfService';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Spinner, { MobileLoadingCard } from './components/Spinner';
@@ -824,6 +825,34 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     }
   };
 
+  // Export investigation as PDF
+  const handleExportPDF = async (investigationId: string) => {
+    try {
+      const storedInvestigation = localStorageService.getInvestigation(investigationId);
+      if (storedInvestigation) {
+        await PDFService.generateInvestigationPDF(storedInvestigation);
+        console.log('PDF generated successfully:', investigationId);
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error al generar el PDF');
+    }
+  };
+
+  // Export investigation summary as PDF
+  const handleExportSummaryPDF = async (investigationId: string) => {
+    try {
+      const storedInvestigation = localStorageService.getInvestigation(investigationId);
+      if (storedInvestigation) {
+        await PDFService.generateSummaryPDF(storedInvestigation);
+        console.log('Summary PDF generated successfully:', investigationId);
+      }
+    } catch (error) {
+      console.error('Error generating summary PDF:', error);
+      alert('Error al generar el PDF de resumen');
+    }
+  };
+
   // Navigation functions for swipe gestures
   const navigateToNextStep = () => {
     if (!investigation) return;
@@ -931,6 +960,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             onDeleteInvestigation={handleDeleteInvestigation}
             onExportInvestigation={handleExportInvestigation}
             onCopyInvestigation={handleCopyInvestigation}
+            onExportPDF={handleExportPDF}
+            onExportSummaryPDF={handleExportSummaryPDF}
             currentInvestigationId={currentInvestigationId}
           />
         </Suspense>
