@@ -412,17 +412,17 @@ const App: React.FC = () => {
         return updatedInvestigation;
     });
 
-    // Auto-navigate to next step or report after state update
+    // Auto-navigate to next step or report after showing current result
     setTimeout(() => {
       const nextStepIndex = currentStepIndex + 1;
       if (nextStepIndex < investigation.plan.length) {
-        // Navigate to next step
+        // Navigate to next step after showing current result
         setActiveView({ type: 'step', id: nextStepIndex + 1 });
       } else {
         // All steps completed, navigate to report
         setActiveView({ type: 'report', id: null });
       }
-    }, 100); // Small delay to ensure state is updated
+    }, 3000); // 3 seconds delay to let user see the result
   };
   
   const handleGenerateReport = async () => {
