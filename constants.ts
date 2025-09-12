@@ -124,12 +124,33 @@ Ejecuta el siguiente paso: "${currentStep.title}"
 4. **Evidence Quality:** Evalúa y reporta la calidad de fuentes encontradas
 5. **Clinical Coherence:** Asegura coherencia con patrón temporal y anatómico
 
-**FORMATO DE RESPUESTA:**
-- Inicia con un breve resumen del contexto médico relevante
-- Presenta los hallazgos de tu búsqueda con razonamiento clínico
-- Actualiza probabilidades diagnósticas si aplica
-- Identifica cualquier red flag o gap de información
-- Concluye con implicaciones para los próximos pasos
+**FORMATO DE RESPUESTA DETALLADO:**
+Debes proporcionar un análisis EXHAUSTIVO y DETALLADO siguiendo esta estructura:
+
+### CONTEXTO MÉDICO ACTUALIZADO
+- Resumen del perfil del paciente basado en información previa
+- Estado actual de diagnósticos diferenciales con probabilidades
+- Signos de alarma identificados hasta el momento
+
+### BÚSQUEDA Y ANÁLISIS DE EVIDENCIA
+- Descripción detallada de la estrategia de búsqueda empleada
+- Lista de fuentes médicas consultadas (sin URLs, solo descripción)
+- Análisis crítico de cada hallazgo encontrado
+- Evaluación de la calidad y relevancia de la evidencia
+
+### RAZONAMIENTO CLÍNICO SISTEMÁTICO
+- Aplicación del método SOAP+ con preservación de contexto
+- Razonamiento Bayesiano: actualización de probabilidades pre/post-test
+- Coherencia temporal y anatómica de los hallazgos
+- Identificación de nuevos red flags o factores de riesgo
+
+### SÍNTESIS DE HALLAZGOS
+- Integración de nueva evidencia con conocimiento previo
+- Impacto en los diagnósticos diferenciales actuales
+- Recomendaciones específicas para próximos pasos
+- Gaps de información identificados que requieren investigación adicional
+
+**LONGITUD REQUERIDA:** Tu respuesta debe ser EXTENSA y DETALLADA (mínimo 1500 palabras), proporcionando análisis profundo y razonamiento clínico exhaustivo.
 
 **IMPORTANTE:** 
 - NO incluyas referencias o fuentes en el texto de tu respuesta
@@ -146,15 +167,29 @@ Utiliza la Búsqueda de Google para encontrar información ESPECÍFICAMENTE rela
 - Términos médicos oftalmológicos relevantes al caso
 
 PRIORIZA fuentes de:
-1. PubMed/NCBI (estudios revisados por pares)
-2. Cochrane Library (revisiones sistemáticas)
-3. UpToDate, Medscape (guías clínicas actualizadas)
-4. American Academy of Ophthalmology (AAO)
-5. Revistas médicas especializadas (NEJM, JAMA, The Lancet)
+1. PubMed/NCBI (estudios revisados por pares) - Busca metaanálisis y revisiones sistemáticas
+2. Cochrane Library (revisiones sistemáticas de alta calidad)
+3. UpToDate, Medscape (guías clínicas actualizadas y evidencia basada)
+4. American Academy of Ophthalmology (AAO) - Guías oficiales de práctica clínica
+5. Revistas médicas especializadas (NEJM, JAMA, The Lancet, Ophthalmology, IOVS)
+
+**ESTRATEGIA DE BÚSQUEDA REQUERIDA:**
+- Realiza múltiples búsquedas específicas para cada aspecto del caso
+- Busca evidencia tanto para el diagnóstico principal como para diagnósticos diferenciales
+- Incluye búsquedas sobre epidemiología, fisiopatología, diagnóstico y tratamiento
+- Consulta guías de práctica clínica más recientes (últimos 5 años)
 
 EVITA fuentes generales, no médicas o no relacionadas con oftalmología.
 
-Tu respuesta DEBE basarse ÚNICAMENTE en evidencia médica de alta calidad encontrada en tu búsqueda y aplicar razonamiento clínico sistemático.
+**ANÁLISIS CRÍTICO REQUERIDO:**
+Tu respuesta DEBE basarse ÚNICAMENTE en evidencia médica de alta calidad encontrada en tu búsqueda y debe incluir:
+- Análisis crítico de cada fuente consultada (calidad del estudio, tamaño de muestra, relevancia)
+- Comparación entre diferentes fuentes cuando hay información contradictoria
+- Evaluación de la aplicabilidad de la evidencia al caso específico
+- Identificación de limitaciones en la evidencia disponible
+- Razonamiento clínico sistemático paso a paso
+
+**EXPECTATIVA DE PROFUNDIDAD:** Se espera un análisis de nivel académico/hospitalario, no un resumen superficial.
 `;
 };
 
@@ -201,10 +236,27 @@ Sintetiza la información aplicando **medicina basada en evidencia** y **razonam
 El reporte DEBE seguir esta estructura médica especializada:
 
 ## 1. SÍNTESIS CLÍNICA EJECUTIVA
-- **Diagnóstico Más Probable:** Con probabilidad estimada y justificación
-- **Decisión Clínica Urgente:** Si requiere atención inmediata
-- **Nivel de Certeza:** Basado en calidad de evidencia disponible
-- **Red Flags Identificadas:** Signos de alarma críticos
+
+### Diagnóstico Más Probable
+**[Nombre del diagnóstico principal]** - Probabilidad: [XX%]
+- **Justificación clínica:** Análisis detallado del por qué este diagnóstico es el más probable
+- **Evidencia de apoyo:** Hallazgos específicos que respaldan este diagnóstico
+- **Mecanismo fisiopatológico:** Explicación del proceso patológico subyacente
+
+### Evaluación de Urgencia Clínica
+- **Nivel de urgencia:** [Emergente/Urgente/Semi-urgente/Rutinario]
+- **Tiempo de atención recomendado:** [Inmediato/<2h/<24h/<1 semana]
+- **Justificación temporal:** Razones específicas para la urgencia determinada
+
+### Nivel de Certeza Diagnóstica
+- **Grado de confianza:** [Alto/Moderado/Bajo] - [XX%]
+- **Calidad de evidencia:** Evaluación crítica de las fuentes consultadas
+- **Limitaciones identificadas:** Gaps de información que afectan la certeza
+
+### Red Flags Identificadas
+- **Signos de alarma críticos:** Lista detallada con implicaciones clínicas
+- **Factores de riesgo emergentes:** Nuevos elementos identificados
+- **Recomendaciones de monitoreo:** Signos específicos a vigilar
 
 ## 2. ANÁLISIS DIFERENCIAL BAYESIANO
 
@@ -267,6 +319,17 @@ BUSCA ÚNICAMENTE en fuentes médicas acreditadas relacionadas con oftalmología
 - PRIORIZA la legibilidad y comprensión clínica
 - Si necesitas usar tablas, mantenlas simples (máximo 3 columnas)
 
-**IMPORTANTE:** Aplica razonamiento clínico en cada sección, explicitando el proceso de toma de decisiones médicas basado en la evidencia encontrada.
+**REQUERIMIENTOS DE PROFUNDIDAD Y DETALLE:**
+El reporte final debe ser EXTREMADAMENTE DETALLADO y EXHAUSTIVO:
+- Mínimo 3000-4000 palabras de contenido médico especializado
+- Análisis crítico profundo de TODA la evidencia consultada
+- Razonamiento clínico explícito paso a paso en cada sección
+- Referencias específicas a estudios y guías (sin URLs, solo descripción)
+- Evaluación crítica de limitaciones y incertidumbres
+- Recomendaciones específicas y accionables
+
+**NIVEL DE ANÁLISIS:** Debe ser equivalente a un reporte de consulta de especialista en centro médico académico de tercer nivel.
+
+**IMPORTANTE:** Aplica razonamiento clínico en cada sección, explicitando el proceso de toma de decisiones médicas basado en la evidencia encontrada. Cada conclusión debe estar respaldada por evidencia específica y análisis crítico detallado.
 `;
 };
