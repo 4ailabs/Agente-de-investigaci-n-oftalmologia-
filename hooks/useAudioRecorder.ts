@@ -7,6 +7,8 @@ interface AudioRecorderState {
   audioBlob: Blob | null;
   audioUrl: string | null;
   error: string | null;
+  liveTranscription: string;
+  isTranscribing: boolean;
 }
 
 interface AudioRecorderControls {
@@ -15,6 +17,8 @@ interface AudioRecorderControls {
   pauseRecording: () => void;
   resumeRecording: () => void;
   clearRecording: () => void;
+  startLiveTranscription: () => void;
+  stopLiveTranscription: () => void;
 }
 
 export const useAudioRecorder = (): AudioRecorderState & AudioRecorderControls => {
@@ -24,10 +28,13 @@ export const useAudioRecorder = (): AudioRecorderState & AudioRecorderControls =
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [liveTranscription, setLiveTranscription] = useState('');
+  const [isTranscribing, setIsTranscribing] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const recognitionRef = useRef<any>(null);
 
   const startTimer = useCallback(() => {
     timerRef.current = setInterval(() => {
@@ -139,8 +146,62 @@ export const useAudioRecorder = (): AudioRecorderState & AudioRecorderControls =
     setAudioUrl(null);
     setRecordingTime(0);
     setError(null);
+    setLiveTranscription('');
     audioChunksRef.current = [];
   }, [audioUrl]);
+
+  const startLiveTranscription = useCallback(() => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      setError('Reconocimiento de voz no soportado en este navegador');
+      return;
+    }
+
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'es-ES';
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event: any) => {
+      let interimTranscript = '';
+      let finalTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      setLiveTranscription(prev => prev + finalTranscript + interimTranscript);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Error en reconocimiento de voz:', event.error);
+      setError(`Error en reconocimiento: ${event.error}`);
+    };
+
+    recognition.onend = () => {
+      setIsTranscribing(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsTranscribing(true);
+    setLiveTranscription('');
+  }, []);
+
+  const stopLiveTranscription = useCallback(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+      setIsTranscribing(false);
+    }
+  }, []);
 
   // Limpiar recursos al desmontar
   const cleanup = useCallback(() => {
@@ -162,11 +223,15 @@ export const useAudioRecorder = (): AudioRecorderState & AudioRecorderControls =
     audioBlob,
     audioUrl,
     error,
+    liveTranscription,
+    isTranscribing,
     startRecording,
     stopRecording,
     pauseRecording,
     resumeRecording,
-    clearRecording
+    clearRecording,
+    startLiveTranscription,
+    stopLiveTranscription
   };
 };
 
