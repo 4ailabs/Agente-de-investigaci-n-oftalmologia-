@@ -168,7 +168,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       return (
         <h1 
           id={id} 
-          className="text-2xl lg:text-3xl font-bold mb-6 text-slate-900 border-b-2 border-blue-100 pb-3"
+          className="text-xl lg:text-2xl font-bold mb-6 text-slate-900 border-b-2 border-blue-100 pb-3"
           {...props}
         >
           <div className="flex items-center">
@@ -189,7 +189,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       return (
         <h2 
           id={id} 
-          className="text-xl lg:text-2xl font-semibold mb-4 text-slate-800 mt-8"
+          className="text-lg lg:text-xl font-semibold mb-4 text-slate-800 mt-8"
           {...props}
         >
           <div className="flex items-center">
@@ -210,7 +210,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       return (
         <h3 
           id={id} 
-          className="text-lg lg:text-xl font-medium mb-3 text-slate-700 mt-6"
+          className="text-base lg:text-lg font-medium mb-3 text-slate-700 mt-6"
           {...props}
         >
           <div className="flex items-center">
@@ -221,12 +221,12 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       );
     },
     p: ({children}: any) => (
-      <p className="text-sm lg:text-base mb-4 leading-7 text-slate-700">
+      <p className="text-sm mb-4 leading-7 text-slate-700">
         {children}
       </p>
     ),
     ul: ({children}: any) => (
-      <ul className="text-sm lg:text-base mb-4 pl-6 space-y-2">
+      <ul className="text-sm mb-4 pl-6 space-y-2">
         {children}
       </ul>
     ),
@@ -317,7 +317,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-slate-900">Reporte Clínico</h2>
+            <h2 className="text-lg font-bold text-slate-900">Reporte Clínico</h2>
           </div>
           
           {sections.length > 3 && (
@@ -395,7 +395,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       {showQualityMetrics && sources.length > 0 && (
         <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-purple-900 flex items-center">
+            <h3 className="text-base font-semibold text-purple-900 flex items-center">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
@@ -414,30 +414,30 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
           {(() => {
             const metrics = calculateQualityMetrics();
             return (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-purple-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">
+                  <div className="w-12 h-12 bg-purple-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
                     {metrics.sourceCount}
                   </div>
-                  <p className="text-sm text-purple-800 font-medium">Fuentes Total</p>
+                  <p className="text-xs text-purple-800 font-medium">Fuentes Total</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-green-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">
+                  <div className="w-12 h-12 bg-green-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
                     {metrics.highQualitySources}
                   </div>
-                  <p className="text-sm text-purple-800 font-medium">Alta Calidad</p>
+                  <p className="text-xs text-purple-800 font-medium">Alta Calidad</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">
+                  <div className="w-12 h-12 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
                     {metrics.averageRelevance}%
                   </div>
-                  <p className="text-sm text-purple-800 font-medium">Relevancia</p>
+                  <p className="text-xs text-purple-800 font-medium">Relevancia</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">
+                  <div className="w-12 h-12 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
                     {metrics.completeness}%
                   </div>
-                  <p className="text-sm text-purple-800 font-medium">Completitud</p>
+                  <p className="text-xs text-purple-800 font-medium">Completitud</p>
                 </div>
               </div>
             );
@@ -452,7 +452,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
         
         return (
           <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200 mb-6">
-            <h3 className="text-lg font-semibold text-amber-900 mb-4 flex items-center">
+            <h3 className="text-base font-semibold text-amber-900 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -497,7 +497,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       {/* Table of Contents */}
       {showTableOfContents && sections.length > 0 && (
         <div className="bg-blue-50 p-6 rounded-xl border border-blue-200 mb-6">
-          <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center">
+          <h3 className="text-base font-semibold text-blue-900 mb-4 flex items-center">
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -523,7 +523,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       {/* Executive Summary */}
       {summary.length > 0 && (
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 mb-6">
-          <h3 className="text-lg font-semibold text-green-900 mb-4 flex items-center">
+          <h3 className="text-base font-semibold text-green-900 mb-4 flex items-center">
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
@@ -586,7 +586,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h4 className="text-xl font-bold text-indigo-900">Referencias y Fuentes</h4>
+              <h4 className="text-lg font-bold text-indigo-900">Referencias y Fuentes</h4>
             </div>
             <div className="flex items-center space-x-2">
               <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full">
@@ -620,7 +620,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
-                        <span className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                        <span className="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-semibold">
                           {index + 1}
                         </span>
                         <div className="flex items-center space-x-2 flex-1">
@@ -628,7 +628,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                             href={source.web.uri} 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className="text-indigo-700 hover:text-indigo-900 font-semibold text-base hover:underline transition-colors"
+                            className="text-indigo-700 hover:text-indigo-900 font-semibold text-sm hover:underline transition-colors"
                             title={`Abrir: ${source.web.uri}`}
                           >
                             {source.web.title || source.web.uri}
@@ -638,7 +638,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between text-xs lg:text-sm text-slate-500 bg-slate-100 px-3 py-2 rounded-md">
+                      <div className="flex items-center justify-between text-xs text-slate-500 bg-slate-100 px-3 py-2 rounded-md">
                         <div className="flex items-center">
                           <svg className="h-3 w-3 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -671,7 +671,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
             </svg>
           </div>
           <div className="flex-1">
-            <h4 className="text-lg font-bold text-amber-800 mb-4">AVISOS MÉDICOS IMPORTANTES</h4>
+            <h4 className="text-base font-bold text-amber-800 mb-4">AVISOS MÉDICOS IMPORTANTES</h4>
             <div className="space-y-3 text-sm text-amber-700">
               <div className="flex items-start">
                 <span className="font-semibold mr-2">•</span>
