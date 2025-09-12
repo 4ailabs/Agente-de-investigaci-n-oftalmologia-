@@ -30,17 +30,18 @@ const InitialQueryInput: React.FC<{
   onSubmitEnhanced: (data: EnhancedPatientData) => void;
   isLoading: boolean;
 }> = ({ onSubmit, onSubmitEnhanced, isLoading }) => {
-  const [age, setAge] = useState('');
-  const [sex, setSex] = useState('');
+  const [inputMode, setInputMode] = useState<'quick' | 'structured'>('quick');
+  const [age, setAge] = useState<number>(0);
+  const [sex, setSex] = useState<'M' | 'F' | ''>('');
   const [clinicalInfo, setClinicalInfo] = useState('');
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
-  const [showEnhancedForm, setShowEnhancedForm] = useState(false);
   const [extractedData, setExtractedData] = useState<Partial<EnhancedPatientData> | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (clinicalInfo.trim() && age.trim() && sex.trim()) {
-      const fullQuery = `Paciente de ${age} años, sexo ${sex}.
+    if (clinicalInfo.trim() && age > 0 && sex) {
+      const sexLabel = sex === 'M' ? 'Masculino' : sex === 'F' ? 'Femenino' : 'No especificado';
+      const fullQuery = `Paciente de ${age} años, sexo ${sexLabel}.
 ---
 Síntomas y Antecedentes Clínicos:
 ${clinicalInfo.trim()}`;
@@ -65,8 +66,10 @@ ${clinicalInfo.trim()}`;
       setExtractedData(structuredData);
       
       // Pre-llenar campos básicos si están disponibles
-      if (structuredData.age) setAge(structuredData.age.toString());
-      if (structuredData.sex) setSex(structuredData.sex);
+      if (structuredData.age) setAge(structuredData.age);
+      if (structuredData.sex && (structuredData.sex === 'M' || structuredData.sex === 'F')) {
+        setSex(structuredData.sex);
+      }
     } catch (error) {
       console.error('Error extrayendo datos estructurados:', error);
     }
@@ -78,190 +81,174 @@ ${clinicalInfo.trim()}`;
   };
 
 
-  const isFormInvalid = isLoading || !clinicalInfo.trim() || !age.trim() || !sex.trim();
+  const isFormInvalid = isLoading || !clinicalInfo.trim() || age <= 0 || !sex;
 
   return (
      <main className="max-w-4xl mx-auto py-2 lg:py-8 px-2 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-br from-white to-blue-50/30 p-3 lg:p-8 rounded-xl lg:rounded-2xl shadow-lg lg:shadow-xl border border-blue-100">
           {/* Header Section */}
-          <div className="text-center mb-4 lg:mb-8">
+          <div className="text-center mb-4 lg:mb-6">
             <div className="inline-flex items-center justify-center w-10 h-10 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl lg:rounded-2xl mb-2 lg:mb-4 shadow-lg">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h2 className="text-base lg:text-2xl font-bold text-slate-900 mb-2">Iniciar Nueva Investigación Clínica</h2>
+            <h2 className="text-base lg:text-2xl font-bold text-slate-900 mb-2">Nueva Investigación Clínica</h2>
             <p className="text-xs lg:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              Complete la información del paciente para que nuestro agente de IA especializado en oftalmología cree un plan de investigación personalizado basado en evidencia médica.
+              Nuestro agente de IA especializado en oftalmología creará un plan de investigación personalizado basado en evidencia médica.
             </p>
           </div>
+          
+          {/* Mode Selector - Optimizado para móvil */}
+          <div className="mb-4 sm:mb-6">
+            <div className="flex items-center justify-center space-x-1 bg-slate-100 p-1 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setInputMode('quick')}
+                className={`flex-1 sm:flex-none px-4 py-3 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-all min-h-[44px] sm:min-h-[36px] ${
+                  inputMode === 'quick'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-800'
+                }`}
+              >
+                <span className="hidden sm:inline">Entrada Rápida</span>
+                <span className="sm:hidden">Rápida</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setInputMode('structured')}
+                className={`flex-1 sm:flex-none px-4 py-3 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-all min-h-[44px] sm:min-h-[36px] ${
+                  inputMode === 'structured'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-800'
+                }`}
+              >
+                <span className="hidden sm:inline">Formulario Detallado</span>
+                <span className="sm:hidden">Detallado</span>
+              </button>
+            </div>
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-8">
-            {/* Patient Demographics Section */}
-            <div className="bg-white p-4 lg:p-6 rounded-xl border border-slate-200 shadow-sm">
-              <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-slate-800">Datos Demográficos del Paciente</h3>
-              </div>
-              <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
-            <div>
-                  <label htmlFor="age" className="block text-sm font-medium text-slate-700 mb-2">
-                    Edad <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                        <input
-                            type="number"
-                            id="age"
-                            value={age}
-                            onChange={(e) => setAge(e.target.value)}
-                      className="w-full px-4 py-3 lg:py-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base min-h-[48px] lg:min-h-[56px]"
-                            placeholder="Ej: 72"
-                            required
-                        />
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <span className="text-slate-400 text-sm">años</span>
+          {/* Content based on selected mode */}
+          {inputMode === 'quick' ? (
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              {/* Quick Entry Form */}
+              <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
+                  <div>
+                    <label htmlFor="age" className="block text-sm font-medium text-slate-700 mb-2">
+                      Edad <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        id="age"
+                        value={age || ''}
+                        onChange={(e) => setAge(parseInt(e.target.value) || 0)}
+                        className="w-full px-4 py-3 sm:px-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base sm:text-sm min-h-[48px] sm:min-h-[40px]"
+                        placeholder="Ej: 65"
+                        min="1"
+                        max="120"
+                        required
+                      />
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <span className="text-slate-400 text-sm">años</span>
+                      </div>
                     </div>
                   </div>
-                     </div>
-                     <div>
-                  <label htmlFor="sex" className="block text-sm font-medium text-slate-700 mb-2">
-                    Sexo <span className="text-red-500">*</span>
+                  <div>
+                    <label htmlFor="sex" className="block text-sm font-medium text-slate-700 mb-2">
+                      Sexo <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="sex"
+                      value={sex}
+                      onChange={(e) => setSex(e.target.value as 'M' | 'F' | '')}
+                      className="w-full px-4 py-3 sm:px-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base sm:text-sm min-h-[48px] sm:min-h-[40px]"
+                      required
+                    >
+                      <option value="" disabled>Seleccionar...</option>
+                      <option value="M">Masculino</option>
+                      <option value="F">Femenino</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="clinical-info" className="block text-sm font-medium text-slate-700 mb-2">
+                    Información Clínica <span className="text-red-500">*</span>
                   </label>
-                         <select
-                            id="sex"
-                            value={sex}
-                            onChange={(e) => setSex(e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base min-h-[48px] lg:min-h-[56px]"
-                            required
-                        >
-                    <option value="" disabled>Seleccionar sexo...</option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                        </select>
-                     </div>
-                </div>
-            </div>
-
-            {/* Clinical Information Section */}
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-              <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-slate-800">Información Clínica</h3>
-            </div>
-            <div>
-                <label htmlFor="clinical-info" className="block text-sm font-medium text-slate-700 mb-2">
-                  Síntomas y Antecedentes Clínicos <span className="text-red-500">*</span>
-                </label>
-                 <textarea
+                  <textarea
                     id="clinical-info"
                     value={clinicalInfo}
                     onChange={(e) => setClinicalInfo(e.target.value)}
-                    rows={6}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm lg:text-base resize-none min-h-[120px]"
-                  placeholder="Describa detalladamente los síntomas, antecedentes médicos relevantes, medicamentos actuales, y cualquier información clínica importante. Ej: Paciente de 65 años con diabetes tipo 2 presenta visión borrosa progresiva en ambos ojos durante las últimas 2 semanas, acompañada de dolor ocular intermitente..."
+                    rows={5}
+                    className="w-full px-4 py-3 sm:px-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base sm:text-sm resize-none"
+                    placeholder="Síntomas actuales, antecedentes médicos, medicamentos, tiempo de evolución...&#10;&#10;Ejemplo: Paciente presenta disminución de agudeza visual bilateral de 3 semanas de evolución, acompañada de dolor ocular moderado. Antecedente de diabetes mellitus tipo 2."
                     required
-                />
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="text-xs text-slate-500 inline-flex items-center">
-                    <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                    Sea lo más específico posible para obtener mejores resultados
-                  </span>
+                  />
                   
-                  <div className="flex space-x-2">
+                  {/* Audio Recorder Button - Móvil optimizado */}
+                  <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                    <span className="text-xs text-slate-500 flex items-center">
+                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                      Sea específico para mejores resultados
+                    </span>
                     <button
                       type="button"
                       onClick={() => setShowAudioRecorder(!showAudioRecorder)}
-                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200"
+                      className="flex items-center justify-center space-x-2 px-4 py-3 sm:px-3 sm:py-2 text-base sm:text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200 min-h-[44px] sm:min-h-[36px]"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                       </svg>
-                      <span>{showAudioRecorder ? 'Ocultar' : 'Transcripción de Voz'}</span>
-                    </button>
-                    
-                    <button
-                      type="button"
-                      onClick={() => setShowEnhancedForm(true)}
-                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition-colors duration-200"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span>Formulario Estructurado</span>
+                      <span>{showAudioRecorder ? 'Ocultar Audio' : 'Dictar Texto'}</span>
                     </button>
                   </div>
+                  
+                  {/* Transcripción de Voz */}
+                  {showAudioRecorder && (
+                    <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <AudioRecorder
+                        onTranscriptionComplete={handleAudioTranscription}
+                        onError={handleAudioError}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-           
-            {/* Transcripción de Voz */}
-            {showAudioRecorder && (
-              <div className="mt-4">
-                <AudioRecorder
-                  onTranscriptionComplete={handleAudioTranscription}
-                  onError={handleAudioError}
-                />
+              
+              {/* Submit Button */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isFormInvalid}
+                  className="w-full flex justify-center items-center py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 min-h-[56px] text-base"
+                >
+                  {isLoading ? (
+                    <>
+                      <Spinner />
+                      <span className="ml-3">Creando Plan de Investigación...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Iniciar Investigación Clínica
+                    </>
+                  )}
+                </button>
               </div>
-            )}
-           
-            {/* Submit Button */}
-            <div className="pt-4">
-            <button
-              type="submit"
-              disabled={isFormInvalid}
-                className="w-full flex justify-center items-center py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 min-h-[56px] text-base"
-              >
-                {isLoading ? (
-                  <>
-                    <Spinner />
-                    <span className="ml-3">Creando Plan de Investigación...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    Iniciar Investigación Clínica
-                  </>
-                )}
-            </button>
-            </div>
-          </form>
-
-          {/* Formulario Estructurado Mejorado */}
-          {showEnhancedForm && (
-            <div className="mt-6">
+            </form>
+          ) : (
+            /* Structured Form Mode */
+            <div>
               <EnhancedDataForm
-                onSubmit={(data) => {
-                  const query = `Paciente de ${data.age} años, sexo ${data.sex}.
----
-Síntomas y Antecedentes Clínicos:
-${data.chiefComplaint || data.symptoms?.mainSymptom?.description || ''}
-
-Historia de la Enfermedad Actual:
-${data.historyOfPresentIllness || ''}
-
-Antecedentes Médicos:
-${data.systemicDiseases?.join(', ') || 'No especificados'}
-
-Medicamentos Actuales:
-${data.currentMedications?.map(med => `${med.name} ${med.dosage} ${med.frequency}`).join(', ') || 'Ninguno'}
-
-Alergias:
-${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).join(', ') || 'Ninguna conocida'}`;
-                  onSubmit(query);
-                }}
-                onCancel={() => setShowEnhancedForm(false)}
+                onSubmit={onSubmitEnhanced}
+                onCancel={() => setInputMode('quick')}
                 initialData={extractedData || undefined}
                 isLoading={isLoading}
               />
@@ -337,13 +324,14 @@ const App: React.FC = () => {
 
   const handleEnhancedFormSubmit = (data: EnhancedPatientData) => {
     // Convertir datos estructurados a query de texto para compatibilidad
-    const query = `Paciente de ${data.age} años, sexo ${data.sex}.
+    const sexLabel = data.sex === 'M' ? 'Masculino' : data.sex === 'F' ? 'Femenino' : 'No especificado';
+    const query = `Paciente de ${data.age} años, sexo ${sexLabel}.
 ---
-Síntomas y Antecedentes Clínicos:
-${data.chiefComplaint || data.symptoms?.mainSymptom?.description || ''}
+Motivo de Consulta:
+${data.clinicalInfo?.chiefComplaint || ''}
 
 Historia de la Enfermedad Actual:
-${data.historyOfPresentIllness || ''}
+${data.clinicalInfo?.historyOfPresentIllness || ''}
 
 Antecedentes Médicos:
 ${data.systemicDiseases?.join(', ') || 'No especificados'}
