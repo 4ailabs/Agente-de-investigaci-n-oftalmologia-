@@ -8,6 +8,9 @@ export interface SourceQuality {
   peerReviewed: boolean;
   medicalAuthority: boolean;
   domain: string;
+  accessType: 'open' | 'subscription' | 'restricted';
+  accessIndicator: string;
+  accessMessage: string;
 }
 
 export interface MedicalDisclaimers {
@@ -34,14 +37,43 @@ export interface Conflict {
 
 // 1. VALIDACIÓN DE FUENTES MÉDICAS
 export class MedicalSourceValidator {
+  private static readonly OPEN_ACCESS_DOMAINS = [
+    'pubmed.ncbi.nlm.nih.gov',
+    'cochrane.org',
+    'clinicaltrials.gov',
+    'aao.org',
+    'esrs.org',
+    'arvo.org',
+    'plos.org',
+    'bmc.com',
+    'frontiersin.org',
+    'hindawi.com',
+    'mdpi.com',
+    'springeropen.com',
+    'biomedcentral.com',
+    'jmir.org'
+  ];
+
+  private static readonly SUBSCRIPTION_DOMAINS = [
+    'uptodate.com',
+    'medscape.com',
+    'thelancet.com',
+    'jama.ama-assn.org',
+    'nejm.org',
+    'ophthalmology.org',
+    'retina-journal.com',
+    'ajophthalmology.com'
+  ];
+
   private static readonly HIGH_AUTHORITY_DOMAINS = [
     'cochrane.org',
     'pubmed.ncbi.nlm.nih.gov',
     'clinicaltrials.gov',
-    'uptodate.com',
-    'medscape.com',
     'aao.org',
     'esrs.org',
+    'arvo.org',
+    'uptodate.com',
+    'medscape.com',
     'thelancet.com',
     'jama.ama-assn.org',
     'nejm.org',
@@ -75,13 +107,19 @@ export class MedicalSourceValidator {
     const peerReviewed = this.isPeerReviewed(title);
     const medicalAuthority = this.isMedicalAuthority(domain, title);
     
+    // Determine access type
+    const accessInfo = this.determineAccessType(domain, title);
+    
     return {
       level,
       authority,
       recency: null, // Se puede implementar parsing de fecha
       peerReviewed,
       medicalAuthority,
-      domain
+      domain,
+      accessType: accessInfo.type,
+      accessIndicator: accessInfo.indicator,
+      accessMessage: accessInfo.message
     };
   }
 
@@ -143,6 +181,67 @@ export class MedicalSourceValidator {
            medicalKeywords.some(keyword => 
              title.toLowerCase().includes(keyword.toLowerCase())
            );
+  }
+
+  private static determineAccessType(domain: string, title: string): {
+    type: 'open' | 'subscription' | 'restricted';
+    indicator: string;
+    message: string;
+  } {
+    // Check for open access domains
+    if (this.OPEN_ACCESS_DOMAINS.some(d => domain.includes(d))) {
+      return {
+        type: 'open',
+        indicator: '✅',
+        message: 'Acceso abierto'
+      };
+    }
+    
+    // Check for subscription domains
+    if (this.SUBSCRIPTION_DOMAINS.some(d => domain.includes(d))) {
+      return {
+        type: 'subscription',
+        indicator: '🔒',
+        message: 'Requiere suscripción'
+      };
+    }
+    
+    // Check for open access indicators in title
+    const openAccessKeywords = [
+      'open access', 'free access', 'public access', 'pmc', 'pubmed central'
+    ];
+    
+    if (openAccessKeywords.some(keyword => 
+      title.toLowerCase().includes(keyword.toLowerCase())
+    )) {
+      return {
+        type: 'open',
+        indicator: '✅',
+        message: 'Acceso abierto'
+      };
+    }
+    
+    // Check for subscription indicators in title
+    const subscriptionKeywords = [
+      'subscription', 'login required', 'paywall', 'premium', 'members only'
+    ];
+    
+    if (subscriptionKeywords.some(keyword => 
+      title.toLowerCase().includes(keyword.toLowerCase())
+    )) {
+      return {
+        type: 'subscription',
+        indicator: '🔒',
+        message: 'Requiere suscripción'
+      };
+    }
+    
+    // Default to restricted for unknown sources
+    return {
+      type: 'restricted',
+      indicator: '⚠️',
+      message: 'Acceso limitado'
+    };
   }
 }
 

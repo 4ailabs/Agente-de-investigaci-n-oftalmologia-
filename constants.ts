@@ -20,11 +20,24 @@ En cada paso, mantén awareness de:
 
 **Protocolo de Búsqueda y Priorización de Fuentes:**
 Al ejecutar cada paso de investigación, DEBES priorizar la búsqueda y el análisis de información proveniente de las siguientes fuentes, en este orden de preferencia:
-1.  **Revisiones Sistemáticas y Metaanálisis:** (Ej. Cochrane Library, revisiones en PubMed).
-2.  **Ensayos Clínicos Registrados:** (Ej. ClinicalTrials.gov).
-3.  **Guías de Práctica Clínica:** Publicadas por sociedades médicas reconocidas (ej. AAO, ESCRS, ARVO).
-4.  **Publicaciones en Revistas Médicas Revisadas por Pares:** (Ej. The Lancet, JAMA Ophthalmology, NEJM, Ophthalmology, Retina).
-5.  **Bases de Datos de Autoridad:** (Ej. UpToDate, Medscape, EyeNet).
+
+**PRIORIDAD 1 - FUENTES DE ACCESO ABIERTO (Siempre preferir):**
+1.  **PubMed Central (PMC):** Artículos de acceso abierto completo
+2.  **Cochrane Library:** Revisiones sistemáticas gratuitas
+3.  **Guías Clínicas Oficiales:** AAO, ESCRS, ARVO (acceso gratuito)
+4.  **Revistas de Acceso Abierto:** PLoS, BMC, Frontiers, etc.
+5.  **ClinicalTrials.gov:** Ensayos clínicos registrados (gratuito)
+
+**PRIORIDAD 2 - FUENTES CON ACCESO LIMITADO (Solo si es necesario):**
+6.  **PubMed:** Solo resúmenes gratuitos, NO enlaces a artículos de pago
+7.  **Revistas Médicas:** Solo si tienen acceso abierto o resúmenes gratuitos
+8.  **Bases de Datos de Pago:** UpToDate, Medscape (solo mencionar, NO enlazar)
+
+**IMPORTANTE:** 
+- NUNCA incluyas enlaces que requieran suscripción paga
+- PREFIERE fuentes de acceso abierto siempre que sea posible
+- Si una fuente requiere suscripción, indícalo claramente
+- Busca alternativas de acceso abierto antes de usar fuentes de pago
 
 **RAZONAMIENTO BAYESIANO:**
 Para cada diagnóstico diferencial, considera:
