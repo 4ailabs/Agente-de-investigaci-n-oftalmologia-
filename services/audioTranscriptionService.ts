@@ -26,15 +26,45 @@ export interface TranscriptionResult {
 
 export const transcribeAudio = async (audioBlob: Blob): Promise<TranscriptionResult> => {
   try {
+    // Primero intentar con Web Speech API (más rápido y directo)
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      try {
+        const transcription = await transcribeAudioWithWebSpeech();
+        return {
+          text: transcription,
+          confidence: 0.8,
+          language: 'es',
+          duration: Math.round(audioBlob.size / 16000)
+        };
+      } catch (webSpeechError) {
+        console.warn('Web Speech API falló, intentando con Gemini:', webSpeechError);
+      }
+    }
+
+    // Fallback: Usar Gemini con el audio convertido a texto
     const genAI = getAI();
     
     // Convertir audio a base64
     const arrayBuffer = await audioBlob.arrayBuffer();
     const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
     
-    // Crear el modelo con capacidades de audio
-    const model = genAI.getGenerativeModel({ 
+    // Usar la API correcta de Gemini para audio
+    const response = await genAI.models.generateContent({
       model: 'gemini-1.5-flash',
+      contents: [{
+        role: 'user',
+        parts: [
+          {
+            text: `Transcribe the following audio recording of a medical consultation in Spanish. Focus on medical terminology, symptoms, and clinical findings.`
+          },
+          {
+            inlineData: {
+              mimeType: 'audio/webm',
+              data: base64Audio
+            }
+          }
+        ]
+      }],
       generationConfig: {
         temperature: 0.1,
         topK: 1,
@@ -43,38 +73,28 @@ export const transcribeAudio = async (audioBlob: Blob): Promise<TranscriptionRes
       }
     });
 
-    // Crear el prompt para transcripción médica
-    const prompt = `Transcribe the following audio recording of a medical consultation. 
-    
-    Instructions:
-    - This is a medical consultation in Spanish
-    - Focus on medical terminology and symptoms
-    - Preserve medical abbreviations and technical terms
-    - Maintain the structure of the conversation
-    - If there are unclear parts, mark them as [inaudible]
-    - Format the transcription in a clear, readable way
-    - Include any numbers, measurements, or medical values mentioned
-    - Preserve the chronological order of symptoms and findings
-    
-    Audio data: data:audio/webm;base64,${base64Audio}`;
+    const transcriptionText = response.response.text();
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const transcriptionText = response.text();
-
-    // Calcular duración estimada (aproximada)
-    const duration = audioBlob.size / 16000; // Estimación basada en tamaño
+    // Calcular duración estimada
+    const duration = Math.round(audioBlob.size / 16000);
 
     return {
-      text: transcriptionText,
-      confidence: 0.85, // Gemini no proporciona confidence score directo
+      text: cleanTranscription(transcriptionText),
+      confidence: 0.85,
       language: 'es',
-      duration: Math.round(duration)
+      duration: duration
     };
 
   } catch (error) {
     console.error('Error en transcripción de audio:', error);
-    throw new Error(`Error al transcribir audio: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    
+    // Si todo falla, devolver un mensaje de error pero no fallar completamente
+    return {
+      text: `[Error en transcripción: ${error instanceof Error ? error.message : 'Error desconocido'}. Por favor, escriba la información manualmente.]`,
+      confidence: 0,
+      language: 'es',
+      duration: 0
+    };
   }
 };
 
@@ -90,26 +110,41 @@ export const transcribeAudioWithWebSpeech = (): Promise<string> => {
     const recognition = new SpeechRecognition();
 
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.lang = 'es-ES';
     recognition.maxAlternatives = 1;
 
     let finalTranscript = '';
+    let timeoutId: NodeJS.Timeout;
 
     recognition.onresult = (event: any) => {
+      // Limpiar timeout cada vez que hay resultados
+      clearTimeout(timeoutId);
+      
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
           finalTranscript += event.results[i][0].transcript + ' ';
         }
       }
+      
+      // Configurar timeout para finalizar después de 3 segundos de silencio
+      timeoutId = setTimeout(() => {
+        recognition.stop();
+      }, 3000);
     };
 
     recognition.onend = () => {
+      clearTimeout(timeoutId);
       resolve(finalTranscript.trim());
     };
 
     recognition.onerror = (event: any) => {
+      clearTimeout(timeoutId);
       reject(new Error(`Error en reconocimiento de voz: ${event.error}`));
+    };
+
+    recognition.onstart = () => {
+      console.log('Reconocimiento de voz iniciado');
     };
 
     recognition.start();

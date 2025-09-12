@@ -19,22 +19,24 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
     audioBlob,
     audioUrl,
     error,
+    liveTranscription,
+    isTranscribing,
     startRecording,
     stopRecording,
     pauseRecording,
     resumeRecording,
-    clearRecording
+    clearRecording,
+    startLiveTranscription,
+    stopLiveTranscription
   } = useAudioRecorder();
 
-  const [isTranscribing, setIsTranscribing] = useState(false);
   const [transcription, setTranscription] = useState<string>('');
 
   const handleTranscribe = async () => {
     if (!audioBlob) return;
 
     try {
-      setIsTranscribing(true);
-      setTranscription('');
+      setTranscription('Transcribiendo audio...');
 
       // Transcribir audio
       const result = await transcribeAudio(audioBlob);
@@ -49,9 +51,16 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
     } catch (err) {
       console.error('Error en transcripción:', err);
-      onError(err instanceof Error ? err.message : 'Error al transcribir audio');
-    } finally {
-      setIsTranscribing(false);
+      const errorMessage = err instanceof Error ? err.message : 'Error al transcribir audio';
+      setTranscription(`Error: ${errorMessage}`);
+      onError(errorMessage);
+    }
+  };
+
+  const handleUseLiveTranscription = () => {
+    if (liveTranscription.trim()) {
+      setTranscription(liveTranscription);
+      onTranscriptionComplete(liveTranscription);
     }
   };
 
@@ -88,15 +97,31 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         {/* Botones de control */}
         <div className="flex items-center justify-center space-x-4 mb-4">
           {!isRecording ? (
-            <button
-              onClick={startRecording}
-              className="flex items-center space-x-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-              </svg>
-              <span>Iniciar Grabación</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={startRecording}
+                className="flex items-center space-x-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+                <span>Iniciar Grabación</span>
+              </button>
+              
+              <button
+                onClick={isTranscribing ? stopLiveTranscription : startLiveTranscription}
+                className={`flex items-center space-x-2 px-4 py-3 font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md ${
+                  isTranscribing 
+                    ? 'bg-orange-600 hover:bg-orange-700 text-white' 
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+                <span>{isTranscribing ? 'Detener Transcripción' : 'Transcripción en Vivo'}</span>
+              </button>
+            </div>
           ) : (
             <div className="flex items-center space-x-2">
               <button
@@ -141,6 +166,24 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             <span className="text-sm font-medium">
               {isPaused ? 'Grabación pausada' : 'Grabando...'}
             </span>
+          </div>
+        )}
+
+        {/* Transcripción en tiempo real */}
+        {isTranscribing && liveTranscription && (
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-sm font-medium text-blue-800">Transcripción en Tiempo Real</h4>
+              <button
+                onClick={handleUseLiveTranscription}
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors duration-200"
+              >
+                Usar Texto
+              </button>
+            </div>
+            <div className="text-sm text-blue-700 leading-relaxed whitespace-pre-wrap">
+              {liveTranscription}
+            </div>
           </div>
         )}
 
