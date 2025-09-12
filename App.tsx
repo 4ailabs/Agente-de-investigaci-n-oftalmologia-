@@ -12,6 +12,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Spinner, { MobileLoadingCard } from './components/Spinner';
 import useSwipeGesture from './hooks/useSwipeGesture';
+import { AudioRecorder } from './components/AudioRecorder';
 
 // Lazy load heavy components
 const ExplanationModal = lazy(() => import('./components/ExplanationModal'));
@@ -28,6 +29,7 @@ const InitialQueryInput: React.FC<{
   const [age, setAge] = useState('');
   const [sex, setSex] = useState('');
   const [clinicalInfo, setClinicalInfo] = useState('');
+  const [showAudioRecorder, setShowAudioRecorder] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +40,23 @@ Síntomas y Antecedentes Clínicos:
 ${clinicalInfo.trim()}`;
       onSubmit(fullQuery);
     }
+  };
+
+  const handleAudioTranscription = (transcription: string, medicalInfo?: any) => {
+    // Si hay información médica estructurada, usarla para pre-llenar campos
+    if (medicalInfo) {
+      if (medicalInfo.age) setAge(medicalInfo.age);
+      if (medicalInfo.sex) setSex(medicalInfo.sex);
+    }
+    
+    // Usar la transcripción como información clínica
+    setClinicalInfo(transcription);
+    setShowAudioRecorder(false);
+  };
+
+  const handleAudioError = (error: string) => {
+    console.error('Error en grabación de audio:', error);
+    // Aquí podrías mostrar un toast o mensaje de error
   };
 
   const isFormInvalid = isLoading || !clinicalInfo.trim() || !age.trim() || !sex.trim();
@@ -131,16 +150,37 @@ ${clinicalInfo.trim()}`;
                   placeholder="Describa detalladamente los síntomas, antecedentes médicos relevantes, medicamentos actuales, y cualquier información clínica importante. Ej: Paciente de 65 años con diabetes tipo 2 presenta visión borrosa progresiva en ambos ojos durante las últimas 2 semanas, acompañada de dolor ocular intermitente..."
                     required
                 />
-                <div className="mt-2 text-xs text-slate-500">
-                  <span className="inline-flex items-center">
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="text-xs text-slate-500 inline-flex items-center">
                     <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
                     Sea lo más específico posible para obtener mejores resultados
                   </span>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setShowAudioRecorder(!showAudioRecorder)}
+                    className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    </svg>
+                    <span>{showAudioRecorder ? 'Ocultar' : 'Grabar Audio'}</span>
+                  </button>
                 </div>
               </div>
             </div>
+
+            {/* Audio Recorder */}
+            {showAudioRecorder && (
+              <div className="mt-4">
+                <AudioRecorder
+                  onTranscriptionComplete={handleAudioTranscription}
+                  onError={handleAudioError}
+                />
+              </div>
+            )}
            
             {/* Submit Button */}
             <div className="pt-4">
