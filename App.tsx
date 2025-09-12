@@ -7,6 +7,7 @@ import { MedicalValidationService, DisclaimerGenerator } from './medicalValidati
 import { EnhancedMedicalReasoning, ClinicalReasoning, ReasoningIntegration } from './enhancedReasoning';
 import { OphthalmologyKnowledgeGraph } from './ophthalmologyKnowledge';
 import { QualityAssuranceEngine, QualityCheck } from './qualityAssurance';
+import { localStorageService, StoredInvestigation } from './services/localStorageService';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Spinner, { MobileLoadingCard } from './components/Spinner';
@@ -14,6 +15,7 @@ import useSwipeGesture from './hooks/useSwipeGesture';
 
 // Lazy load heavy components
 const ExplanationModal = lazy(() => import('./components/ExplanationModal'));
+const HistoryModal = lazy(() => import('./components/HistoryModal'));
 // Import ReactMarkdown normally since it's needed for step rendering
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -196,8 +198,39 @@ const App: React.FC = () => {
   // Quality Assurance State
   const [qualityChecks, setQualityChecks] = useState<QualityCheck[]>([]);
   
+  // Local Storage State
+  const [investigationHistory, setInvestigationHistory] = useState<StoredInvestigation[]>([]);
+  const [currentInvestigationId, setCurrentInvestigationId] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  
   // Refs for swipe gesture
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Load investigation history and recover active investigation on mount
+  React.useEffect(() => {
+    const loadInvestigationData = () => {
+      try {
+        // Load investigation history
+        const history = localStorageService.getInvestigationHistory();
+        setInvestigationHistory(history.investigations);
+
+        // Try to recover active investigation
+        const activeInvestigation = localStorageService.getActiveInvestigation();
+        if (activeInvestigation && activeInvestigation.status === 'active') {
+          setInvestigation(activeInvestigation.investigation);
+          setCurrentInvestigationId(activeInvestigation.id);
+          
+          // Extract patient info for context
+          const patientInfo = activeInvestigation.patientInfo;
+          console.log('Recovered active investigation:', activeInvestigation.id);
+        }
+      } catch (error) {
+        console.error('Error loading investigation data:', error);
+      }
+    };
+
+    loadInvestigationData();
+  }, []);
 
   const handleStartInvestigation = async (query: string) => {
     // Initialize medical context from query
@@ -226,7 +259,7 @@ const App: React.FC = () => {
     
     setClinicalReasoning(initialReasoning);
 
-    setInvestigation({
+    const newInvestigation: InvestigationState = {
         originalQuery: query,
         plan: [],
         currentStep: 0,
@@ -235,8 +268,25 @@ const App: React.FC = () => {
         finalReport: null,
         finalReportSources: null,
         isGeneratingReport: false,
-    });
+    };
+    
+    setInvestigation(newInvestigation);
     setActiveView({ type: 'step', id: 1 });
+
+    // Extract patient info for storage
+    const patientInfo = {
+      age: initialContext.patientProfile.age || 'No especificado',
+      sex: initialContext.patientProfile.sex || 'No especificado',
+      symptoms: initialContext.patientProfile.currentSymptoms.map(s => s.description).join(', ') || 'No especificados'
+    };
+
+    // Save investigation to localStorage
+    const investigationId = localStorageService.saveInvestigation(newInvestigation, patientInfo);
+    setCurrentInvestigationId(investigationId);
+    
+    // Update history
+    const history = localStorageService.getInvestigationHistory();
+    setInvestigationHistory(history.investigations);
 
     // Enhanced prompt with medical context, clinical reasoning AND knowledge graph
     const contextSummary = MedicalContextEngine.generateContextSummary(initialContext);
@@ -339,12 +389,26 @@ const App: React.FC = () => {
         newPlan[currentStepIndex].result = finalResult;
         newPlan[currentStepIndex].sources = validatedSources;
         
-        return {
+        const updatedInvestigation = {
             ...prev,
             plan: newPlan,
             currentStep: prev.currentStep + 1,
             isGenerating: false,
         };
+
+        // Auto-save after step completion
+        if (currentInvestigationId) {
+          const patientInfo = {
+            age: medicalContext?.patientProfile.age || 'No especificado',
+            sex: medicalContext?.patientProfile.sex || 'No especificado',
+            symptoms: medicalContext?.patientProfile.currentSymptoms.map(s => s.description).join(', ') || 'No especificados'
+          };
+          
+          localStorageService.updateInvestigation(currentInvestigationId, updatedInvestigation);
+          console.log('Investigation auto-saved after step completion');
+        }
+
+        return updatedInvestigation;
     });
   };
   
@@ -379,7 +443,21 @@ const App: React.FC = () => {
         // Add medical disclaimers to the final report
         const reportWithDisclaimers = `${reportText}\n\n---\n\n## Disclaimers Médicos\n\n${disclaimers}`;
         
-        return {...prev, finalReport: reportWithDisclaimers, finalReportSources: validatedSources, isGeneratingReport: false };
+        const finalInvestigation = {...prev, finalReport: reportWithDisclaimers, finalReportSources: validatedSources, isGeneratingReport: false };
+
+        // Auto-save final report
+        if (currentInvestigationId) {
+          const patientInfo = {
+            age: medicalContext?.patientProfile.age || 'No especificado',
+            sex: medicalContext?.patientProfile.sex || 'No especificado',
+            symptoms: medicalContext?.patientProfile.currentSymptoms.map(s => s.description).join(', ') || 'No especificados'
+          };
+          
+          localStorageService.updateInvestigation(currentInvestigationId, finalInvestigation);
+          console.log('Final report auto-saved');
+        }
+
+        return finalInvestigation;
     });
   };
   
@@ -419,7 +497,68 @@ const App: React.FC = () => {
 
   const handleReset = () => {
       setInvestigation(null);
+      setCurrentInvestigationId(null);
+      setMedicalContext(null);
+      setClinicalReasoning(null);
+      setQualityChecks([]);
   }
+
+  // Load investigation from history
+  const handleLoadInvestigation = (investigationId: string) => {
+    try {
+      const storedInvestigation = localStorageService.getInvestigationById(investigationId);
+      if (storedInvestigation) {
+        setInvestigation(storedInvestigation.investigation);
+        setCurrentInvestigationId(investigationId);
+        setActiveView({ type: 'step', id: 1 });
+        setShowHistory(false);
+        console.log('Investigation loaded:', investigationId);
+      }
+    } catch (error) {
+      console.error('Error loading investigation:', error);
+    }
+  };
+
+  // Delete investigation from history
+  const handleDeleteInvestigation = (investigationId: string) => {
+    try {
+      const success = localStorageService.deleteInvestigation(investigationId);
+      if (success) {
+        // Update local state
+        const history = localStorageService.getInvestigationHistory();
+        setInvestigationHistory(history.investigations);
+        
+        // If deleted investigation was active, reset
+        if (currentInvestigationId === investigationId) {
+          handleReset();
+        }
+        console.log('Investigation deleted:', investigationId);
+      }
+    } catch (error) {
+      console.error('Error deleting investigation:', error);
+    }
+  };
+
+  // Export investigation
+  const handleExportInvestigation = (investigationId: string) => {
+    try {
+      const jsonData = localStorageService.exportInvestigation(investigationId);
+      if (jsonData) {
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `investigacion-${investigationId}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log('Investigation exported:', investigationId);
+      }
+    } catch (error) {
+      console.error('Error exporting investigation:', error);
+    }
+  };
 
   // Navigation functions for swipe gestures
   const navigateToNextStep = () => {
@@ -493,7 +632,11 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 flex flex-col">
-      <Header onShowExplanation={() => setShowExplanation(true)} />
+      <Header 
+        onShowExplanation={() => setShowExplanation(true)} 
+        onShowHistory={() => setShowHistory(true)}
+        investigationCount={investigationHistory.length}
+      />
       {showExplanation && (
         <Suspense fallback={
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
@@ -504,6 +647,27 @@ const App: React.FC = () => {
           </div>
         }>
           <ExplanationModal onClose={() => setShowExplanation(false)} />
+        </Suspense>
+      )}
+      
+      {showHistory && (
+        <Suspense fallback={
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+            <div className="bg-white rounded-lg shadow-xl p-8 flex flex-col items-center">
+              <Spinner />
+              <p className="mt-4 text-slate-600">Cargando historial...</p>
+            </div>
+          </div>
+        }>
+          <HistoryModal
+            isOpen={showHistory}
+            onClose={() => setShowHistory(false)}
+            investigations={investigationHistory}
+            onLoadInvestigation={handleLoadInvestigation}
+            onDeleteInvestigation={handleDeleteInvestigation}
+            onExportInvestigation={handleExportInvestigation}
+            currentInvestigationId={currentInvestigationId}
+          />
         </Suspense>
       )}
       <div className="flex-1">
