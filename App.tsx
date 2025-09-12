@@ -115,8 +115,8 @@ ${clinicalInfo.trim()}`;
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h2 className="text-base lg:text-2xl font-bold text-slate-900 mb-2">Nueva Investigación Clínica</h2>
-            <p className="text-xs lg:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-3">Nueva Investigación Clínica</h2>
+            <p className="text-sm lg:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
               Nuestro agente de IA especializado en oftalmología creará un plan de investigación personalizado basado en evidencia médica.
             </p>
           </div>
@@ -158,7 +158,7 @@ ${clinicalInfo.trim()}`;
               <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
             <div>
-                    <label htmlFor="age" className="block text-sm font-medium text-slate-700 mb-2">
+                    <label htmlFor="age" className="block text-sm lg:text-base font-medium text-slate-700 mb-2">
                       Edad <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
@@ -174,12 +174,12 @@ ${clinicalInfo.trim()}`;
                             required
                         />
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-slate-400 text-sm">años</span>
+                        <span className="text-slate-400 text-sm lg:text-base">años</span>
                       </div>
                     </div>
                      </div>
                      <div>
-                    <label htmlFor="sex" className="block text-sm font-medium text-slate-700 mb-2">
+                    <label htmlFor="sex" className="block text-sm lg:text-base font-medium text-slate-700 mb-2">
                       Sexo <span className="text-red-500">*</span>
                     </label>
                          <select
@@ -197,7 +197,7 @@ ${clinicalInfo.trim()}`;
                 </div>
                 
             <div>
-                  <label htmlFor="clinical-info" className="block text-sm font-medium text-slate-700 mb-2">
+                  <label htmlFor="clinical-info" className="block text-sm lg:text-base font-medium text-slate-700 mb-2">
                     Información Clínica <span className="text-red-500">*</span>
                   </label>
                  <textarea
@@ -213,7 +213,7 @@ ${clinicalInfo.trim()}`;
                   {/* Audio y Documento Buttons - Móvil optimizado */}                                         
                   <div className="mt-3 space-y-2">                                     
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-500 flex items-center">                            
+                      <span className="text-xs lg:text-sm text-slate-500 flex items-center">                            
                         <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">               
                           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />            
                         </svg>
@@ -869,11 +869,11 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                         </svg>
                                     </div>
-                                    <h2 className="text-sm lg:text-lg font-semibold text-slate-800">Investigación Actual</h2>
+                                    <h2 className="text-base lg:text-xl font-semibold text-slate-800">Investigación Actual</h2>
                                 </div>
                                 <button 
                                     onClick={handleReset} 
-                                    className="flex items-center px-2 lg:px-3 py-1 lg:py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+                                    className="flex items-center px-2 lg:px-3 py-1 lg:py-1.5 text-xs lg:text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -883,12 +883,12 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 </button>
                              </div>
                              <div className="bg-blue-50 p-2 lg:p-3 rounded-lg">
-                                 <div className="text-sm text-slate-700 space-y-1">
+                                 <div className="text-sm lg:text-base text-slate-700 space-y-1">
                                      {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
                                          if (index === 0) {
                                              // Patient demographics (first line)
                                              return (
-                                                 <div key={index} className="font-medium text-blue-800 text-sm">
+                                                 <div key={index} className="font-medium text-blue-800 text-sm lg:text-base">
                                                      {section.trim()}
                                                  </div>
                                              );
@@ -915,8 +915,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                         {/* Progress Indicator */}
                         <div className="my-4 lg:my-6">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-slate-700">Progreso</span>
-                                <span className="text-sm text-slate-500 font-mono">
+                                <span className="text-sm lg:text-base font-medium text-slate-700">Progreso</span>
+                                <span className="text-sm lg:text-base text-slate-500 font-mono">
                                     {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length}
                                 </span>
                             </div>
@@ -933,8 +933,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                         {/* Navigation */}
                         <nav className="mb-4 lg:mb-6">
                             <div className="flex items-center justify-between mb-2 lg:mb-3">
-                                <h3 className="text-sm font-semibold text-slate-700">Pasos de Investigación</h3>
-                                <div className="hidden lg:flex items-center space-x-1 text-xs text-slate-500">
+                                <h3 className="text-sm lg:text-base font-semibold text-slate-700">Pasos de Investigación</h3>
+                                <div className="hidden lg:flex items-center space-x-1 text-xs lg:text-sm text-slate-500">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -964,8 +964,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                            <div className="flex-1 min-w-0 ml-2 lg:ml-3">
                                                <div className="flex items-center justify-between">
                                                    <span className="text-left break-words leading-tight pr-2">
-                                                       <span className="hidden lg:inline">{step.title || 'Paso sin título'}</span>
-                                                        <span className="lg:hidden">
+                                                       <span className="hidden lg:inline text-sm lg:text-base font-medium">{step.title || 'Paso sin título'}</span>
+                                                        <span className="lg:hidden text-sm lg:text-base font-medium">
                                                             {step.title && step.title.length > 60 ? step.title.substring(0, 60) + "..." : (step.title || "Paso sin título")}
                                                         </span>
                                                    </span>
@@ -1123,7 +1123,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                               </svg>
-                              <span className="text-xs ml-1">Anterior</span>
+                              <span className="text-xs lg:text-sm ml-1">Anterior</span>
                             </div>
                           )}
                         </div>
@@ -1134,7 +1134,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                             (activeView.type === 'step' && activeView.id === investigation.plan.length && investigation.finalReport)
                           ) && (
                             <div className="flex items-center animate-pulse">
-                              <span className="text-xs mr-1">Siguiente</span>
+                              <span className="text-xs lg:text-sm mr-1">Siguiente</span>
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                               </svg>
@@ -1161,10 +1161,10 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                 </div>
                                             )}
                                             <div>
-                                                <h2 className="text-xl lg:text-2xl font-bold text-slate-900">{activeContent.title}</h2>
+                                                <h2 className="text-lg lg:text-xl font-bold text-slate-900">{activeContent.title}</h2>
                                                 <div className="flex items-center mt-1">
                                                     <StatusIcon status={activeContent.status as ResearchStep['status']} />
-                                                    <span className="ml-2 text-sm text-slate-600">
+                                                    <span className="ml-2 text-sm lg:text-base text-slate-600">
                                                         {activeContent.status === 'completed' ? 'Completado' : 
                                                          activeContent.status === 'in-progress' ? 'En progreso' : 
                                                          activeContent.status === 'error' ? 'Error' : 'Pendiente'}
@@ -1177,7 +1177,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         {activeView.type === 'step' && activeContent.status === 'completed' && (
                                         <button
                                                 onClick={() => handleCopyStep(activeView.id!)}
-                                                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
+                                                className="flex items-center space-x-2 px-4 py-2 text-sm lg:text-base font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                               <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -1342,7 +1342,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                         setActiveView({ type: 'step', id: activeView.id! - 1 });
                                                     }
                                                 }}
-                                                className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                                                className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm lg:text-base font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -1366,7 +1366,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                         }
                                                     }
                                                 }}
-                                                className={`flex-1 sm:flex-none flex items-center justify-center px-6 py-3 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md ${
+                                                className={`flex-1 sm:flex-none flex items-center justify-center px-6 py-3 text-sm lg:text-base font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md ${
                                                     (() => {
                                                         const nextStep = investigation.plan.find(step => step.id === activeView.id! + 1);
                                                         if (nextStep && nextStep.status === 'completed') {
