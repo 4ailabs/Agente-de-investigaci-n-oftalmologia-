@@ -15,10 +15,6 @@ const getAI = (): GoogleGenAI => {
     }
     
     ai = new GoogleGenAI({ apiKey });
-    
-    // Debug: Check available methods
-    console.log('🔍 Available methods on ai object:', Object.getOwnPropertyNames(ai));
-    console.log('🔍 Available methods on ai.__proto__:', Object.getOwnPropertyNames(Object.getPrototypeOf(ai)));
   }
   return ai;
 };
@@ -114,12 +110,18 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     console.log('🔧 Using search:', useSearch);
     
     // Use the correct method for Gemini 1.5 with search capabilities
-    const model = genAI.getGenerativeModel({ 
-        model: 'gemini-1.5-flash'
+    const response = await genAI.models.generateContent({
+        model: 'gemini-1.5-flash',
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        tools: useSearch ? [{
+            googleSearchRetrieval: {
+                dynamicRetrievalConfig: {
+                    mode: "MODE_DYNAMIC",
+                    dynamicThreshold: 0.7
+                }
+            }
+        }] : undefined
     });
-    
-    // For now, let's test without search tools to see if the basic API works
-    const response = await model.generateContent(prompt);
     
     // Debug response structure
     console.log('📊 Full response structure:', JSON.stringify(response, null, 2));
