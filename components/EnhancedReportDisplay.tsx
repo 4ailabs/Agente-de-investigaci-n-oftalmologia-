@@ -2,11 +2,32 @@ import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+interface StepFeedback {
+  stepId: number;
+  observations: string;
+  additionalData: string;
+  clinicalFindings: string;
+  recommendations: string;
+  confidence: 'low' | 'medium' | 'high';
+  timestamp: string;
+}
+
+interface ResearchStep {
+  id: number;
+  title: string;
+  status: string;
+  result: string | null;
+  prompt: string;
+  sources: any[] | null;
+  feedback?: StepFeedback;
+}
+
 interface EnhancedReportDisplayProps {
   content: string;
   sources?: any[];
   onCopy?: () => void;
   isCopied?: boolean;
+  investigationSteps?: ResearchStep[];
 }
 
 interface ReportSection {
@@ -28,7 +49,8 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
   content,
   sources = [],
   onCopy,
-  isCopied = false
+  isCopied = false,
+  investigationSteps = []
 }) => {
   const [activeSection, setActiveSection] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,6 +58,17 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
   const [showQualityMetrics, setShowQualityMetrics] = useState(true);
   const [viewMode, setViewMode] = useState<'full' | 'summary' | 'print'>('full');
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Extract specialist feedback from investigation steps
+  const getSpecialistFeedback = () => {
+    return investigationSteps
+      .filter(step => step.feedback)
+      .map(step => ({
+        stepId: step.id,
+        stepTitle: step.title,
+        feedback: step.feedback!
+      }));
+  };
 
   // Extract sections from markdown content
   const extractSections = (content: string) => {
@@ -574,6 +607,80 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Specialist Feedback Section */}
+          {getSpecialistFeedback().length > 0 && (
+            <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">Feedback del Especialista</h3>
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                  {getSpecialistFeedback().length} paso{getSpecialistFeedback().length !== 1 ? 's' : ''}
+                </span>
+              </div>
+              
+              <div className="space-y-4">
+                {getSpecialistFeedback().map(({ stepId, stepTitle, feedback }) => (
+                  <div key={stepId} className="bg-white rounded-lg p-4 border border-blue-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-semibold text-slate-800">Paso {stepId}: {stepTitle}</h4>
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          feedback.confidence === 'high' 
+                            ? 'bg-green-100 text-green-800' 
+                            : feedback.confidence === 'medium'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          Confianza: {feedback.confidence === 'high' ? 'Alta' : feedback.confidence === 'medium' ? 'Media' : 'Baja'}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          {new Date(feedback.timestamp).toLocaleDateString('es-ES', { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      {feedback.observations && (
+                        <div>
+                          <h5 className="font-medium text-slate-700 mb-1">Observaciones:</h5>
+                          <p className="text-slate-600">{feedback.observations}</p>
+                        </div>
+                      )}
+                      {feedback.additionalData && (
+                        <div>
+                          <h5 className="font-medium text-slate-700 mb-1">Datos Adicionales:</h5>
+                          <p className="text-slate-600">{feedback.additionalData}</p>
+                        </div>
+                      )}
+                      {feedback.clinicalFindings && (
+                        <div>
+                          <h5 className="font-medium text-slate-700 mb-1">Hallazgos Clínicos:</h5>
+                          <p className="text-slate-600">{feedback.clinicalFindings}</p>
+                        </div>
+                      )}
+                      {feedback.recommendations && (
+                        <div>
+                          <h5 className="font-medium text-slate-700 mb-1">Recomendaciones:</h5>
+                          <p className="text-slate-600">{feedback.recommendations}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Report Content with Enhanced Typography */}
           <div 
