@@ -2,6 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { EnhancedPatientData, RedFlags, DataQuality } from '../types/enhancedDataTypes';
 import { MedicalDataExtractionService } from '../services/medicalDataExtraction';
 
+// Función helper para valores por defecto inteligentes
+const getSmartDefaults = (age: number) => {
+  if (age >= 65) {
+    // Pacientes mayores (≥65 años)
+    return {
+      visualAcuity: { withCorrection: true },  // Más probable que usen corrección
+      intraocularPressure: { method: 'Goldmann' as const }, // Método estándar
+      lens: { clarity: 'Catarata' as const },  // Alta probabilidad de cataratas
+    };
+  } else if (age >= 40) {
+    // Pacientes de mediana edad (40-64 años)
+    return {
+      visualAcuity: { withCorrection: false },
+      intraocularPressure: { method: 'Goldmann' as const },
+      lens: { clarity: 'Clara' as const },
+    };
+  } else {
+    // Pacientes jóvenes (<40 años)
+    return {
+      visualAcuity: { withCorrection: false },
+      intraocularPressure: { method: 'iCare' as const }, // Más cómodo para jóvenes
+      lens: { clarity: 'Clara' as const },
+    };
+  }
+};
+
 interface EnhancedDataFormProps {
   onSubmit: (data: EnhancedPatientData) => void;
   onCancel: () => void;
@@ -63,8 +89,12 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
         diplopia: 'Ninguna'
       }
     },
-    chiefComplaint: '',
-    historyOfPresentIllness: '',
+    // Información clínica consolidada (elimina duplicación)
+    clinicalInfo: {
+      chiefComplaint: '',
+      historyOfPresentIllness: '',
+      reviewOfSystems: []
+    },
     socialHistory: {
       smoking: 'Nunca',
       alcohol: 'Nunca',
@@ -97,8 +127,41 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
     suggestions: []
   });
 
-  const [activeSection, setActiveSection] = useState<'demographics' | 'symptoms' | 'exam' | 'history'>('demographics');
+  const [activeSection, setActiveSection] = useState<'demographics' | 'clinical' | 'history' | 'symptoms' | 'exam'>('demographics');
   const [showRedFlags, setShowRedFlags] = useState(false);
+
+  // Valores por defecto inteligentes basados en edad
+  useEffect(() => {
+    if (formData.age && formData.age > 0) {
+      const smartDefaults = getSmartDefaults(formData.age);
+      
+      // Solo aplicar defaults si los campos están vacíos
+      setFormData(prev => ({
+        ...prev,
+        exam: {
+          ...prev.exam,
+          visualAcuity: {
+            OD: prev.exam?.visualAcuity?.OD || '',
+            OI: prev.exam?.visualAcuity?.OI || '',
+            withCorrection: prev.exam?.visualAcuity?.withCorrection ?? smartDefaults.visualAcuity.withCorrection,
+            pinhole: prev.exam?.visualAcuity?.pinhole || ''
+          },
+          intraocularPressure: {
+            OD: prev.exam?.intraocularPressure?.OD || 0,
+            OI: prev.exam?.intraocularPressure?.OI || 0,
+            method: prev.exam?.intraocularPressure?.method || smartDefaults.intraocularPressure.method
+          },
+          anteriorSegment: {
+            ...prev.exam?.anteriorSegment,
+            lens: {
+              ...prev.exam?.anteriorSegment?.lens,
+              clarity: prev.exam?.anteriorSegment?.lens?.clarity || smartDefaults.lens.clarity
+            }
+          }
+        }
+      }));
+    }
+  }, [formData.age]);
 
   // Actualizar calidad de datos cuando cambie el formulario
   useEffect(() => {
@@ -149,20 +212,20 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.age && formData.sex && formData.symptoms?.mainSymptom?.description) {
+    if (formData.age && formData.sex && formData.clinicalInfo?.chiefComplaint) {
       onSubmit(formData as EnhancedPatientData);
     }
   };
 
-  const isFormValid = formData.age && formData.sex && formData.symptoms?.mainSymptom?.description;
+  const isFormValid = formData.age && formData.sex && formData.clinicalInfo?.chiefComplaint;
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-2 sm:p-4">
       {/* Header con indicadores de calidad */}
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-slate-800">Formulario Médico Estructurado</h2>
-          <div className="flex items-center space-x-4">
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 sm:p-6 mb-4 sm:mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800">Formulario Médico Estructurado</h2>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
             <div className="text-sm text-slate-600">
               Calidad: <span className="font-semibold text-green-600">{dataQuality.medicalValidity}%</span>
             </div>
@@ -193,37 +256,55 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
           </div>
         )}
 
-        {/* Navegación por secciones */}
-        <div className="flex space-x-1 bg-slate-100 rounded-lg p-1">
-          {[
-            { id: 'demographics', label: 'Demográficos', icon: '' },
-            { id: 'symptoms', label: 'Síntomas', icon: '' },
-            { id: 'exam', label: 'Examen', icon: '' },
-            { id: 'history', label: 'Antecedentes', icon: '' }
-          ].map(section => (
-            <button
-              key={section.id}
-              onClick={() => setActiveSection(section.id as any)}
-              className={`flex-1 flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeSection === section.id
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
+        {/* Navegación por secciones - Optimizada para móvil */}
+        <div className="bg-slate-100 rounded-lg p-1 overflow-hidden">
+          {/* Desktop tabs */}
+          <div className="hidden md:flex space-x-1">
+            {[
+              { id: 'demographics', label: 'Demográficos' },
+              { id: 'clinical', label: 'Motivo de Consulta' },
+              { id: 'history', label: 'Antecedentes' },
+              { id: 'symptoms', label: 'Síntomas' },
+              { id: 'exam', label: 'Examen' }
+            ].map(section => (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.id as any)}
+                className={`flex-1 flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  activeSection === section.id
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {section.label}
+              </button>
+            ))}
+          </div>
+          
+          {/* Mobile dropdown */}
+          <div className="md:hidden">
+            <select
+              value={activeSection}
+              onChange={(e) => setActiveSection(e.target.value as any)}
+              className="w-full px-4 py-3 bg-white border border-slate-300 rounded-md text-base font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <span className="mr-2">{section.icon}</span>
-              {section.label}
-            </button>
-          ))}
+              <option value="demographics">1. Demográficos</option>
+              <option value="clinical">2. Motivo de Consulta</option>
+              <option value="history">3. Antecedentes</option>
+              <option value="symptoms">4. Síntomas</option>
+              <option value="exam">5. Examen</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Formulario por secciones */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         {/* Sección Demográficos */}
         {activeSection === 'demographics' && (
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 sm:p-6">
             <h3 className="text-lg font-semibold text-slate-800 mb-4">Datos Demográficos</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Edad <span className="text-red-500">*</span>
@@ -232,7 +313,7 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
                   type="number"
                   value={formData.age || ''}
                   onChange={(e) => handleInputChange('age', parseInt(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 sm:px-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base sm:text-sm min-h-[48px] sm:min-h-[40px]"
                   min="0"
                   max="120"
                   required
@@ -245,7 +326,7 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
                 <select
                   value={formData.sex || 'M'}
                   onChange={(e) => handleInputChange('sex', e.target.value as 'M' | 'F' | 'Otros')}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 sm:px-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base sm:text-sm min-h-[48px] sm:min-h-[40px]"
                   required
                 >
                   <option value="M">Masculino</option>
@@ -281,152 +362,224 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
           </div>
         )}
 
-        {/* Sección Examen Oftalmológico */}
-        {activeSection === 'exam' && (
+        {/* Nueva sección: Motivo de Consulta Consolidado */}
+        {activeSection === 'clinical' && (
           <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Examen Oftalmológico</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-4">Motivo de Consulta</h3>
             
-            {/* Agudeza Visual */}
-            <div className="mb-6">
-              <h4 className="text-md font-medium text-slate-700 mb-3">Agudeza Visual</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Ojo Derecho (OD)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.exam?.visualAcuity?.OD || ''}
-                    onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'OD'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: 20/20, 20/40, CF"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Ojo Izquierdo (OI)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.exam?.visualAcuity?.OI || ''}
-                    onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'OI'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: 20/20, 20/40, CF"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Pinhole
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.exam?.visualAcuity?.pinhole || ''}
-                    onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'pinhole'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Mejora con pinhole"
-                  />
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="withCorrection"
-                    checked={formData.exam?.visualAcuity?.withCorrection || false}
-                    onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'withCorrection'], e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="withCorrection" className="ml-2 text-sm text-slate-700">
-                    Con corrección
-                  </label>
+            <div className="space-y-6">
+              {/* Queja Principal */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Queja Principal <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={formData.clinicalInfo?.chiefComplaint || ''}
+                  onChange={(e) => handleNestedInputChange(['clinicalInfo', 'chiefComplaint'], e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  rows={2}
+                  placeholder="Resumen breve del motivo de consulta principal"
+                  required
+                />
+              </div>
+
+              {/* Historia de la Enfermedad Actual */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Historia de la Enfermedad Actual
+                </label>
+                <textarea
+                  value={formData.clinicalInfo?.historyOfPresentIllness || ''}
+                  onChange={(e) => handleNestedInputChange(['clinicalInfo', 'historyOfPresentIllness'], e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  rows={4}
+                  placeholder="Descripción detallada de la evolución y características del cuadro clínico actual..."
+                />
+              </div>
+
+              {/* Ayuda contextual */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <svg className="h-5 w-5 text-blue-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium mb-1">Guía para completar:</p>
+                    <ul className="text-xs space-y-1">
+                      <li>• <strong>Queja Principal:</strong> Una frase concisa del problema principal</li>
+                      <li>• <strong>Historia Actual:</strong> Cronología detallada, factores desencadenantes, síntomas asociados</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+        )}
 
-            {/* Presión Intraocular */}
-            <div className="mb-6">
-              <h4 className="text-md font-medium text-slate-700 mb-3">Presión Intraocular</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    OD (mmHg)
-                  </label>
+        {/* Sección Examen Oftalmológico - Estructura optimizada por ojo */}
+        {activeSection === 'exam' && (
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+            <h3 className="text-lg font-semibold text-slate-800 mb-6">Examen Oftalmológico</h3>
+            
+            {/* Navegación por ojo */}
+            <div className="flex space-x-2 mb-6">
+              <div className="flex-1 bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-lg p-4">
+                <h4 className="text-center font-semibold text-red-800 mb-4">OJO DERECHO (OD)</h4>
+                
+                {/* Agudeza Visual OD */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Agudeza Visual</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={formData.exam?.visualAcuity?.OD || ''}
+                      onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'OD'], e.target.value)}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      placeholder="20/20"
+                    />
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.exam?.visualAcuity?.withCorrection || false}
+                        onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'withCorrection'], e.target.checked)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label className="ml-2 text-xs text-slate-700">c/c</label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* PIO OD */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">PIO (mmHg)</label>
                   <input
                     type="number"
                     value={formData.exam?.intraocularPressure?.OD || ''}
                     onChange={(e) => handleNestedInputChange(['exam', 'intraocularPressure', 'OD'], parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    placeholder="16"
                     min="0"
                     max="50"
                     step="0.1"
                   />
                 </div>
+
+                {/* Copa/Disco OD */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Copa/Disco</label>
+                  <input
+                    type="text"
+                    value={formData.exam?.fundus?.opticNerve?.cupDiscRatio?.OD || ''}
+                    onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'opticNerve', 'cupDiscRatio', 'OD'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    placeholder="0.3"
+                  />
+                </div>
+
+                {/* Pupila OD */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    OI (mmHg)
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Pupila</label>
+                  <select
+                    value={formData.exam?.pupilResponse?.size?.OD || 'Normal'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'pupilResponse', 'size', 'OD'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Miótica">Miótica</option>
+                    <option value="Midriática">Midriática</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex-1 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+                <h4 className="text-center font-semibold text-blue-800 mb-4">OJO IZQUIERDO (OI)</h4>
+                
+                {/* Agudeza Visual OI */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Agudeza Visual</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={formData.exam?.visualAcuity?.OI || ''}
+                      onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'OI'], e.target.value)}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      placeholder="20/20"
+                    />
+                    <input
+                      type="text"
+                      value={formData.exam?.visualAcuity?.pinhole || ''}
+                      onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'pinhole'], e.target.value)}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      placeholder="Pinhole"
+                    />
+                  </div>
+                </div>
+
+                {/* PIO OI */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">PIO (mmHg)</label>
                   <input
                     type="number"
                     value={formData.exam?.intraocularPressure?.OI || ''}
                     onChange={(e) => handleNestedInputChange(['exam', 'intraocularPressure', 'OI'], parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    placeholder="16"
                     min="0"
                     max="50"
                     step="0.1"
                   />
                 </div>
+
+                {/* Copa/Disco OI */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Copa/Disco</label>
+                  <input
+                    type="text"
+                    value={formData.exam?.fundus?.opticNerve?.cupDiscRatio?.OI || ''}
+                    onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'opticNerve', 'cupDiscRatio', 'OI'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    placeholder="0.3"
+                  />
+                </div>
+
+                {/* Pupila OI */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Método
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Pupila</label>
                   <select
-                    value={formData.exam?.intraocularPressure?.method || 'No medido'}
-                    onChange={(e) => handleNestedInputChange(['exam', 'intraocularPressure', 'method'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={formData.exam?.pupilResponse?.size?.OI || 'Normal'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'pupilResponse', 'size', 'OI'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   >
-                    <option value="No medido">No medido</option>
-                    <option value="Goldmann">Goldmann</option>
-                    <option value="Tonopen">Tonopen</option>
-                    <option value="iCare">iCare</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Miótica">Miótica</option>
+                    <option value="Midriática">Midriática</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            {/* Examen de Pupila */}
-            <div className="mb-6">
-              <h4 className="text-md font-medium text-slate-700 mb-3">Examen de Pupila</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Campos compartidos */}
+            <div className="border-t pt-6">
+              <h5 className="text-md font-medium text-slate-700 mb-4">Hallazgos Generales</h5>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Método PIO */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Tamaño OD
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Método PIO</label>
                   <select
-                    value={formData.exam?.pupilResponse?.size?.OD || 'Normal'}
-                    onChange={(e) => handleNestedInputChange(['exam', 'pupilResponse', 'size', 'OD'], e.target.value)}
+                    value={formData.exam?.intraocularPressure?.method || 'Goldmann'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'intraocularPressure', 'method'], e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="Normal">Normal</option>
-                    <option value="Miótica">Miótica</option>
-                    <option value="Midriática">Midriática</option>
+                    <option value="Goldmann">Goldmann</option>
+                    <option value="Tonopen">Tonopen</option>
+                    <option value="iCare">iCare</option>
+                    <option value="No medido">No medido</option>
                   </select>
                 </div>
+
+                {/* Reacción pupilar */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Tamaño OI
-                  </label>
-                  <select
-                    value={formData.exam?.pupilResponse?.size?.OI || 'Normal'}
-                    onChange={(e) => handleNestedInputChange(['exam', 'pupilResponse', 'size', 'OI'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="Normal">Normal</option>
-                    <option value="Miótica">Miótica</option>
-                    <option value="Midriática">Midriática</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Reacción a la luz
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Reacción a la luz</label>
                   <select
                     value={formData.exam?.pupilResponse?.reaction?.light || 'Normal'}
                     onChange={(e) => handleNestedInputChange(['exam', 'pupilResponse', 'reaction', 'light'], e.target.value)}
@@ -437,7 +590,9 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
                     <option value="Ausente">Ausente</option>
                   </select>
                 </div>
-                <div className="flex items-center">
+
+                {/* Anisocoria */}
+                <div className="flex items-center pt-6">
                   <input
                     type="checkbox"
                     id="anisocoria"
@@ -452,33 +607,31 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
               </div>
             </div>
 
-            {/* Segmento Anterior */}
-            <div className="mb-6">
-              <h4 className="text-md font-medium text-slate-700 mb-3">Segmento Anterior</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Segmento Anterior y Fondo de Ojo (adicionales si es necesario) */}
+            <div className="border-t pt-6 mt-6">
+              <h5 className="text-md font-medium text-slate-700 mb-4">Hallazgos Adicionales (Opcional)</h5>
+
+              {/* Hallazgos adicionales compactos */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Inyección conjuntival
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Conjuntiva</label>
                   <select
                     value={formData.exam?.anteriorSegment?.conjunctiva?.injection || 'Normal'}
                     onChange={(e) => handleNestedInputChange(['exam', 'anteriorSegment', 'conjunctiva', 'injection'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   >
                     <option value="Normal">Normal</option>
-                    <option value="Leve">Leve</option>
-                    <option value="Moderada">Moderada</option>
-                    <option value="Severa">Severa</option>
+                    <option value="Inyectada">Inyectada</option>
+                    <option value="Inflamada">Inflamada</option>
                   </select>
                 </div>
+                
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Claridad corneal
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Córnea</label>
                   <select
                     value={formData.exam?.anteriorSegment?.cornea?.clarity || 'Clara'}
                     onChange={(e) => handleNestedInputChange(['exam', 'anteriorSegment', 'cornea', 'clarity'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   >
                     <option value="Clara">Clara</option>
                     <option value="Edema">Edema</option>
@@ -486,28 +639,13 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
                     <option value="Ulcera">Úlcera</option>
                   </select>
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Profundidad de cámara anterior
-                  </label>
-                  <select
-                    value={formData.exam?.anteriorSegment?.anteriorChamber?.depth || 'Normal'}
-                    onChange={(e) => handleNestedInputChange(['exam', 'anteriorSegment', 'anteriorChamber', 'depth'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="Normal">Normal</option>
-                    <option value="Shallow">Shallow</option>
-                    <option value="Profunda">Profunda</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Claridad del cristalino
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Cristalino</label>
                   <select
                     value={formData.exam?.anteriorSegment?.lens?.clarity || 'Clara'}
                     onChange={(e) => handleNestedInputChange(['exam', 'anteriorSegment', 'lens', 'clarity'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   >
                     <option value="Clara">Clara</option>
                     <option value="Catarata">Catarata</option>
@@ -515,60 +653,13 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
                     <option value="Afaquia">Afaquia</option>
                   </select>
                 </div>
-              </div>
-            </div>
 
-            {/* Fondo de Ojo */}
-            <div className="mb-6">
-              <h4 className="text-md font-medium text-slate-700 mb-3">Fondo de Ojo</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Relación copa/disco OD
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.exam?.fundus?.opticNerve?.cupDiscRatio?.OD || ''}
-                    onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'opticNerve', 'cupDiscRatio', 'OD'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: 0.3, 0.5"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Relación copa/disco OI
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.exam?.fundus?.opticNerve?.cupDiscRatio?.OI || ''}
-                    onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'opticNerve', 'cupDiscRatio', 'OI'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: 0.3, 0.5"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Palidez del nervio óptico
-                  </label>
-                  <select
-                    value={formData.exam?.fundus?.opticNerve?.pallor || 'Normal'}
-                    onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'opticNerve', 'pallor'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="Normal">Normal</option>
-                    <option value="Leve">Leve</option>
-                    <option value="Moderada">Moderada</option>
-                    <option value="Severa">Severa</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Estado de la mácula
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Estado Macular</label>
                   <select
                     value={formData.exam?.fundus?.macula?.center || 'Normal'}
                     onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'macula', 'center'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   >
                     <option value="Normal">Normal</option>
                     <option value="Edema">Edema</option>
@@ -942,31 +1033,16 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
               </div>
             </div>
 
-            {/* Campos de texto libre */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Queja Principal
-                </label>
-                <textarea
-                  value={formData.chiefComplaint || ''}
-                  onChange={(e) => handleInputChange('chiefComplaint', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  rows={3}
-                  placeholder="Descripción de la queja principal del paciente..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Historia de la Enfermedad Actual
-                </label>
-                <textarea
-                  value={formData.historyOfPresentIllness || ''}
-                  onChange={(e) => handleInputChange('historyOfPresentIllness', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  rows={4}
-                  placeholder="Descripción detallada de la evolución de la enfermedad actual..."
-                />
+            {/* Nota: Campos de queja principal movidos a sección "Motivo de Consulta" para evitar duplicación */}
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="flex items-start">
+                <svg className="h-5 w-5 text-amber-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="text-sm text-amber-800">
+                  <p className="font-medium mb-1">Información clínica actual</p>
+                  <p>La queja principal e historia de la enfermedad actual se capturan en la sección "Motivo de Consulta" para evitar duplicación de datos.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -977,23 +1053,16 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
           <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
             <h3 className="text-lg font-semibold text-slate-800 mb-4">Síntomas Oftalmológicos</h3>
             
-            {/* Síntoma principal */}
+            {/* Características del síntoma principal */}
             <div className="mb-6">
-              <h4 className="text-md font-medium text-slate-700 mb-3">Síntoma Principal</h4>
+              <h4 className="text-md font-medium text-slate-700 mb-3">Características del Síntoma Principal</h4>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-blue-800">
+                  <strong>Nota:</strong> La descripción del síntoma principal se captura en "Motivo de Consulta". 
+                  Aquí especifica las características adicionales del síntoma.
+                </p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Descripción <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    value={formData.symptoms?.mainSymptom?.description || ''}
-                    onChange={(e) => handleNestedInputChange(['symptoms', 'mainSymptom', 'description'], e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    rows={3}
-                    placeholder="Describe el síntoma principal del paciente"
-                    required
-                  />
-                </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Duración
@@ -1113,27 +1182,29 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
           </div>
         )}
 
-        {/* Botones de acción */}
-        <div className="flex items-center justify-between bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
-          >
-            Cancelar
-          </button>
+        {/* Botones de acción - Optimizados para móvil */}
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 sm:p-6">
+          {/* Sugerencias - Solo desktop */}
+          {dataQuality.suggestions.length > 0 && (
+            <div className="hidden sm:block text-center text-sm text-slate-600 mb-4">
+              <span className="font-medium">Sugerencias disponibles:</span> {dataQuality.suggestions.length}
+            </div>
+          )}
           
-          <div className="flex items-center space-x-4">
-            {dataQuality.suggestions.length > 0 && (
-              <div className="text-sm text-slate-600">
-                <span className="font-medium">Sugerencias:</span> {dataQuality.suggestions.length}
-              </div>
-            )}
+          {/* Mobile: Botones apilados */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="w-full sm:w-auto px-6 py-3 sm:py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors text-base sm:text-sm font-medium min-h-[48px] sm:min-h-[40px]"
+            >
+              Cancelar
+            </button>
             
             <button
               type="submit"
               disabled={!isFormValid || isLoading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors"
+              className="w-full sm:w-auto px-6 py-3 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors text-base sm:text-sm font-semibold min-h-[48px] sm:min-h-[40px]"
             >
               {isLoading ? 'Procesando...' : 'Iniciar Investigación'}
             </button>

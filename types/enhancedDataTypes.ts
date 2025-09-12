@@ -147,10 +147,13 @@ export interface EnhancedPatientData {
   // Examen oftalmológico
   exam: OphthalmologyExam;
   
-  // Información adicional
-  chiefComplaint: string;
-  historyOfPresentIllness: string;
-  reviewOfSystems: string[];
+  // Información clínica consolidada (elimina duplicación)
+  clinicalInfo: {
+    chiefComplaint: string;              // Queja principal breve
+    historyOfPresentIllness: string;     // Historia detallada actual
+    reviewOfSystems: string[];           // Revisión por sistemas
+  };
+  
   socialHistory: {
     smoking: 'Nunca' | 'Ex-fumador' | 'Fumador actual';
     alcohol: 'Nunca' | 'Ocasional' | 'Regular' | 'Excesivo';
