@@ -1,13 +1,37 @@
 import { GoogleGenAI } from "@google/genai";
 import { MedicalValidationService } from "../medicalValidation.js";
 
+// Sistema de caché inteligente para búsquedas
+interface SearchCache {
+  query: string;
+  timestamp: Date;
+  results: GenerationResult;
+  relevanceScore: number;
+  medicalKeywords: string[];
+  expiresAt: Date;
+}
+
+// Configuración del caché
+const CACHE_EXPIRY_HOURS = 24;
+const MAX_CACHE_SIZE = 100;
+const searchCache = new Map<string, SearchCache>();
+
+// Sistema de scoring de relevancia mejorado
+interface RelevanceMetrics {
+  symptomMatch: number;
+  anatomicalRelevance: number;
+  sourceAuthority: number;
+  recencyScore: number;
+  totalScore: number;
+}
+
 let ai: GoogleGenAI | null = null;
 
 const getAI = (): GoogleGenAI => {
   if (!ai) {
     // For Vite frontend, environment variables need VITE_ prefix
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 
-                  import.meta.env.VITE_API_KEY || 
+    const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || 
+                  (import.meta as any).env?.VITE_API_KEY || 
                   process.env.GEMINI_API_KEY;
     
     if (!apiKey) {
@@ -38,7 +62,117 @@ export interface GenerationResult {
     disclaimers?: string;
 }
 
-// Function to check source relevance based on content keywords
+// Sistema de manejo de caché inteligente
+const getCachedResult = (query: string, medicalKeywords: string[]): SearchCache | null => {
+  const cacheKey = generateCacheKey(query, medicalKeywords);
+  const cached = searchCache.get(cacheKey);
+  
+  if (cached && cached.expiresAt > new Date()) {
+    console.log('🎯 Using cached search result');
+    return cached;
+  }
+  
+  if (cached) {
+    searchCache.delete(cacheKey);
+  }
+  
+  return null;
+};
+
+const setCachedResult = (query: string, medicalKeywords: string[], result: GenerationResult, relevanceScore: number) => {
+  const cacheKey = generateCacheKey(query, medicalKeywords);
+  const expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + CACHE_EXPIRY_HOURS);
+  
+  // Limpiar caché si está lleno
+  if (searchCache.size >= MAX_CACHE_SIZE) {
+    const oldestKey = Array.from(searchCache.keys())[0];
+    searchCache.delete(oldestKey);
+  }
+  
+  searchCache.set(cacheKey, {
+    query,
+    timestamp: new Date(),
+    results: result,
+    relevanceScore,
+    medicalKeywords,
+    expiresAt
+  });
+};
+
+const generateCacheKey = (query: string, keywords: string[]): string => {
+  return `${query.toLowerCase()}-${keywords.sort().join(',').toLowerCase()}`;
+};
+
+// Sistema de scoring de relevancia mejorado
+const calculateSourceRelevance = (source: { web: { uri: string; title: string; } }, prompt: string, generatedText: string): RelevanceMetrics => {
+  const sourceText = `${source.web.title} ${source.web.uri}`.toLowerCase();
+  const combinedText = `${generatedText} ${prompt}`.toLowerCase();
+  
+  // 1. Coincidencia con síntomas específicos (30%)
+  const symptomKeywords = ['dolor', 'vision', 'borrosa', 'ceguera', 'diplopia', 'fotofobia', 'lagrimeo', 'enrojecimiento', 'pain', 'blur', 'blindness', 'double', 'light', 'tear', 'red'];
+  const symptomMatches = symptomKeywords.filter(keyword => 
+    combinedText.includes(keyword) && sourceText.includes(keyword)
+  ).length;
+  const symptomMatch = Math.min(symptomMatches / 5, 1) * 0.3;
+  
+  // 2. Relevancia anatómica (25%)
+  const anatomicalKeywords = ['retina', 'cornea', 'iris', 'pupila', 'cristalino', 'vitreo', 'optic', 'macula', 'conjuntiva', 'choroid'];
+  const anatomicalMatches = anatomicalKeywords.filter(keyword => 
+    combinedText.includes(keyword) && sourceText.includes(keyword)
+  ).length;
+  const anatomicalRelevance = Math.min(anatomicalMatches / 4, 1) * 0.25;
+  
+  // 3. Autoridad de fuente (25%)
+  const highAuthorityDomains = ['pubmed', 'ncbi', 'cochrane', 'aao.org', 'nejm', 'jama', 'thelancet'];
+  const mediumAuthorityDomains = ['medscape', 'uptodate', 'mayoclinic', 'clevelandclinic'];
+  
+  let sourceAuthority = 0;
+  if (highAuthorityDomains.some(domain => sourceText.includes(domain))) {
+    sourceAuthority = 1 * 0.25;
+  } else if (mediumAuthorityDomains.some(domain => sourceText.includes(domain))) {
+    sourceAuthority = 0.7 * 0.25;
+  } else if (sourceText.includes('medical') || sourceText.includes('medic') || sourceText.includes('health')) {
+    sourceAuthority = 0.5 * 0.25;
+  } else {
+    sourceAuthority = 0.2 * 0.25;
+  }
+  
+  // 4. Score de recencia (20%) - basado en palabras clave de actualidad
+  const recencyKeywords = ['2024', '2023', '2022', 'recent', 'latest', 'new', 'current', 'updated'];
+  const recencyMatches = recencyKeywords.filter(keyword => sourceText.includes(keyword)).length;
+  const recencyScore = Math.min(recencyMatches / 3, 1) * 0.2;
+  
+  const totalScore = symptomMatch + anatomicalRelevance + sourceAuthority + recencyScore;
+  
+  return {
+    symptomMatch: Math.round(symptomMatch * 1000) / 10, // Convert to percentage
+    anatomicalRelevance: Math.round(anatomicalRelevance * 1000) / 10,
+    sourceAuthority: Math.round(sourceAuthority * 1000) / 10,
+    recencyScore: Math.round(recencyScore * 1000) / 10,
+    totalScore: Math.round(totalScore * 1000) / 10
+  };
+};
+
+// Extracción de palabras clave médicas para caché inteligente
+const extractMedicalKeywords = (prompt: string): string[] => {
+  const text = prompt.toLowerCase();
+  const allMedicalTerms = [
+    // Síntomas oftalmológicos
+    'dolor', 'vision', 'borrosa', 'ceguera', 'diplopia', 'fotofobia', 'lagrimeo', 'enrojecimiento',
+    'pain', 'blur', 'blindness', 'double', 'light', 'tear', 'red',
+    // Anatomía ocular
+    'retina', 'cornea', 'iris', 'pupila', 'cristalino', 'vitreo', 'optic', 'macula', 'conjuntiva',
+    // Condiciones oftalmológicas
+    'glaucoma', 'catarata', 'macular', 'diabetic', 'retinopathy', 'uveitis', 'keratitis',
+    // Términos médicos generales
+    'diagnosis', 'treatment', 'therapy', 'surgery', 'medication', 'symptom'
+  ];
+  
+  return allMedicalTerms.filter(term => text.includes(term));
+};
+
+// Function to check source relevance based on content keywords (MEJORADA)
 const filterRelevantSources = (sources: { web: { uri: string; title: string; } }[] | null, generatedText: string, originalPrompt: string): { web: { uri: string; title: string; } }[] | null => {
   if (!sources || sources.length === 0) return sources;
   
@@ -67,27 +201,20 @@ const filterRelevantSources = (sources: { web: { uri: string; title: string; } }
     return sources;
   }
   
-  // Filter sources that seem relevant to medical/ophthalmology content
-  const relevantSources = sources.filter(source => {
-    const sourceText = `${source.web.title} ${source.web.uri}`.toLowerCase();
-    
-    // Check if source is from medical domains
-    const isMedicalDomain = [
-      'pubmed', 'ncbi', 'medline', 'cochrane', 'uptodate', 'medscape', 
-      'nejm', 'jama', 'thelancet', 'bmj', 'aao.org', 'who.int', 'cdc.gov',
-      'mayoclinic', 'clevelandclinic', 'hopkinsmedicine', 'webmd',
-      'medigraphic', 'scielo', 'elsevier', 'springer', 'nature.com',
-      'ophthalmology', 'oftalmol', 'medical', 'medic', 'health', 'salud'
-    ].some(domain => sourceText.includes(domain));
-    
-    // Check if source contains medical keywords
-    const containsRelevantTerms = medicalKeywords.some(keyword => 
-      sourceText.includes(keyword)
-    );
-    
-    // Keep source if it's from medical domain OR contains relevant terms
-    return isMedicalDomain || containsRelevantTerms;
+  // Calcular relevancia para cada fuente y filtrar por score
+  const sourcesWithRelevance = sources.map(source => {
+    const relevanceMetrics = calculateSourceRelevance(source, originalPrompt, generatedText);
+    return {
+      source,
+      relevanceMetrics
+    };
   });
+  
+  // Filtrar fuentes con score mínimo y ordenar por relevancia
+  const relevantSources = sourcesWithRelevance
+    .filter(item => item.relevanceMetrics.totalScore >= 15) // Mínimo 15% de relevancia
+    .sort((a, b) => b.relevanceMetrics.totalScore - a.relevanceMetrics.totalScore)
+    .map(item => item.source);
   
   // If filtering removed too many sources, keep at least the original ones
   // but limit to most relevant
@@ -104,8 +231,21 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
   try {
     const genAI = getAI();
     
+    // Extraer palabras clave médicas del prompt para caché
+    const medicalKeywords = extractMedicalKeywords(prompt);
+    
+    // Verificar caché si se usa búsqueda
+    if (useSearch) {
+      const cachedResult = getCachedResult(prompt, medicalKeywords);
+      if (cachedResult) {
+        console.log('🎯 Returning cached search result with relevance score:', cachedResult.relevanceScore);
+        return cachedResult.results;
+      }
+    }
+    
     // Log search configuration for debugging
     console.log(`Generating content with search: ${useSearch}`);
+    console.log('Medical keywords extracted:', medicalKeywords);
     
     console.log('Using search:', useSearch);
     
@@ -113,28 +253,28 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     const response = await genAI.models.generateContent({
         model: 'gemini-1.5-flash',
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        tools: useSearch ? [{
+        ...(useSearch && { tools: [{
             googleSearchRetrieval: {
                 dynamicRetrievalConfig: {
                     mode: "MODE_DYNAMIC",
                     dynamicThreshold: 0.7
                 }
             }
-        }] : undefined
-    });
+        }] })
+    } as any);
     
     // Debug response structure
     console.log('Full response structure:', JSON.stringify(response, null, 2));
     console.log('Response candidates:', response.candidates?.length || 0);
     
     // Get text content - handle both possible response formats
-    const responseText = response.text || response.response?.text() || response.candidates?.[0]?.content?.parts?.[0]?.text;
+    const responseText = (response as any).text || (response as any).response?.text() || response.candidates?.[0]?.content?.parts?.[0]?.text;
     console.log('📝 Response text preview:', responseText?.substring(0, 200) + '...');
     
     // Debug grounding metadata - check different possible locations for Gemini 1.5
     let groundingMetadata = response.candidates?.[0]?.groundingMetadata || 
-                          response.response?.candidates?.[0]?.groundingMetadata ||
-                          response.groundingMetadata;
+                          (response as any).response?.candidates?.[0]?.groundingMetadata ||
+                          (response as any).groundingMetadata;
     
     console.log('🔗 Grounding metadata:', JSON.stringify(groundingMetadata, null, 2));
     
@@ -231,6 +371,13 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
                 disclaimers: '⚠️ ADVERTENCIA: Las fuentes no pudieron ser validadas automáticamente. Se recomienda verificación manual.'
             };
         }
+    }
+
+    // Guardar en caché si se usó búsqueda y hay fuentes válidas
+    if (useSearch && enhancedResult.sources && enhancedResult.sources.length > 0) {
+      const averageRelevanceScore = enhancedResult.sources.length * 20; // Score estimado basado en cantidad de fuentes
+      setCachedResult(prompt, medicalKeywords, enhancedResult, averageRelevanceScore);
+      console.log('💾 Search result cached for future use');
     }
 
     return enhancedResult;
