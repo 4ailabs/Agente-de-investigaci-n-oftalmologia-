@@ -1,4 +1,4 @@
-import React, { useState, useMemo, Suspense, lazy, useRef } from 'react';
+import React, { useState, useEffect, useMemo, Suspense, lazy, useRef } from 'react';
 import { InvestigationState, ResearchStep, Source } from './types';
 import { createResearchPlanPrompt, createExecuteStepPrompt, createFinalReportPrompt } from './constants';
 import { generateContent } from './services/geminiService';
