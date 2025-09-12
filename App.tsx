@@ -681,6 +681,18 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       setQualityChecks([]);
   }
 
+  const handleNewInvestigation = () => {
+    // Limpiar localStorage completamente
+    localStorageService.clearAllInvestigations();
+    setInvestigation(null);
+    setCurrentInvestigationId(null);
+    setMedicalContext(null);
+    setClinicalReasoning(null);
+    setQualityChecks([]);
+    setInvestigationHistory([]);
+    console.log('🆕 Nueva investigación iniciada - localStorage limpiado');
+  };
+
   // Load investigation from history
   const handleLoadInvestigation = (investigationId: string) => {
     try {
@@ -878,14 +890,13 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     <h2 className="text-base lg:text-xl font-semibold text-slate-800">Investigación Actual</h2>
                                 </div>
                                 <button 
-                                    onClick={handleReset} 
-                                    className="flex items-center px-2 lg:px-3 py-1 lg:py-1.5 text-xs lg:text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+                                    onClick={handleNewInvestigation} 
+                                    className="flex items-center px-3 lg:px-4 py-2 lg:py-2.5 text-sm lg:text-base font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                                     </svg>
-                                    <span className="hidden lg:inline">Nueva</span>
-                                    <span className="lg:hidden">🔄</span>
+                                    <span>Nueva Investigación</span>
                                 </button>
                              </div>
                              <div className="bg-blue-50 p-2 lg:p-3 rounded-lg">
