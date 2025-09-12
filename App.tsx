@@ -274,14 +274,14 @@ const App: React.FC = () => {
     setActiveView({ type: 'step', id: 1 });
 
     // Extract patient info for storage
-    const patientInfo = {
+    const patientInfoForStorage = {
       age: initialContext.patientProfile.age || 'No especificado',
       sex: initialContext.patientProfile.sex || 'No especificado',
       symptoms: initialContext.patientProfile.currentSymptoms.map(s => s.description).join(', ') || 'No especificados'
     };
 
     // Save investigation to localStorage
-    const investigationId = localStorageService.saveInvestigation(newInvestigation, patientInfo);
+    const investigationId = localStorageService.saveInvestigation(newInvestigation, patientInfoForStorage);
     setCurrentInvestigationId(investigationId);
     
     // Update history
