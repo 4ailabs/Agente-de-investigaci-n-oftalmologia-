@@ -20,7 +20,7 @@ export interface InvestigationHistory {
   lastUpdated: string;
 }
 
-export class LocalStorageService {
+class LocalStorageService {
   private static readonly STORAGE_KEY = 'ophthalmology_investigations';
   private static readonly ACTIVE_INVESTIGATION_KEY = 'active_investigation';
 
@@ -162,3 +162,6 @@ export class LocalStorageService {
     return { used, available, investigations };
   }
 }
+
+// Export the service instance
+export const localStorageService = LocalStorageService;
