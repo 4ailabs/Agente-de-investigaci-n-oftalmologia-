@@ -38,6 +38,9 @@ Al ejecutar cada paso de investigación, DEBES priorizar la búsqueda y el anál
 - PREFIERE fuentes de acceso abierto siempre que sea posible
 - Si una fuente requiere suscripción, indícalo claramente
 - Busca alternativas de acceso abierto antes de usar fuentes de pago
+- NUNCA incluyas referencias o fuentes como texto plano en el contenido
+- Las fuentes se manejan automáticamente por el sistema en la sección "Fuentes Consultadas"
+- Enfócate solo en el contenido médico, no en citar fuentes
 
 **RAZONAMIENTO BAYESIANO:**
 Para cada diagnóstico diferencial, considera:
@@ -128,7 +131,13 @@ Ejecuta el siguiente paso: "${currentStep.title}"
 - Identifica cualquier red flag o gap de información
 - Concluye con implicaciones para los próximos pasos
 
-**IMPORTANTE:** NO incluyas referencias o fuentes en el texto de tu respuesta. Las fuentes se mostrarán automáticamente en la sección dedicada. Enfócate únicamente en el contenido clínico y el razonamiento médico.
+**IMPORTANTE:** 
+- NO incluyas referencias o fuentes en el texto de tu respuesta
+- NO escribas "Fuentes:" seguido de texto
+- NO incluyas citas o referencias bibliográficas en el contenido
+- Las fuentes se manejan automáticamente por el sistema en la sección "Fuentes Consultadas"
+- Enfócate únicamente en el contenido clínico y el razonamiento médico
+- El sistema se encarga de mostrar las fuentes de forma separada y clickeable
 
 Utiliza la Búsqueda de Google siguiendo tu protocolo de priorización de fuentes. Tu respuesta DEBE basarse en evidencia médica de alta calidad y aplicar razonamiento clínico sistemático.
 `;
