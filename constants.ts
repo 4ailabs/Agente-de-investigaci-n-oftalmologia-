@@ -202,11 +202,7 @@ Tabla con formato:
 - **Recomendaciones para Profundización:** Investigación adicional sugerida
 
 ## 7. REFERENCIAS MÉDICAS CONSOLIDADAS
-Lista numerada de fuentes únicas por nivel de evidencia:
-- **Nivel I:** Metaanálisis y revisiones sistemáticas
-- **Nivel II:** Ensayos clínicos controlados
-- **Nivel III:** Guías de práctica clínica
-- **Nivel IV:** Series de casos y opiniones de expertos
+**IMPORTANTE:** NO incluyas las referencias en el texto del reporte. Las fuentes se mostrarán automáticamente en la sección de fuentes de la interfaz. Enfócate únicamente en el contenido clínico del reporte.
 
 **IMPORTANTE:** Aplica razonamiento clínico en cada sección, explicitando el proceso de toma de decisiones médicas.
 `;
