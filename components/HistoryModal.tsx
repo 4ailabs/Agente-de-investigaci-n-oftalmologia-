@@ -8,6 +8,7 @@ interface HistoryModalProps {
   onLoadInvestigation: (id: string) => void;
   onDeleteInvestigation: (id: string) => void;
   onExportInvestigation: (id: string) => void;
+  onCopyInvestigation: (id: string) => void;
   currentInvestigationId: string | null;
 }
 
@@ -18,6 +19,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
   onLoadInvestigation,
   onDeleteInvestigation,
   onExportInvestigation,
+  onCopyInvestigation,
   currentInvestigationId
 }) => {
   if (!isOpen) return null;
@@ -113,8 +115,8 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-3 mb-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(investigation.status)}`}>
-                          {getStatusText(investigation.status)}
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(investigation.investigation?.isGenerating ? 'active' : 'completed')}`}>
+                          {getStatusText(investigation.investigation?.isGenerating ? 'active' : 'completed')}
                         </span>
                         {currentInvestigationId === investigation.id && (
                           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
@@ -131,7 +133,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
                           {investigation.patientInfo.symptoms}
                         </p>
                         <p className="text-xs text-slate-500">
-                          {formatDate(investigation.timestamp)}
+                          {formatDate(new Date(investigation.createdAt).getTime())}
                         </p>
                       </div>
 
@@ -150,7 +152,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-2 ml-4">
+                    <div className="flex items-center space-x-1 ml-4">
                       <button
                         onClick={() => onLoadInvestigation(investigation.id)}
                         className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
@@ -162,9 +164,19 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
                       </button>
                       
                       <button
-                        onClick={() => onExportInvestigation(investigation.id)}
+                        onClick={() => onCopyInvestigation(investigation.id)}
                         className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors"
-                        title="Exportar investigación"
+                        title="Copiar resumen al portapapeles"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </button>
+                      
+                      <button
+                        onClick={() => onExportInvestigation(investigation.id)}
+                        className="p-2 text-purple-600 hover:bg-purple-100 rounded-lg transition-colors"
+                        title="Descargar archivo JSON"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -190,16 +202,54 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
 
         {/* Footer */}
         <div className="bg-slate-50 px-6 py-4 border-t border-slate-200">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-600">
-              Las investigaciones se guardan automáticamente en tu navegador
-            </p>
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Cerrar
-            </button>
+          <div className="space-y-3">
+            {/* Leyenda de iconos */}
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600">
+              <div className="flex items-center space-x-1">
+                <div className="w-4 h-4 bg-blue-100 rounded flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                </div>
+                <span>Cargar</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-4 h-4 bg-green-100 rounded flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <span>Copiar resumen</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-4 h-4 bg-purple-100 rounded flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <span>Descargar JSON</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-4 h-4 bg-red-100 rounded flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </div>
+                <span>Eliminar</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-slate-600">
+                Las investigaciones se guardan automáticamente en tu navegador
+              </p>
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       </div>
