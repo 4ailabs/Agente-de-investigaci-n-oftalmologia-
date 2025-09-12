@@ -420,17 +420,8 @@ const App: React.FC = () => {
         return updatedInvestigation;
     });
 
-    // Auto-navigate to next step or report after showing current result
-    setTimeout(() => {
-      const nextStepIndex = currentStepIndex + 1;
-      if (nextStepIndex < investigation.plan.length) {
-        // Navigate to next step after showing current result
-        setActiveView({ type: 'step', id: nextStepIndex + 1 });
-      } else {
-        // All steps completed, navigate to report
-        setActiveView({ type: 'report', id: null });
-      }
-    }, 3000); // 3 seconds delay to let user see the result
+    // Don't auto-navigate - let user manually navigate to next step
+    // This allows users to read the result at their own pace
   };
   
   const handleGenerateReport = async () => {
@@ -1173,6 +1164,60 @@ const App: React.FC = () => {
                                             })}
                                         </ul>
                                         </div>
+                                    </div>
+                                )}
+
+                                {/* Navigation Buttons for Steps */}
+                                {activeView.type === 'step' && investigation && (
+                                    <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                                        {/* Previous Step Button */}
+                                        {activeView.id && activeView.id > 1 && (
+                                            <button
+                                                onClick={() => {
+                                                    const prevStep = investigation.plan.find(step => step.id === activeView.id! - 1);
+                                                    if (prevStep && prevStep.status === 'completed') {
+                                                        setActiveView({ type: 'step', id: activeView.id! - 1 });
+                                                    }
+                                                }}
+                                                className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                                                </svg>
+                                                Paso Anterior
+                                            </button>
+                                        )}
+
+                                        {/* Next Step Button */}
+                                        {activeView.id && activeView.id < investigation.plan.length && (
+                                            <button
+                                                onClick={() => {
+                                                    const nextStep = investigation.plan.find(step => step.id === activeView.id! + 1);
+                                                    if (nextStep && nextStep.status === 'completed') {
+                                                        setActiveView({ type: 'step', id: activeView.id! + 1 });
+                                                    }
+                                                }}
+                                                className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                                            >
+                                                Siguiente Paso
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </button>
+                                        )}
+
+                                        {/* Final Report Button */}
+                                        {activeView.id && activeView.id === investigation.plan.length && investigation.finalReport && (
+                                            <button
+                                                onClick={() => setActiveView({ type: 'report', id: null })}
+                                                className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                                            >
+                                                Ver Reporte Final
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </button>
+                                        )}
                                     </div>
                                 )}
                             </div>
