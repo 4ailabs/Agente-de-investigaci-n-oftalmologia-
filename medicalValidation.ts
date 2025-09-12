@@ -192,7 +192,7 @@ export class MedicalSourceValidator {
     if (this.OPEN_ACCESS_DOMAINS.some(d => domain.includes(d))) {
       return {
         type: 'open',
-        indicator: '✅',
+        indicator: '✓',
         message: 'Acceso abierto'
       };
     }
@@ -216,7 +216,7 @@ export class MedicalSourceValidator {
     )) {
       return {
         type: 'open',
-        indicator: '✅',
+        indicator: '✓',
         message: 'Acceso abierto'
       };
     }
@@ -295,11 +295,11 @@ export class ContradictionDetector {
 
 // 3. DISCLAIMERS MÉDICOS
 export const MEDICAL_DISCLAIMERS: MedicalDisclaimers = {
-  ai_limitation: "⚠️ **IMPORTANTE**: Este análisis es generado por inteligencia artificial y no reemplaza el juicio clínico profesional.",
-  supervision_required: "👨‍⚕️ **SUPERVISIÓN MÉDICA REQUERIDA**: Todas las recomendaciones deben ser validadas por un médico calificado antes de su aplicación.",
-  evidence_quality: "📊 **CALIDAD DE EVIDENCIA**: La calidad y actualidad de la evidencia puede variar según las fuentes disponibles.",
-  not_diagnostic: "🚫 **NO ES DIAGNÓSTICO**: Este análisis no constituye un diagnóstico médico definitivo y no debe utilizarse como tal.",
-  source_validation: "🔍 **VALIDACIÓN DE FUENTES**: Las fuentes han sido evaluadas por autoridad médica, pero se recomienda verificación adicional."
+  ai_limitation: "**IMPORTANTE**: Este análisis es generado por inteligencia artificial y no reemplaza el juicio clínico profesional.",
+  supervision_required: "**SUPERVISIÓN MÉDICA REQUERIDA**: Todas las recomendaciones deben ser validadas por un médico calificado antes de su aplicación.",
+  evidence_quality: "**CALIDAD DE EVIDENCIA**: La calidad y actualidad de la evidencia puede variar según las fuentes disponibles.",
+  not_diagnostic: "**NO ES DIAGNÓSTICO**: Este análisis no constituye un diagnóstico médico definitivo y no debe utilizarse como tal.",
+  source_validation: "**VALIDACIÓN DE FUENTES**: Las fuentes han sido evaluadas por autoridad médica, pero se recomienda verificación adicional."
 };
 
 // 4. GENERADOR DE DISCLAIMERS PARA REPORTES

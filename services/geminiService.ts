@@ -105,9 +105,9 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     const genAI = getAI();
     
     // Log search configuration for debugging
-    console.log(`🔍 Generating content with search: ${useSearch}`);
+    console.log(`Generating content with search: ${useSearch}`);
     
-    console.log('🔧 Using search:', useSearch);
+    console.log('Using search:', useSearch);
     
     // Use the correct method for Gemini 1.5 with search capabilities
     const response = await genAI.models.generateContent({
@@ -124,8 +124,8 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     });
     
     // Debug response structure
-    console.log('📊 Full response structure:', JSON.stringify(response, null, 2));
-    console.log('📊 Response candidates:', response.candidates?.length || 0);
+    console.log('Full response structure:', JSON.stringify(response, null, 2));
+    console.log('Response candidates:', response.candidates?.length || 0);
     
     // Get text content - handle both possible response formats
     const responseText = response.text || response.response?.text() || response.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -144,10 +144,10 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
                           groundingMetadata?.groundingSupports ||
                           groundingMetadata?.retrievalMetadata?.googleSearchDynamicRetrievalScore;
     
-    console.log(`🔍 Raw grounding chunks found: ${groundingChunks?.length || 0}`);
+    console.log(`Raw grounding chunks found: ${groundingChunks?.length || 0}`);
     
     if (groundingChunks) {
-      console.log('📋 Grounding chunks details:', groundingChunks.map((chunk: any) => ({
+      console.log('Grounding chunks details:', groundingChunks.map((chunk: any) => ({
         hasWeb: !!(chunk.web || chunk.webSearchResult),
         uri: chunk.web?.uri || chunk.webSearchResult?.uri || chunk.uri || 'NO_URI',
         title: chunk.web?.title || chunk.webSearchResult?.title || chunk.title || 'NO_TITLE'
@@ -181,9 +181,9 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     // Filter sources for relevance to medical content
     if (sources && sources.length > 0) {
       sources = filterRelevantSources(sources, responseText, prompt);
-      console.log(`🎯 Source filtering: ${groundingChunks?.length || 0} original -> ${sources?.length || 0} relevant`);
+      console.log(`Source filtering: ${groundingChunks?.length || 0} original -> ${sources?.length || 0} relevant`);
     } else if (useSearch) {
-      console.warn('⚠️ WARNING: Search was enabled but no sources were found!');
+      console.warn('WARNING: Search was enabled but no sources were found!');
       console.log('📝 Generated text preview:', responseText?.substring(0, 200) + '...');
     }
 
