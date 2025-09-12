@@ -388,7 +388,7 @@ export class QualityAssuranceEngine {
   static formatQualityReport(check: QualityCheck): string {
     let report = `### REPORTE DE CALIDAD - ${check.stepTitle} ###\n\n`;
     
-    report += `**Estado:** ${check.approved ? '✅ APROBADO' : '❌ REQUIERE REVISIÓN'}\n`;
+    report += `**Estado:** ${check.approved ? 'APROBADO' : 'REQUIERE REVISIÓN'}\n`;
     report += `**Calidad General:** ${(check.metrics.overallQuality * 100).toFixed(1)}%\n\n`;
     
     report += `**Métricas Detalladas:**\n`;
@@ -400,10 +400,10 @@ export class QualityAssuranceEngine {
     if (check.issues.length > 0) {
       report += `**Problemas Identificados:**\n`;
       check.issues.forEach((issue, index) => {
-        const icon = issue.severity === 'critical' ? '🚨' : 
-                    issue.severity === 'high' ? '⚠️' : 
-                    issue.severity === 'medium' ? '⚡' : 'ℹ️';
-        report += `${index + 1}. ${icon} ${issue.description}\n`;
+        const icon = issue.severity === 'critical' ? 'CRITICO' : 
+                    issue.severity === 'high' ? 'ALTO' : 
+                    issue.severity === 'medium' ? 'MEDIO' : 'INFO';
+        report += `${index + 1}. [${icon}] ${issue.description}\n`;
         report += `   Ubicación: ${issue.location}\n`;
         report += `   Solución: ${issue.suggestedFix}\n\n`;
       });
