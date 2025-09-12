@@ -1,6 +1,10 @@
 import React from 'react';
 
-const Header: React.FC<{ onShowExplanation: () => void }> = ({ onShowExplanation }) => {
+const Header: React.FC<{ 
+  onShowExplanation: () => void;
+  onShowHistory: () => void;
+  investigationCount: number;
+}> = ({ onShowExplanation, onShowHistory, investigationCount }) => {
   return (
     <header className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 lg:py-6">
@@ -35,9 +39,25 @@ const Header: React.FC<{ onShowExplanation: () => void }> = ({ onShowExplanation
                 </h1>
             </div>
             
-            {/* Action button - Responsive */}
+            {/* Action buttons - Responsive */}
             <div className="flex items-center space-x-2 flex-shrink-0">
-                {/* Mobile button */}
+                {/* History button - Mobile */}
+                <button 
+                    onClick={onShowHistory} 
+                    className="lg:hidden flex items-center justify-center w-12 h-12 text-slate-700 hover:bg-slate-100 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px] relative"
+                    aria-label="Historial de investigaciones"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {investigationCount > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            {investigationCount}
+                        </span>
+                    )}
+                </button>
+
+                {/* Guide button - Mobile */}
                 <button 
                     onClick={onShowExplanation} 
                     className="lg:hidden flex items-center justify-center w-12 h-12 text-slate-700 hover:bg-slate-100 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px]"
@@ -48,7 +68,23 @@ const Header: React.FC<{ onShowExplanation: () => void }> = ({ onShowExplanation
                     </svg>
                 </button>
 
-                {/* Desktop button */}
+                {/* Desktop buttons */}
+                <button 
+                    onClick={onShowHistory} 
+                    className="hidden lg:flex items-center space-x-2 px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm min-h-[44px] relative"
+                    aria-label="Historial de investigaciones"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Historial</span>
+                    {investigationCount > 0 && (
+                        <span className="bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            {investigationCount}
+                        </span>
+                    )}
+                </button>
+
                 <button 
                     onClick={onShowExplanation} 
                     className="hidden lg:flex items-center space-x-2 px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm min-h-[44px]"
