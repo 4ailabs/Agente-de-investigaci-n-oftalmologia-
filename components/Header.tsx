@@ -34,9 +34,17 @@ const Header: React.FC<{
                 </div>
                 
                 {/* Title */}
-                <h1 className="text-sm lg:text-2xl font-bold text-slate-900 lg:text-transparent lg:bg-gradient-to-r lg:from-slate-900 lg:to-slate-700 lg:bg-clip-text leading-tight truncate">
-                  Agente de Investigación Clínica de Oftalmología
-                </h1>
+                <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-3">
+                  <h1 className="text-sm lg:text-2xl font-bold text-slate-900 lg:text-transparent lg:bg-gradient-to-r lg:from-slate-900 lg:to-slate-700 lg:bg-clip-text leading-tight truncate">
+                    Agente de Investigación Clínica de Oftalmología
+                  </h1>
+                  <div className="flex items-center space-x-2 mt-1 lg:mt-0">
+                    <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded flex items-center justify-center">
+                      <span className="text-white font-bold text-xs">4A</span>
+                    </div>
+                    <span className="text-slate-600 text-xs lg:text-sm font-medium">4 ailabs</span>
+                  </div>
+                </div>
             </div>
             
             {/* Action buttons - Responsive */}
