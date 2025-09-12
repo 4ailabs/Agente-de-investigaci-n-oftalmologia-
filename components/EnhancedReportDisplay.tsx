@@ -366,7 +366,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
           )}
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-col lg:flex-row lg:items-center space-y-3 lg:space-y-0 lg:space-x-3">
           {/* View Mode Selector */}
           <div className="flex items-center bg-slate-100 rounded-lg p-1">
             <button
@@ -395,32 +395,36 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
             </button>
           </div>
 
-          {/* Search */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Buscar en el reporte..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-64 px-4 py-2 pl-10 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-            <svg className="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-
-          {/* Copy button */}
-          {onCopy && (
-            <button
-              onClick={onCopy}
-              className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          {/* Search and Copy - Responsive Layout */}
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 flex-1">
+            {/* Search */}
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Buscar en el reporte..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 pl-10 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <svg className="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <span>{isCopied ? '¡Copiado!' : 'Copiar Reporte'}</span>
-            </button>
-          )}
+            </div>
+
+            {/* Copy button */}
+            {onCopy && (
+              <button
+                onClick={onCopy}
+                className="flex items-center justify-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm whitespace-nowrap"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span className="hidden sm:inline">{isCopied ? '¡Copiado!' : 'Copiar Reporte'}</span>
+                <span className="sm:hidden">{isCopied ? '¡Copiado!' : 'Copiar'}</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
