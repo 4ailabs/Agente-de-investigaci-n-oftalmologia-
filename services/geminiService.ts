@@ -107,27 +107,22 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     // Log search configuration for debugging
     console.log(`🔍 Generating content with search: ${useSearch}`);
     
-    // Use the correct API structure for the current SDK version
-    const requestConfig: any = {
-        model: 'gemini-1.5-flash',
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    };
+    console.log('🔧 Using search:', useSearch);
     
-    // Add Google Search tool if needed - correct API structure for Gemini 1.5
-    if (useSearch) {
-        requestConfig.tools = [{
+    // Use the correct method for Gemini 1.5 with search capabilities
+    const model = genAI.getGenerativeModel({ 
+        model: 'gemini-1.5-flash',
+        tools: useSearch ? [{
             googleSearchRetrieval: {
                 dynamicRetrievalConfig: {
                     mode: "MODE_DYNAMIC",
                     dynamicThreshold: 0.7
                 }
             }
-        }];
-    }
+        }] : undefined
+    });
     
-    console.log('🔧 Request config:', JSON.stringify(requestConfig, null, 2));
-    
-    const response = await genAI.models.generateContent(requestConfig);
+    const response = await model.generateContent(prompt);
     
     // Debug response structure
     console.log('📊 Full response structure:', JSON.stringify(response, null, 2));
