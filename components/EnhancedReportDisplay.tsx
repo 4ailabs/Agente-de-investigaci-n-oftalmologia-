@@ -168,7 +168,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       return (
         <h1 
           id={id} 
-          className="text-xl lg:text-2xl font-bold mb-6 text-slate-900 border-b-2 border-blue-100 pb-3"
+          className="text-2xl lg:text-3xl font-bold mb-6 text-slate-900 border-b-2 border-blue-100 pb-3"
           {...props}
         >
           <div className="flex items-center">
@@ -189,7 +189,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       return (
         <h2 
           id={id} 
-          className="text-lg lg:text-xl font-semibold mb-4 text-slate-800 mt-8"
+          className="text-xl lg:text-2xl font-semibold mb-4 text-slate-800 mt-8"
           {...props}
         >
           <div className="flex items-center">
@@ -210,7 +210,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       return (
         <h3 
           id={id} 
-          className="text-base lg:text-lg font-medium mb-3 text-slate-700 mt-6"
+          className="text-lg lg:text-xl font-medium mb-3 text-slate-700 mt-6"
           {...props}
         >
           <div className="flex items-center">
@@ -221,12 +221,12 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       );
     },
     p: ({children}: any) => (
-      <p className="text-sm mb-4 leading-7 text-slate-700">
+      <p className="text-sm lg:text-base mb-4 leading-7 text-slate-700">
         {children}
       </p>
     ),
     ul: ({children}: any) => (
-      <ul className="text-sm mb-4 pl-6 space-y-2">
+      <ul className="text-sm lg:text-base mb-4 pl-6 space-y-2">
         {children}
       </ul>
     ),
@@ -255,7 +255,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
     table: ({children}: any) => (
       <div className="my-6 overflow-hidden">
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-t-lg border-b border-blue-200">
-          <h4 className="text-sm font-semibold text-blue-900 flex items-center">
+          <h4 className="text-sm lg:text-base font-semibold text-blue-900 flex items-center">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2a2 2 0 002-2z" />
             </svg>
@@ -286,7 +286,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
     ),
     th: ({children, ...props}: any) => (
       <th 
-        className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 last:border-r-0"
+        className="px-4 py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 last:border-r-0"
         {...props}
       >
         <div className="flex items-center space-x-1">
@@ -296,7 +296,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
     ),
     td: ({children, ...props}: any) => (
       <td 
-        className="px-4 py-3 text-sm text-gray-900 border-r border-gray-100 last:border-r-0 max-w-xs"
+        className="px-4 py-3 text-sm lg:text-base text-gray-900 border-r border-gray-100 last:border-r-0 max-w-xs"
         {...props}
       >
         <div className="break-words">
@@ -317,13 +317,13 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-slate-900">Reporte Clínico</h2>
+            <h2 className="text-xl lg:text-2xl font-bold text-slate-900">Reporte Clínico</h2>
           </div>
           
           {sections.length > 3 && (
             <button
               onClick={() => setShowTableOfContents(!showTableOfContents)}
-              className="px-3 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+              className="px-3 py-2 text-sm lg:text-base font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
             >
               <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

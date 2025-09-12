@@ -63,9 +63,9 @@ export const MobileLoadingCard: React.FC<{
         <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-pulse shadow-lg">
           <Spinner size="lg" color="white" />
         </div>
-        <h3 className="text-base lg:text-lg font-bold text-slate-800 mb-2">{title}</h3>
+        <h3 className="text-lg lg:text-xl font-bold text-slate-800 mb-3">{title}</h3>
         {description && (
-          <p className="text-sm text-slate-600 mb-6">{description}</p>
+          <p className="text-sm lg:text-base text-slate-600 mb-6">{description}</p>
         )}
         <div className="flex items-center justify-center space-x-2">
           <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
