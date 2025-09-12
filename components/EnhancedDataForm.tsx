@@ -281,6 +281,697 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
           </div>
         )}
 
+        {/* Sección Examen Oftalmológico */}
+        {activeSection === 'exam' && (
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+            <h3 className="text-lg font-semibold text-slate-800 mb-4">Examen Oftalmológico</h3>
+            
+            {/* Agudeza Visual */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Agudeza Visual</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Ojo Derecho (OD)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.exam?.visualAcuity?.OD || ''}
+                    onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'OD'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: 20/20, 20/40, CF"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Ojo Izquierdo (OI)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.exam?.visualAcuity?.OI || ''}
+                    onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'OI'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: 20/20, 20/40, CF"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Pinhole
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.exam?.visualAcuity?.pinhole || ''}
+                    onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'pinhole'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Mejora con pinhole"
+                  />
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="withCorrection"
+                    checked={formData.exam?.visualAcuity?.withCorrection || false}
+                    onChange={(e) => handleNestedInputChange(['exam', 'visualAcuity', 'withCorrection'], e.target.checked)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="withCorrection" className="ml-2 text-sm text-slate-700">
+                    Con corrección
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Presión Intraocular */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Presión Intraocular</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    OD (mmHg)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.exam?.intraocularPressure?.OD || ''}
+                    onChange={(e) => handleNestedInputChange(['exam', 'intraocularPressure', 'OD'], parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    min="0"
+                    max="50"
+                    step="0.1"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    OI (mmHg)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.exam?.intraocularPressure?.OI || ''}
+                    onChange={(e) => handleNestedInputChange(['exam', 'intraocularPressure', 'OI'], parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    min="0"
+                    max="50"
+                    step="0.1"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Método
+                  </label>
+                  <select
+                    value={formData.exam?.intraocularPressure?.method || 'No medido'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'intraocularPressure', 'method'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="No medido">No medido</option>
+                    <option value="Goldmann">Goldmann</option>
+                    <option value="Tonopen">Tonopen</option>
+                    <option value="iCare">iCare</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Examen de Pupila */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Examen de Pupila</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Tamaño OD
+                  </label>
+                  <select
+                    value={formData.exam?.pupilResponse?.size?.OD || 'Normal'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'pupilResponse', 'size', 'OD'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Miótica">Miótica</option>
+                    <option value="Midriática">Midriática</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Tamaño OI
+                  </label>
+                  <select
+                    value={formData.exam?.pupilResponse?.size?.OI || 'Normal'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'pupilResponse', 'size', 'OI'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Miótica">Miótica</option>
+                    <option value="Midriática">Midriática</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Reacción a la luz
+                  </label>
+                  <select
+                    value={formData.exam?.pupilResponse?.reaction?.light || 'Normal'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'pupilResponse', 'reaction', 'light'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Lenta">Lenta</option>
+                    <option value="Ausente">Ausente</option>
+                  </select>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="anisocoria"
+                    checked={formData.exam?.pupilResponse?.anisocoria || false}
+                    onChange={(e) => handleNestedInputChange(['exam', 'pupilResponse', 'anisocoria'], e.target.checked)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="anisocoria" className="ml-2 text-sm text-slate-700">
+                    Anisocoria
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Segmento Anterior */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Segmento Anterior</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Inyección conjuntival
+                  </label>
+                  <select
+                    value={formData.exam?.anteriorSegment?.conjunctiva?.injection || 'Normal'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'anteriorSegment', 'conjunctiva', 'injection'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Leve">Leve</option>
+                    <option value="Moderada">Moderada</option>
+                    <option value="Severa">Severa</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Claridad corneal
+                  </label>
+                  <select
+                    value={formData.exam?.anteriorSegment?.cornea?.clarity || 'Clara'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'anteriorSegment', 'cornea', 'clarity'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Clara">Clara</option>
+                    <option value="Edema">Edema</option>
+                    <option value="Opacidad">Opacidad</option>
+                    <option value="Ulcera">Úlcera</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Profundidad de cámara anterior
+                  </label>
+                  <select
+                    value={formData.exam?.anteriorSegment?.anteriorChamber?.depth || 'Normal'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'anteriorSegment', 'anteriorChamber', 'depth'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Shallow">Shallow</option>
+                    <option value="Profunda">Profunda</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Claridad del cristalino
+                  </label>
+                  <select
+                    value={formData.exam?.anteriorSegment?.lens?.clarity || 'Clara'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'anteriorSegment', 'lens', 'clarity'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Clara">Clara</option>
+                    <option value="Catarata">Catarata</option>
+                    <option value="Subluxación">Subluxación</option>
+                    <option value="Afaquia">Afaquia</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Fondo de Ojo */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Fondo de Ojo</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Relación copa/disco OD
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.exam?.fundus?.opticNerve?.cupDiscRatio?.OD || ''}
+                    onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'opticNerve', 'cupDiscRatio', 'OD'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: 0.3, 0.5"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Relación copa/disco OI
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.exam?.fundus?.opticNerve?.cupDiscRatio?.OI || ''}
+                    onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'opticNerve', 'cupDiscRatio', 'OI'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: 0.3, 0.5"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Palidez del nervio óptico
+                  </label>
+                  <select
+                    value={formData.exam?.fundus?.opticNerve?.pallor || 'Normal'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'opticNerve', 'pallor'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Leve">Leve</option>
+                    <option value="Moderada">Moderada</option>
+                    <option value="Severa">Severa</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Estado de la mácula
+                  </label>
+                  <select
+                    value={formData.exam?.fundus?.macula?.center || 'Normal'}
+                    onChange={(e) => handleNestedInputChange(['exam', 'fundus', 'macula', 'center'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Edema">Edema</option>
+                    <option value="Atrofia">Atrofia</option>
+                    <option value="Agujero">Agujero</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Campos de texto libre para observaciones adicionales */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Observaciones Adicionales
+              </label>
+              <textarea
+                value={formData.exam?.additionalNotes || ''}
+                onChange={(e) => handleInputChange('additionalNotes', e.target.value)}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                rows={4}
+                placeholder="Otras observaciones del examen oftalmológico..."
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Sección Antecedentes */}
+        {activeSection === 'history' && (
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+            <h3 className="text-lg font-semibold text-slate-800 mb-4">Antecedentes Médicos</h3>
+            
+            {/* Antecedentes Sistémicos */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Enfermedades Sistémicas</h4>
+              <div className="space-y-3">
+                {formData.systemicDiseases?.map((disease, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={disease}
+                      onChange={(e) => {
+                        const newDiseases = [...(formData.systemicDiseases || [])];
+                        newDiseases[index] = e.target.value;
+                        handleInputChange('systemicDiseases', newDiseases);
+                      }}
+                      className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Ej: Diabetes, Hipertensión, Artritis"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newDiseases = formData.systemicDiseases?.filter((_, i) => i !== index) || [];
+                        handleInputChange('systemicDiseases', newDiseases);
+                      }}
+                      className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newDiseases = [...(formData.systemicDiseases || []), ''];
+                    handleInputChange('systemicDiseases', newDiseases);
+                  }}
+                  className="px-4 py-2 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded-lg transition-colors"
+                >
+                  + Agregar Enfermedad
+                </button>
+              </div>
+            </div>
+
+            {/* Medicamentos Actuales */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Medicamentos Actuales</h4>
+              <div className="space-y-3">
+                {formData.currentMedications?.map((med, index) => (
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                    <input
+                      type="text"
+                      value={med.name}
+                      onChange={(e) => {
+                        const newMeds = [...(formData.currentMedications || [])];
+                        newMeds[index] = { ...med, name: e.target.value };
+                        handleInputChange('currentMedications', newMeds);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Nombre del medicamento"
+                    />
+                    <input
+                      type="text"
+                      value={med.dosage}
+                      onChange={(e) => {
+                        const newMeds = [...(formData.currentMedications || [])];
+                        newMeds[index] = { ...med, dosage: e.target.value };
+                        handleInputChange('currentMedications', newMeds);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Dosis"
+                    />
+                    <input
+                      type="text"
+                      value={med.frequency}
+                      onChange={(e) => {
+                        const newMeds = [...(formData.currentMedications || [])];
+                        newMeds[index] = { ...med, frequency: e.target.value };
+                        handleInputChange('currentMedications', newMeds);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Frecuencia"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newMeds = formData.currentMedications?.filter((_, i) => i !== index) || [];
+                        handleInputChange('currentMedications', newMeds);
+                      }}
+                      className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newMeds = [...(formData.currentMedications || []), { name: '', dosage: '', frequency: '', indication: '' }];
+                    handleInputChange('currentMedications', newMeds);
+                  }}
+                  className="px-4 py-2 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded-lg transition-colors"
+                >
+                  + Agregar Medicamento
+                </button>
+              </div>
+            </div>
+
+            {/* Alergias */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Alergias Medicamentosas</h4>
+              <div className="space-y-3">
+                {formData.allergies?.map((allergy, index) => (
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <input
+                      type="text"
+                      value={allergy.substance}
+                      onChange={(e) => {
+                        const newAllergies = [...(formData.allergies || [])];
+                        newAllergies[index] = { ...allergy, substance: e.target.value };
+                        handleInputChange('allergies', newAllergies);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Sustancia"
+                    />
+                    <input
+                      type="text"
+                      value={allergy.reaction}
+                      onChange={(e) => {
+                        const newAllergies = [...(formData.allergies || [])];
+                        newAllergies[index] = { ...allergy, reaction: e.target.value };
+                        handleInputChange('allergies', newAllergies);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Tipo de reacción"
+                    />
+                    <div className="flex space-x-2">
+                      <select
+                        value={allergy.severity}
+                        onChange={(e) => {
+                          const newAllergies = [...(formData.allergies || [])];
+                          newAllergies[index] = { ...allergy, severity: e.target.value as 'Leve' | 'Moderada' | 'Severa' };
+                          handleInputChange('allergies', newAllergies);
+                        }}
+                        className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="Leve">Leve</option>
+                        <option value="Moderada">Moderada</option>
+                        <option value="Severa">Severa</option>
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newAllergies = formData.allergies?.filter((_, i) => i !== index) || [];
+                          handleInputChange('allergies', newAllergies);
+                        }}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newAllergies = [...(formData.allergies || []), { substance: '', reaction: '', severity: 'Leve' as const }];
+                    handleInputChange('allergies', newAllergies);
+                  }}
+                  className="px-4 py-2 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded-lg transition-colors"
+                >
+                  + Agregar Alergia
+                </button>
+              </div>
+            </div>
+
+            {/* Cirugías Previas */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Cirugías Previas</h4>
+              <div className="space-y-3">
+                {formData.previousSurgeries?.map((surgery, index) => (
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                    <input
+                      type="text"
+                      value={surgery.type}
+                      onChange={(e) => {
+                        const newSurgeries = [...(formData.previousSurgeries || [])];
+                        newSurgeries[index] = { ...surgery, type: e.target.value };
+                        handleInputChange('previousSurgeries', newSurgeries);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Tipo de cirugía"
+                    />
+                    <input
+                      type="date"
+                      value={surgery.date}
+                      onChange={(e) => {
+                        const newSurgeries = [...(formData.previousSurgeries || [])];
+                        newSurgeries[index] = { ...surgery, date: e.target.value };
+                        handleInputChange('previousSurgeries', newSurgeries);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <select
+                      value={surgery.eye}
+                      onChange={(e) => {
+                        const newSurgeries = [...(formData.previousSurgeries || [])];
+                        newSurgeries[index] = { ...surgery, eye: e.target.value as 'OD' | 'OI' | 'Ambos' | 'Sistémica' };
+                        handleInputChange('previousSurgeries', newSurgeries);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="OD">Ojo Derecho</option>
+                      <option value="OI">Ojo Izquierdo</option>
+                      <option value="Ambos">Ambos Ojos</option>
+                      <option value="Sistémica">Sistémica</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newSurgeries = formData.previousSurgeries?.filter((_, i) => i !== index) || [];
+                        handleInputChange('previousSurgeries', newSurgeries);
+                      }}
+                      className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newSurgeries = [...(formData.previousSurgeries || []), { type: '', date: '', eye: 'OD' as const, complications: '' }];
+                    handleInputChange('previousSurgeries', newSurgeries);
+                  }}
+                  className="px-4 py-2 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded-lg transition-colors"
+                >
+                  + Agregar Cirugía
+                </button>
+              </div>
+            </div>
+
+            {/* Historia Familiar */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Historia Familiar</h4>
+              <div className="space-y-3">
+                {formData.familyHistory?.map((family, index) => (
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <input
+                      type="text"
+                      value={family.condition}
+                      onChange={(e) => {
+                        const newFamily = [...(formData.familyHistory || [])];
+                        newFamily[index] = { ...family, condition: e.target.value };
+                        handleInputChange('familyHistory', newFamily);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Condición familiar"
+                    />
+                    <input
+                      type="text"
+                      value={family.relation}
+                      onChange={(e) => {
+                        const newFamily = [...(formData.familyHistory || [])];
+                        newFamily[index] = { ...family, relation: e.target.value };
+                        handleInputChange('familyHistory', newFamily);
+                      }}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Parentesco"
+                    />
+                    <div className="flex space-x-2">
+                      <input
+                        type="number"
+                        value={family.ageOfOnset || ''}
+                        onChange={(e) => {
+                          const newFamily = [...(formData.familyHistory || [])];
+                          newFamily[index] = { ...family, ageOfOnset: parseInt(e.target.value) || undefined };
+                          handleInputChange('familyHistory', newFamily);
+                        }}
+                        className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Edad de inicio"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newFamily = formData.familyHistory?.filter((_, i) => i !== index) || [];
+                          handleInputChange('familyHistory', newFamily);
+                        }}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newFamily = [...(formData.familyHistory || []), { condition: '', relation: '', ageOfOnset: undefined }];
+                    handleInputChange('familyHistory', newFamily);
+                  }}
+                  className="px-4 py-2 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded-lg transition-colors"
+                >
+                  + Agregar Antecedente Familiar
+                </button>
+              </div>
+            </div>
+
+            {/* Historia Social */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-slate-700 mb-3">Historia Social</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Tabaquismo
+                  </label>
+                  <select
+                    value={formData.socialHistory?.smoking || 'Nunca'}
+                    onChange={(e) => handleNestedInputChange(['socialHistory', 'smoking'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Nunca">Nunca</option>
+                    <option value="Ex-fumador">Ex-fumador</option>
+                    <option value="Fumador actual">Fumador actual</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Consumo de alcohol
+                  </label>
+                  <select
+                    value={formData.socialHistory?.alcohol || 'Nunca'}
+                    onChange={(e) => handleNestedInputChange(['socialHistory', 'alcohol'], e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="Nunca">Nunca</option>
+                    <option value="Ocasional">Ocasional</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Excesivo">Excesivo</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Campos de texto libre */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Queja Principal
+                </label>
+                <textarea
+                  value={formData.chiefComplaint || ''}
+                  onChange={(e) => handleInputChange('chiefComplaint', e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  rows={3}
+                  placeholder="Descripción de la queja principal del paciente..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Historia de la Enfermedad Actual
+                </label>
+                <textarea
+                  value={formData.historyOfPresentIllness || ''}
+                  onChange={(e) => handleInputChange('historyOfPresentIllness', e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  rows={4}
+                  placeholder="Descripción detallada de la evolución de la enfermedad actual..."
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Sección Síntomas */}
         {activeSection === 'symptoms' && (
           <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">

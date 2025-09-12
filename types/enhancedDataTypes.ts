@@ -195,6 +195,7 @@ export interface OphthalmologyExam {
   anteriorSegment: AnteriorSegmentExam;
   fundus: FundusExam;
   visualFields: VisualFieldExam;
+  additionalNotes?: string;
 }
 
 // Red flags for urgent conditions
