@@ -14,6 +14,7 @@ import Spinner, { MobileLoadingCard } from './components/Spinner';
 import useSwipeGesture from './hooks/useSwipeGesture';
 import { AudioRecorder } from './components/AudioRecorder';
 import { EnhancedDataForm } from './components/EnhancedDataForm';
+import DocumentCapture from './components/DocumentCapture';
 import { EnhancedPatientData } from './types/enhancedDataTypes';
 import { MedicalDataExtractionService } from './services/medicalDataExtraction';
 
@@ -35,6 +36,7 @@ const InitialQueryInput: React.FC<{
   const [sex, setSex] = useState<'M' | 'F' | ''>('');
   const [clinicalInfo, setClinicalInfo] = useState('');
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
+  const [showDocumentCapture, setShowDocumentCapture] = useState(false);
   const [extractedData, setExtractedData] = useState<Partial<EnhancedPatientData> | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -78,6 +80,26 @@ ${clinicalInfo.trim()}`;
   const handleAudioError = (error: string) => {
     console.error('Error en grabación de audio:', error);
     // Aquí podrías mostrar un toast o mensaje de error
+  };
+
+  const handleDocumentDataExtracted = (data: any) => {
+    console.log('Datos extraídos del documento:', data);
+    setExtractedData(data);
+    
+    // Pre-llenar campos básicos si están disponibles
+    if (data.age) setAge(data.age);
+    if (data.sex && (data.sex === 'M' || data.sex === 'F')) {
+      setSex(data.sex);
+    }
+    if (data.clinicalInfo?.chiefComplaint) {
+      setClinicalInfo(data.clinicalInfo.chiefComplaint);
+    }
+    
+    setShowDocumentCapture(false);
+  };
+
+  const handleDocumentError = (error: string) => {
+    console.error('Error en captura de documento:', error);
   };
 
 
@@ -188,24 +210,41 @@ ${clinicalInfo.trim()}`;
                     required
                   />
                   
-                  {/* Audio Recorder Button - Móvil optimizado */}
-                  <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                    <span className="text-xs text-slate-500 flex items-center">
-                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                      </svg>
-                      Sea específico para mejores resultados
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setShowAudioRecorder(!showAudioRecorder)}
-                      className="flex items-center justify-center space-x-2 px-4 py-3 sm:px-3 sm:py-2 text-base sm:text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200 min-h-[44px] sm:min-h-[36px]"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                      </svg>
-                      <span>{showAudioRecorder ? 'Ocultar Audio' : 'Dictar Texto'}</span>
-                    </button>
+                  {/* Audio y Documento Buttons - Móvil optimizado */}                                         
+                  <div className="mt-3 space-y-2">                                     
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-slate-500 flex items-center">                            
+                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">               
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />            
+                        </svg>
+                        Sea específico para mejores resultados                                               
+                      </span>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowAudioRecorder(!showAudioRecorder)}                             
+                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-base sm:text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200 min-h-[44px] sm:min-h-[36px]"                                                   
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>         
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />                               
+                        </svg>
+                        <span>{showAudioRecorder ? 'Ocultar Audio' : 'Dictar Texto'}</span>                  
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => setShowDocumentCapture(!showDocumentCapture)}                             
+                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-base sm:text-sm font-medium text-green-600 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition-colors duration-200 min-h-[44px] sm:min-h-[36px]"                                                   
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>         
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span>{showDocumentCapture ? 'Ocultar Cámara' : 'Capturar Expediente'}</span>                  
+                      </button>
+                    </div>
                   </div>
                   
                   {/* Transcripción de Voz */}
@@ -214,6 +253,17 @@ ${clinicalInfo.trim()}`;
                       <AudioRecorder
                         onTranscriptionComplete={handleAudioTranscription}
                         onError={handleAudioError}
+                      />
+                    </div>
+                  )}
+
+                  {/* Captura de Documentos */}
+                  {showDocumentCapture && (
+                    <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                      <DocumentCapture
+                        onDataExtracted={handleDocumentDataExtracted}
+                        onError={handleDocumentError}
+                        isLoading={isLoading}
                       />
                     </div>
                   )}
