@@ -39,12 +39,6 @@ const InitialQueryInput: React.FC<{
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [showDocumentCapture, setShowDocumentCapture] = useState(false);
   const [extractedData, setExtractedData] = useState<Partial<EnhancedPatientData> | null>(null);
-  const [showSplash, setShowSplash] = useState(true);
-
-  // Debug splash screen
-  useEffect(() => {
-    console.log('🎬 App: showSplash =', showSplash);
-  }, [showSplash]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -333,6 +327,12 @@ const App: React.FC = () => {
   const [investigation, setInvestigation] = useState<InvestigationState | null>(null);
   const [activeView, setActiveView] = useState<{ type: 'step' | 'report'; id: number | null }>({ type: 'step', id: 1 });
   const [showExplanation, setShowExplanation] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+
+  // Debug splash screen
+  useEffect(() => {
+    console.log('🎬 App: showSplash =', showSplash);
+  }, [showSplash]);
   const [isCopied, setIsCopied] = useState(false);
   const [copiedStepId, setCopiedStepId] = useState<number | null>(null);
   
