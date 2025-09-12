@@ -34,7 +34,7 @@ const Header: React.FC<{
                 </div>
                 
                 {/* Title */}
-                <h1 className="text-sm lg:text-2xl font-bold text-slate-900 lg:text-transparent lg:bg-gradient-to-r lg:from-slate-900 lg:to-slate-700 lg:bg-clip-text leading-tight truncate">
+                <h1 className="text-sm lg:text-xl font-bold text-slate-900 lg:text-transparent lg:bg-gradient-to-r lg:from-slate-900 lg:to-slate-700 lg:bg-clip-text leading-tight truncate">
                   Agente de Investigación Clínica de Oftalmología
                 </h1>
             </div>
