@@ -25,6 +25,85 @@ interface RelevanceMetrics {
   totalScore: number;
 }
 
+// Sistema híbrido Pro/Flash
+interface ModelSelection {
+  model: 'gemini-1.5-pro' | 'gemini-1.5-flash';
+  reason: string;
+  confidence: number;
+}
+
+// Clasificador inteligente para selección de modelo
+class MedicalModelClassifier {
+  private static medicalKeywords = [
+    // Síntomas oculares
+    'dolor ocular', 'visión borrosa', 'pérdida de visión', 'fotofobia', 'diplopía',
+    'escotoma', 'miodesopsias', 'halos', 'distorsión visual', 'cefalea',
+    
+    // Enfermedades oftalmológicas
+    'glaucoma', 'catarata', 'retinopatía', 'macular', 'desprendimiento', 'retina',
+    'uveítis', 'conjuntivitis', 'queratitis', 'blefaritis', 'estrabismo',
+    
+    // Términos médicos complejos
+    'diagnóstico diferencial', 'fisiopatología', 'etiología', 'patogénesis',
+    'tratamiento', 'pronóstico', 'complicaciones', 'seguimiento',
+    
+    // Análisis clínico
+    'análisis', 'evaluación', 'examen', 'exploración', 'hallazgos',
+    'signos', 'síntomas', 'historia clínica', 'antecedentes'
+  ];
+
+  private static complexTasks = [
+    'reporte final', 'análisis diferencial', 'plan de investigación',
+    'evaluación clínica', 'diagnóstico', 'tratamiento recomendado'
+  ];
+
+  static classify(prompt: string, context?: string): ModelSelection {
+    const fullText = `${prompt} ${context || ''}`.toLowerCase();
+    
+    // Contar palabras médicas
+    const medicalWordCount = this.medicalKeywords.filter(keyword => 
+      fullText.includes(keyword.toLowerCase())
+    ).length;
+
+    // Detectar tareas complejas
+    const hasComplexTask = this.complexTasks.some(task => 
+      fullText.includes(task.toLowerCase())
+    );
+
+    // Detectar longitud del prompt (prompts largos = más complejos)
+    const isLongPrompt = prompt.length > 500;
+
+    // Detectar si es reporte final o análisis profundo
+    const isDeepAnalysis = fullText.includes('reporte') || 
+                          fullText.includes('análisis') ||
+                          fullText.includes('evaluación') ||
+                          fullText.includes('diagnóstico diferencial');
+
+    // Calcular score de complejidad médica
+    const medicalComplexityScore = (
+      medicalWordCount * 0.4 +
+      (hasComplexTask ? 3 : 0) * 0.3 +
+      (isLongPrompt ? 2 : 0) * 0.2 +
+      (isDeepAnalysis ? 3 : 0) * 0.1
+    );
+
+    // Decisión basada en score
+    if (medicalComplexityScore >= 2.5) {
+      return {
+        model: 'gemini-1.5-pro',
+        reason: `Análisis médico complejo (score: ${medicalComplexityScore.toFixed(1)})`,
+        confidence: Math.min(0.9, medicalComplexityScore / 5)
+      };
+    } else {
+      return {
+        model: 'gemini-1.5-flash',
+        reason: `Tarea médica simple (score: ${medicalComplexityScore.toFixed(1)})`,
+        confidence: Math.min(0.9, (5 - medicalComplexityScore) / 5)
+      };
+    }
+  }
+}
+
 let ai: GoogleGenAI | null = null;
 
 const getAI = (): GoogleGenAI => {
@@ -227,16 +306,24 @@ const filterRelevantSources = (sources: { web: { uri: string; title: string; } }
   return relevantSources.slice(0, 8);
 };
 
-export const generateContent = async (prompt: string, useSearch: boolean = false): Promise<GenerationResult> => {
+export const generateContent = async (prompt: string, useSearch: boolean = false, context?: string): Promise<GenerationResult> => {
   try {
     const genAI = getAI();
+    
+    // Clasificar y seleccionar modelo híbrido
+    const modelSelection = MedicalModelClassifier.classify(prompt, context);
+    
+    console.log(`🤖 Modelo seleccionado: ${modelSelection.model}`);
+    console.log(`📊 Razón: ${modelSelection.reason}`);
+    console.log(`🎯 Confianza: ${(modelSelection.confidence * 100).toFixed(1)}%`);
     
     // Extraer palabras clave médicas del prompt para caché
     const medicalKeywords = extractMedicalKeywords(prompt);
     
-    // Verificar caché si se usa búsqueda
+    // Verificar caché si se usa búsqueda (incluyendo modelo en la clave)
     if (useSearch) {
-      const cachedResult = getCachedResult(prompt, medicalKeywords);
+      const cacheKey = `${modelSelection.model}_${prompt}`;
+      const cachedResult = getCachedResult(cacheKey, medicalKeywords);
       if (cachedResult) {
         console.log('🎯 Returning cached search result with relevance score:', cachedResult.relevanceScore);
         return cachedResult.results;
@@ -244,21 +331,29 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     }
     
     // Log search configuration for debugging
-    console.log(`Generating content with search: ${useSearch}`);
+    console.log(`Generating content with search: ${useSearch} using ${modelSelection.model}`);
     console.log('Medical keywords extracted:', medicalKeywords);
     
     console.log('Using search:', useSearch);
     
+    // Configuración optimizada según el modelo seleccionado
+    const generationConfig = modelSelection.model === 'gemini-1.5-pro' ? {
+      temperature: 0.05, // Muy baja temperatura para máxima precisión médica
+      topK: 20,
+      topP: 0.9,
+      maxOutputTokens: 16384, // Mayor capacidad para análisis complejos
+    } : {
+      temperature: 0.1, // Baja temperatura para respuestas médicas precisas
+      topK: 40,
+      topP: 0.95,
+      maxOutputTokens: 8192, // Capacidad estándar para tareas simples
+    };
+
     // Use the correct method for Gemini 1.5 with search capabilities
     const response = await genAI.models.generateContent({
-        model: 'gemini-1.5-flash',
+        model: modelSelection.model,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: {
-            temperature: 0.1, // Baja temperatura para respuestas médicas precisas
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 8192, // Aumentado para análisis detallados
-        },
+        generationConfig,
         ...(useSearch && { tools: [{
             googleSearchRetrieval: {
                 dynamicRetrievalConfig: {
