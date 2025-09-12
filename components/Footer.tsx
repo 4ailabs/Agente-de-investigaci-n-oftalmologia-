@@ -9,10 +9,10 @@ const Footer: React.FC = () => {
             <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded flex items-center justify-center">
               <span className="text-white font-bold text-xs">4A</span>
             </div>
-            <span className="text-slate-600 text-sm">4 ailabs</span>
+            <span className="text-slate-600 text-sm">4ailabs</span>
           </div>
           <p className="text-slate-500 text-xs">
-            © 2024 4 ailabs. Todos los derechos reservados.
+            © 2024 4ailabs. Todos los derechos reservados.
           </p>
         </div>
       </div>

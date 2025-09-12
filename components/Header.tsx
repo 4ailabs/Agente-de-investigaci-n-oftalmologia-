@@ -42,7 +42,7 @@ const Header: React.FC<{
                     <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded flex items-center justify-center">
                       <span className="text-white font-bold text-xs">4A</span>
                     </div>
-                    <span className="text-slate-600 text-xs lg:text-sm font-medium">4 ailabs</span>
+                    <span className="text-slate-600 text-xs lg:text-sm font-medium">4ailabs</span>
                   </div>
                 </div>
             </div>
