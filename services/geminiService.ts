@@ -111,17 +111,10 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     
     // Use the correct method for Gemini 1.5 with search capabilities
     const model = genAI.getGenerativeModel({ 
-        model: 'gemini-1.5-flash',
-        tools: useSearch ? [{
-            googleSearchRetrieval: {
-                dynamicRetrievalConfig: {
-                    mode: "MODE_DYNAMIC",
-                    dynamicThreshold: 0.7
-                }
-            }
-        }] : undefined
+        model: 'gemini-1.5-flash'
     });
     
+    // For now, let's test without search tools to see if the basic API works
     const response = await model.generateContent(prompt);
     
     // Debug response structure
