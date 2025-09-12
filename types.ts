@@ -7,6 +7,16 @@ export interface Source {
   };
 }
 
+export interface StepFeedback {
+  stepId: number;
+  observations: string;
+  additionalData: string;
+  clinicalFindings: string;
+  recommendations: string;
+  confidence: 'low' | 'medium' | 'high';
+  timestamp: string;
+}
+
 export interface ResearchStep {
   id: number;
   title: string;
@@ -14,6 +24,7 @@ export interface ResearchStep {
   result: string | null;
   prompt: string;
   sources: Source[] | null;
+  feedback?: StepFeedback;
 }
 
 export interface InvestigationState {
