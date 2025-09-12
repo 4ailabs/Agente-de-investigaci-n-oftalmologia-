@@ -17,6 +17,7 @@ import { EnhancedDataForm } from './components/EnhancedDataForm';
 import DocumentCapture from './components/DocumentCapture';
 import { EnhancedPatientData } from './types/enhancedDataTypes';
 import { MedicalDataExtractionService } from './services/medicalDataExtraction';
+import SplashScreen from './components/SplashScreen';
 
 // Lazy load heavy components
 const ExplanationModal = lazy(() => import('./components/ExplanationModal'));
@@ -38,6 +39,12 @@ const InitialQueryInput: React.FC<{
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [showDocumentCapture, setShowDocumentCapture] = useState(false);
   const [extractedData, setExtractedData] = useState<Partial<EnhancedPatientData> | null>(null);
+  const [showSplash, setShowSplash] = useState(true);
+
+  // Debug splash screen
+  useEffect(() => {
+    console.log('🎬 App: showSplash =', showSplash);
+  }, [showSplash]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -804,6 +811,12 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 flex flex-col">
+      {showSplash && (
+        <SplashScreen onComplete={() => {
+          console.log('🎬 Splash screen onComplete llamado');
+          setShowSplash(false);
+        }} />
+      )}
       <Header 
         onShowExplanation={() => setShowExplanation(true)} 
         onShowHistory={() => setShowHistory(true)}
