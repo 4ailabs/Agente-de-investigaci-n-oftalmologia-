@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -7,6 +7,21 @@ interface EnhancedReportDisplayProps {
   sources?: any[];
   onCopy?: () => void;
   isCopied?: boolean;
+}
+
+interface ReportSection {
+  id: string;
+  title: string;
+  level: number;
+  content: string;
+  subsections: ReportSection[];
+}
+
+interface QualityMetrics {
+  sourceCount: number;
+  highQualitySources: number;
+  averageRelevance: number;
+  completeness: number;
 }
 
 const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
@@ -18,6 +33,8 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
   const [activeSection, setActiveSection] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showTableOfContents, setShowTableOfContents] = useState(false);
+  const [showQualityMetrics, setShowQualityMetrics] = useState(true);
+  const [viewMode, setViewMode] = useState<'full' | 'summary' | 'print'>('full');
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Extract sections from markdown content
@@ -41,6 +58,68 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
   };
 
   const sections = extractSections(content);
+
+  // Highlight search terms in content
+  const highlightSearchTerms = (content: string, searchTerm: string): string => {
+    if (!searchTerm.trim()) return content;
+    const regex = new RegExp(`(${searchTerm.trim()})`, 'gi');
+    return content.replace(regex, '**$1**');
+  };
+
+  // Calculate quality metrics from sources
+  const calculateQualityMetrics = (): QualityMetrics => {
+    const sourceCount = sources.length;
+    const highQualitySources = sources.filter(source => 
+      source.web?.title?.includes('PubMed') || 
+      source.web?.title?.includes('Cochrane') ||
+      source.web?.uri?.includes('pubmed') ||
+      source.web?.uri?.includes('cochrane')
+    ).length;
+    
+    const averageRelevance = sourceCount > 0 ? (highQualitySources / sourceCount) * 100 : 0;
+    const completeness = Math.min((sourceCount / 5) * 100, 100); // Max score with 5+ sources
+    
+    return {
+      sourceCount,
+      highQualitySources,
+      averageRelevance: Math.round(averageRelevance),
+      completeness: Math.round(completeness)
+    };
+  };
+
+  // Generate executive summary from content
+  const generateExecutiveSummary = (content: string) => {
+    const lines = content.split('\n').filter(line => line.trim());
+    const summaryPoints: string[] = [];
+    
+    // Extract key diagnostic points
+    lines.forEach(line => {
+      if (line.includes('**Diagnóstico') || line.includes('**Diagnosis')) {
+        summaryPoints.push(line.replace(/\*\*/g, '').trim());
+      } else if (line.includes('- **') && (line.includes('Probabilidad') || line.includes('Probability'))) {
+        summaryPoints.push(line.replace(/\*\*/g, '').replace(/- /, '• ').trim());
+      } else if (line.includes('Red Flag') || line.includes('Urgente') || line.includes('Emergent')) {
+        summaryPoints.push(`🚨 ${line.replace(/\*\*/g, '').trim()}`);
+      }
+    });
+    
+    return summaryPoints.slice(0, 6); // Top 6 most important points
+  };
+
+  // Extract clinical recommendations
+  const extractClinicalRecommendations = (content: string) => {
+    const lines = content.split('\n').filter(line => line.trim());
+    const recommendations: string[] = [];
+    
+    lines.forEach(line => {
+      if (line.includes('Se recomienda') || line.includes('Recommend') || 
+          line.includes('Debe realizar') || line.includes('Should perform')) {
+        recommendations.push(line.replace(/\*\*/g, '').replace(/- /, '').trim());
+      }
+    });
+    
+    return recommendations;
+  };
 
   // Generate summary from content
   const generateSummary = (content: string) => {
@@ -255,6 +334,34 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
         </div>
 
         <div className="flex items-center space-x-3">
+          {/* View Mode Selector */}
+          <div className="flex items-center bg-slate-100 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('full')}
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+                viewMode === 'full' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
+              }`}
+            >
+              Completo
+            </button>
+            <button
+              onClick={() => setViewMode('summary')}
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+                viewMode === 'summary' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
+              }`}
+            >
+              Resumen
+            </button>
+            <button
+              onClick={() => setViewMode('print')}
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+                viewMode === 'print' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
+              }`}
+            >
+              Impresión
+            </button>
+          </div>
+
           {/* Search */}
           <div className="relative">
             <input
@@ -283,6 +390,109 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
           )}
         </div>
       </div>
+
+      {/* Quality Metrics Panel */}
+      {showQualityMetrics && sources.length > 0 && (
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-purple-900 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Métricas de Calidad del Reporte
+            </h3>
+            <button
+              onClick={() => setShowQualityMetrics(!showQualityMetrics)}
+              className="text-purple-600 hover:text-purple-800 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={showQualityMetrics ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+              </svg>
+            </button>
+          </div>
+          
+          {(() => {
+            const metrics = calculateQualityMetrics();
+            return (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-purple-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">
+                    {metrics.sourceCount}
+                  </div>
+                  <p className="text-sm text-purple-800 font-medium">Fuentes Total</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-green-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">
+                    {metrics.highQualitySources}
+                  </div>
+                  <p className="text-sm text-purple-800 font-medium">Alta Calidad</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">
+                    {metrics.averageRelevance}%
+                  </div>
+                  <p className="text-sm text-purple-800 font-medium">Relevancia</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">
+                    {metrics.completeness}%
+                  </div>
+                  <p className="text-sm text-purple-800 font-medium">Completitud</p>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* Executive Summary for Summary View */}
+      {viewMode === 'summary' && (() => {
+        const executiveSummary = generateExecutiveSummary(content);
+        const clinicalRecommendations = extractClinicalRecommendations(content);
+        
+        return (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200 mb-6">
+            <h3 className="text-lg font-semibold text-amber-900 mb-4 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Resumen Clínico Ejecutivo
+            </h3>
+            
+            {executiveSummary.length > 0 && (
+              <div className="mb-6">
+                <h4 className="font-semibold text-amber-800 mb-3">Hallazgos Principales:</h4>
+                <div className="space-y-2">
+                  {executiveSummary.map((point, index) => (
+                    <div key={index} className="flex items-start">
+                      <span className="w-6 h-6 bg-amber-600 text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3 mt-0.5">
+                        {index + 1}
+                      </span>
+                      <p className="text-sm text-amber-800 leading-relaxed">{point}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {clinicalRecommendations.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-amber-800 mb-3">Recomendaciones Clínicas:</h4>
+                <div className="space-y-2">
+                  {clinicalRecommendations.map((rec, index) => (
+                    <div key={index} className="flex items-start">
+                      <svg className="w-4 h-4 text-amber-600 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className="text-sm text-amber-800 leading-relaxed">{rec}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Table of Contents */}
       {showTableOfContents && sections.length > 0 && (
@@ -332,20 +542,39 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
         </div>
       )}
 
-      {/* Main Content */}
-      <div className="bg-white p-6 lg:p-8 rounded-xl border border-slate-200 shadow-sm">
-        <div 
-          ref={contentRef}
-          className="prose prose-slate max-w-none text-slate-800 leading-relaxed"
-        >
-          <ReactMarkdown 
-            remarkPlugins={[remarkGfm]}
-            components={markdownComponents}
+      {/* Main Content - Conditional based on view mode */}
+      {viewMode !== 'summary' && (
+        <div className={`bg-white rounded-xl border border-slate-200 shadow-sm ${
+          viewMode === 'print' ? 'p-8 print:shadow-none print:border-none' : 'p-6 lg:p-8'
+        }`}>
+          <div 
+            ref={contentRef}
+            className={`prose prose-slate max-w-none text-slate-800 leading-relaxed ${
+              viewMode === 'print' ? 'print:text-black print:text-sm' : ''
+            }`}
           >
-            {content}
-          </ReactMarkdown>
+            <ReactMarkdown 
+              remarkPlugins={[remarkGfm]}
+              components={markdownComponents}
+            >
+              {searchTerm ? highlightSearchTerms(content, searchTerm) : content}
+            </ReactMarkdown>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Print-specific styles */}
+      {viewMode === 'print' && (
+        <style jsx>{`
+          @media print {
+            .no-print { display: none !important; }
+            .print\\:text-black { color: black !important; }
+            .print\\:text-sm { font-size: 0.875rem !important; }
+            .print\\:shadow-none { box-shadow: none !important; }
+            .print\\:border-none { border: none !important; }
+          }
+        `}</style>
+      )}
 
       {/* Enhanced Sources Section */}
       {sources && sources.length > 0 && (
