@@ -56,8 +56,12 @@ const DocumentCapture: React.FC<DocumentCaptureProps> = ({
       captureService.cleanupImagePreviews(images);
       setImages([]);
       setShowPreview(false);
-    } catch (error) {
-      onError('Error extrayendo datos: ' + (error as Error).message);
+    } catch (error: any) {
+      if (error.message?.includes('429') || error.message?.includes('quota')) {
+        onError('Cuota de API excedida. Intenta nuevamente mañana o actualiza tu plan de Gemini API.');
+      } else {
+        onError('Error extrayendo datos: ' + error.message);
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -208,20 +212,38 @@ const DocumentCapture: React.FC<DocumentCaptureProps> = ({
       )}
 
       {/* Instrucciones */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-        <div className="flex items-start">
-          <svg className="h-5 w-5 text-blue-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div className="text-sm text-blue-800">
-            <p className="font-medium mb-1">Consejos para mejor captura:</p>
-            <ul className="text-xs space-y-1">
-              <li>• <strong>Múltiples fotos:</strong> Puedes capturar varias páginas del expediente</li>
-              <li>• <strong>Calidad:</strong> Asegúrate de que el texto sea legible y esté bien iluminado</li>
-              <li>• <strong>Estabilidad:</strong> Mantén la cámara estable y perpendicular al documento</li>
-              <li>• <strong>Completitud:</strong> Captura páginas completas del expediente</li>
-              <li>• <strong>Agregar más:</strong> Puedes seguir agregando fotos después de la primera captura</li>
-            </ul>
+      <div className="space-y-3">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-start">
+            <svg className="h-5 w-5 text-blue-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="text-sm text-blue-800">
+              <p className="font-medium mb-1">Consejos para mejor captura:</p>
+              <ul className="text-xs space-y-1">
+                <li>• <strong>Múltiples fotos:</strong> Puedes capturar varias páginas del expediente</li>
+                <li>• <strong>Calidad:</strong> Asegúrate de que el texto sea legible y esté bien iluminado</li>
+                <li>• <strong>Estabilidad:</strong> Mantén la cámara estable y perpendicular al documento</li>
+                <li>• <strong>Completitud:</strong> Captura páginas completas del expediente</li>
+                <li>• <strong>Agregar más:</strong> Puedes seguir agregando fotos después de la primera captura</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Advertencia sobre cuota de API */}
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+          <div className="flex items-start">
+            <svg className="h-5 w-5 text-amber-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <div className="text-sm text-amber-800">
+              <p className="font-medium mb-1">Nota sobre límites de API:</p>
+              <p className="text-xs">
+                El plan gratuito de Gemini API tiene un límite de 50 requests por día. 
+                Si excedes este límite, el OCR funcionará pero la extracción de datos médicos estará limitada hasta el siguiente día.
+              </p>
+            </div>
           </div>
         </div>
       </div>
