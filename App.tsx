@@ -13,6 +13,9 @@ import Footer from './components/Footer';
 import Spinner, { MobileLoadingCard } from './components/Spinner';
 import useSwipeGesture from './hooks/useSwipeGesture';
 import { AudioRecorder } from './components/AudioRecorder';
+import { EnhancedDataForm } from './components/EnhancedDataForm';
+import { EnhancedPatientData } from './types/enhancedDataTypes';
+import { MedicalDataExtractionService } from './services/medicalDataExtraction';
 
 // Lazy load heavy components
 const ExplanationModal = lazy(() => import('./components/ExplanationModal'));
@@ -24,12 +27,15 @@ import remarkGfm from 'remark-gfm';
 
 const InitialQueryInput: React.FC<{
   onSubmit: (query: string) => void;
+  onSubmitEnhanced: (data: EnhancedPatientData) => void;
   isLoading: boolean;
-}> = ({ onSubmit, isLoading }) => {
+}> = ({ onSubmit, onSubmitEnhanced, isLoading }) => {
   const [age, setAge] = useState('');
   const [sex, setSex] = useState('');
   const [clinicalInfo, setClinicalInfo] = useState('');
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
+  const [showEnhancedForm, setShowEnhancedForm] = useState(false);
+  const [extractedData, setExtractedData] = useState<Partial<EnhancedPatientData> | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +48,7 @@ ${clinicalInfo.trim()}`;
     }
   };
 
-  const handleAudioTranscription = (transcription: string, medicalInfo?: any) => {
+  const handleAudioTranscription = async (transcription: string, medicalInfo?: any) => {
     // Si hay información médica estructurada, usarla para pre-llenar campos
     if (medicalInfo) {
       if (medicalInfo.age) setAge(medicalInfo.age);
@@ -52,12 +58,25 @@ ${clinicalInfo.trim()}`;
     // Usar la transcripción como información clínica
     setClinicalInfo(transcription);
     setShowAudioRecorder(false);
+
+    // Extraer datos estructurados de la transcripción
+    try {
+      const { structuredData } = await MedicalDataExtractionService.extractFromAudioTranscription(transcription);
+      setExtractedData(structuredData);
+      
+      // Pre-llenar campos básicos si están disponibles
+      if (structuredData.age) setAge(structuredData.age.toString());
+      if (structuredData.sex) setSex(structuredData.sex);
+    } catch (error) {
+      console.error('Error extrayendo datos estructurados:', error);
+    }
   };
 
   const handleAudioError = (error: string) => {
     console.error('Error en grabación de audio:', error);
     // Aquí podrías mostrar un toast o mensaje de error
   };
+
 
   const isFormInvalid = isLoading || !clinicalInfo.trim() || !age.trim() || !sex.trim();
 
@@ -158,16 +177,29 @@ ${clinicalInfo.trim()}`;
                     Sea lo más específico posible para obtener mejores resultados
                   </span>
                   
-                  <button
-                    type="button"
-                    onClick={() => setShowAudioRecorder(!showAudioRecorder)}
-                    className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                    </svg>
-                    <span>{showAudioRecorder ? 'Ocultar' : 'Transcripción de Voz'}</span>
-                  </button>
+                  <div className="flex space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAudioRecorder(!showAudioRecorder)}
+                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                      </svg>
+                      <span>{showAudioRecorder ? 'Ocultar' : 'Transcripción de Voz'}</span>
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => setShowEnhancedForm(true)}
+                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition-colors duration-200"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span>Formulario Estructurado</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -205,6 +237,36 @@ ${clinicalInfo.trim()}`;
             </button>
             </div>
           </form>
+
+          {/* Formulario Estructurado Mejorado */}
+          {showEnhancedForm && (
+            <div className="mt-6">
+              <EnhancedDataForm
+                onSubmit={(data) => {
+                  const query = `Paciente de ${data.age} años, sexo ${data.sex}.
+---
+Síntomas y Antecedentes Clínicos:
+${data.chiefComplaint || data.symptoms?.mainSymptom?.description || ''}
+
+Historia de la Enfermedad Actual:
+${data.historyOfPresentIllness || ''}
+
+Antecedentes Médicos:
+${data.systemicDiseases?.join(', ') || 'No especificados'}
+
+Medicamentos Actuales:
+${data.currentMedications?.map(med => `${med.name} ${med.dosage} ${med.frequency}`).join(', ') || 'Ninguno'}
+
+Alergias:
+${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).join(', ') || 'Ninguna conocida'}`;
+                  onSubmit(query);
+                }}
+                onCancel={() => setShowEnhancedForm(false)}
+                initialData={extractedData || undefined}
+                isLoading={isLoading}
+              />
+            </div>
+          )}
         </div>
     </main>
   );
@@ -257,7 +319,7 @@ const App: React.FC = () => {
 
         // Try to recover active investigation
         const activeInvestigation = localStorageService.getActiveInvestigation();
-        if (activeInvestigation && activeInvestigation.status === 'active') {
+        if (activeInvestigation) {
           setInvestigation(activeInvestigation.investigation);
           setCurrentInvestigationId(activeInvestigation.id);
           
@@ -272,6 +334,28 @@ const App: React.FC = () => {
 
     loadInvestigationData();
   }, []);
+
+  const handleEnhancedFormSubmit = (data: EnhancedPatientData) => {
+    // Convertir datos estructurados a query de texto para compatibilidad
+    const query = `Paciente de ${data.age} años, sexo ${data.sex}.
+---
+Síntomas y Antecedentes Clínicos:
+${data.chiefComplaint || data.symptoms?.mainSymptom?.description || ''}
+
+Historia de la Enfermedad Actual:
+${data.historyOfPresentIllness || ''}
+
+Antecedentes Médicos:
+${data.systemicDiseases?.join(', ') || 'No especificados'}
+
+Medicamentos Actuales:
+${data.currentMedications?.map(med => `${med.name} ${med.dosage} ${med.frequency}`).join(', ') || 'Ninguno'}
+
+Alergias:
+${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).join(', ') || 'Ninguna conocida'}`;
+
+    handleStartInvestigation(query);
+  };
 
   const handleStartInvestigation = async (query: string) => {
     // Initialize medical context from query
@@ -316,7 +400,7 @@ const App: React.FC = () => {
 
     // Extract patient info for storage
     const patientInfoForStorage = {
-      age: initialContext.patientProfile.age || 'No especificado',
+      age: initialContext.patientProfile.age?.toString() || 'No especificado',
       sex: initialContext.patientProfile.sex || 'No especificado',
       symptoms: initialContext.patientProfile.currentSymptoms.map(s => s.description).join(', ') || 'No especificados'
     };
@@ -559,7 +643,7 @@ const App: React.FC = () => {
   // Load investigation from history
   const handleLoadInvestigation = (investigationId: string) => {
     try {
-      const storedInvestigation = localStorageService.getInvestigationById(investigationId);
+      const storedInvestigation = localStorageService.getInvestigation(investigationId);
       if (storedInvestigation) {
         setInvestigation(storedInvestigation.investigation);
         setCurrentInvestigationId(investigationId);
@@ -723,7 +807,8 @@ const App: React.FC = () => {
       <div className="flex-1">
       {!investigation ? (
         <InitialQueryInput 
-          onSubmit={handleStartInvestigation} 
+          onSubmit={handleStartInvestigation}
+          onSubmitEnhanced={handleEnhancedFormSubmit} 
           isLoading={investigation?.isGenerating ?? false}
         />
       ) : investigation.isGenerating && investigation.plan.length === 0 ? (
@@ -1239,7 +1324,7 @@ const App: React.FC = () => {
                                                             setActiveView({ type: 'step', id: activeView.id! + 1 });
                                                         } else if (nextStep.status === 'pending') {
                                                             // Execute the next step
-                                                            handleExecuteStep(activeView.id!);
+                                                            handleExecuteNextStep();
                                                         }
                                                     }
                                                 }}
