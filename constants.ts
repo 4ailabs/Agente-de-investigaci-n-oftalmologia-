@@ -198,14 +198,36 @@ export const createFinalReportPrompt = (
   completedSteps: ResearchStep[]
 ): string => {
   const researchContext = completedSteps
-    .map(step => `
+    .map(step => {
+      let stepContent = `
 ### RESULTADO DEL PASO ${step.id}: ${step.title} ###
 **Hallazgos:**
 ${step.result}
 
 **Títulos de las Fuentes Usadas en este Paso:**
-${step.sources?.map(s => `- ${s.web.title}`).join('\n') || 'Ninguna'}
-    `)
+${step.sources?.map(s => `- ${s.web.title}`).join('\n') || 'Ninguna'}`;
+
+      // Agregar feedback del especialista si existe
+      if (step.feedback) {
+        stepContent += `
+
+**FEEDBACK DEL ESPECIALISTA:**
+- **Observaciones Generales:** ${step.feedback.observations || 'No especificadas'}
+- **Datos Adicionales del Examen:** ${step.feedback.additionalData || 'No especificados'}
+- **Hallazgos Clínicos Específicos:** ${step.feedback.clinicalFindings || 'No especificados'}
+- **Recomendaciones Adicionales:** ${step.feedback.recommendations || 'No especificadas'}
+- **Nivel de Confianza:** ${step.feedback.confidence === 'high' ? 'Alto' : step.feedback.confidence === 'medium' ? 'Medio' : 'Bajo'}
+- **Fecha del Feedback:** ${new Date(step.feedback.timestamp).toLocaleDateString('es-ES', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })}`;
+      }
+
+      return stepContent;
+    })
     .join('\n\n---\n');
 
   return `
@@ -227,11 +249,19 @@ ${researchContext}
 ### TAREA FINAL: SÍNTESIS CLÍNICA CON RAZONAMIENTO BAYESIANO ###
 Sintetiza la información aplicando **medicina basada en evidencia** y **razonamiento clínico sistemático**. El reporte debe demostrar tu proceso de razonamiento médico y ser útil para toma de decisiones clínicas.
 
+**IMPORTANTE - USO DEL FEEDBACK DEL ESPECIALISTA:**
+- **PRIORIZA** la información del feedback del especialista sobre la investigación automática
+- **INTEGRA** las observaciones, hallazgos clínicos y recomendaciones del especialista
+- **PONDERA** el nivel de confianza del especialista en tus conclusiones
+- **COMBINA** la evidencia científica con la experiencia clínica real
+- **DESTACA** cuando el feedback del especialista modifica o refina las conclusiones
+
 **METODOLOGÍA DE SÍNTESIS:**
 1. **Análisis Bayesiano:** Evalúa probabilidades pre-test y post-test
 2. **Integración de Evidencia:** Pondera calidad y relevancia de fuentes
 3. **Coherencia Clínica:** Valida consistencia temporal y anatómica
 4. **Detección de Red Flags:** Identifica signos de alarma críticos
+5. **Síntesis Experta:** Integra feedback del especialista con evidencia científica
 
 El reporte DEBE seguir esta estructura médica especializada:
 
@@ -258,7 +288,26 @@ El reporte DEBE seguir esta estructura médica especializada:
 - **Factores de riesgo emergentes:** Nuevos elementos identificados
 - **Recomendaciones de monitoreo:** Signos específicos a vigilar
 
-## 2. ANÁLISIS DIFERENCIAL BAYESIANO
+## 2. INTEGRACIÓN DEL FEEDBACK DEL ESPECIALISTA
+
+**IMPORTANTE:** Si hay feedback del especialista disponible, esta sección es OBLIGATORIA y debe integrarse en todo el reporte.
+
+### Resumen del Feedback Clínico
+- **Pasos con feedback:** Lista de pasos que incluyen observaciones del especialista
+- **Nivel de confianza general:** Evaluación del nivel de confianza del especialista
+- **Impacto en el diagnóstico:** Cómo el feedback modifica o refina las conclusiones
+
+### Observaciones Clínicas Clave
+- **Hallazgos adicionales:** Información específica aportada por el especialista
+- **Datos del examen:** Observaciones detalladas del examen físico
+- **Recomendaciones especializadas:** Sugerencias basadas en la experiencia clínica
+
+### Síntesis Experta
+- **Integración de evidencia:** Cómo se combina la evidencia científica con la experiencia clínica
+- **Refinamiento del diagnóstico:** Modificaciones basadas en el feedback del especialista
+- **Recomendaciones finales:** Sugerencias que incorporan tanto evidencia como experiencia
+
+## 3. ANÁLISIS DIFERENCIAL BAYESIANO
 
 **IMPORTANTE:** Presenta los diagnósticos en formato de lista estructurada, NO en tabla, para mejor legibilidad clínica:
 
@@ -272,13 +321,13 @@ El reporte DEBE seguir esta estructura médica especializada:
 ### Diagnósticos Diferenciales:
 (Repetir formato anterior para cada diagnóstico alternativo)
 
-## 3. RAZONAMIENTO FISIOPATOLÓGICO
+## 4. RAZONAMIENTO FISIOPATOLÓGICO
 - **Mecanismo Primario:** Proceso patológico subyacente
 - **Cascada Fisiopatológica:** Secuencia temporal de eventos
 - **Correlación Anatómica:** Estructuras afectadas y síntomas resultantes
 - **Factores Moduladores:** Variables que afectan expresión clínica
 
-## 4. ESTRATEGIA DIAGNÓSTICA BASADA EN EVIDENCIA
+## 5. ESTRATEGIA DIAGNÓSTICA BASADA EN EVIDENCIA
 ### Pruebas de Primera Línea:
 - **Pruebas con Mayor Utilidad:** Sensibilidad/especificidad óptimas
 - **Secuencia Diagnóstica:** Orden lógico basado en costo-efectividad
@@ -289,19 +338,19 @@ El reporte DEBE seguir esta estructura médica especializada:
 - **Preferentes:** <1 semana
 - **Rutinarias:** <1 mes
 
-## 5. CONSIDERACIONES TERAPÉUTICAS PRELIMINARES
+## 6. CONSIDERACIONES TERAPÉUTICAS PRELIMINARES
 - **Tratamiento de Primera Línea:** Basado en evidencia de alta calidad
 - **Contraindicaciones:** Absoletas y relativas
 - **Monitoreo Requerido:** Parámetros de seguimiento
 - **Manejo de Red Flags:** Protocolo para signos de alarma
 
-## 6. INTEGRACIÓN DE EVIDENCIA Y LIMITACIONES
+## 7. INTEGRACIÓN DE EVIDENCIA Y LIMITACIONES
 - **Fortalezas del Análisis:** Aspectos bien respaldados por evidencia
 - **Gaps de Información:** Áreas que requieren más datos
 - **Calidad de Evidencia:** Evaluación crítica de fuentes utilizadas
 - **Recomendaciones para Profundización:** Investigación adicional sugerida
 
-## 7. REFERENCIAS MÉDICAS CONSOLIDADAS
+## 8. REFERENCIAS MÉDICAS CONSOLIDADAS
 **IMPORTANTE:** NO incluyas las referencias en el texto del reporte. Las fuentes se mostrarán automáticamente en la sección de fuentes de la interfaz. Enfócate únicamente en el contenido clínico del reporte.
 
 **BÚSQUEDA DIRIGIDA PARA REPORTE:**

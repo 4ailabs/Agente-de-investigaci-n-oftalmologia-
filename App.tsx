@@ -1403,6 +1403,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                 sources={activeContent.sources}
                                                 onCopy={handleCopyReport}
                                                 isCopied={isCopied}
+                                                investigationSteps={investigation?.plan || []}
                                             />
                                         </Suspense>
                                     ) : (
