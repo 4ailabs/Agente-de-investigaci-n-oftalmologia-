@@ -315,14 +315,23 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
 
           <div className="grid gap-4">
             {sources.map((source, index) => {
+              // Determine access type for display - matching original implementation
               const isOpenAccess = source.web.uri.includes('pubmed.ncbi.nlm.nih.gov') || 
                                  source.web.uri.includes('cochrane.org') ||
                                  source.web.uri.includes('clinicaltrials.gov') ||
-                                 source.web.uri.includes('aao.org');
+                                 source.web.uri.includes('aao.org') ||
+                                 source.web.uri.includes('esrs.org') ||
+                                 source.web.uri.includes('arvo.org');
               
               const isSubscription = source.web.uri.includes('uptodate.com') ||
                                     source.web.uri.includes('medscape.com') ||
-                                    source.web.uri.includes('thelancet.com');
+                                    source.web.uri.includes('thelancet.com') ||
+                                    source.web.uri.includes('jama.ama-assn.org') ||
+                                    source.web.uri.includes('nejm.org');
+
+              const accessIndicator = isOpenAccess ? '[LIBRE]' : isSubscription ? '[SUSCRIPCION]' : '[LIMITADO]';
+              const accessMessage = isOpenAccess ? 'Acceso abierto' : 
+                                  isSubscription ? 'Requiere suscripción' : 'Acceso limitado';
               
               return (
                 <div key={index} className="bg-white p-4 rounded-lg border border-indigo-200 hover:shadow-md transition-shadow">
@@ -332,29 +341,36 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                         <span className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                           {index + 1}
                         </span>
-                        <a 
-                          href={source.web.uri} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-indigo-700 hover:text-indigo-900 font-semibold text-base hover:underline transition-colors"
-                        >
-                          {source.web.title || 'Fuente médica'}
-                        </a>
+                        <div className="flex items-center space-x-2 flex-1">
+                          <a 
+                            href={source.web.uri} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-indigo-700 hover:text-indigo-900 font-semibold text-base hover:underline transition-colors"
+                            title={`Abrir: ${source.web.uri}`}
+                          >
+                            {source.web.title || source.web.uri}
+                          </a>
+                          <span className="text-lg" title={accessMessage}>
+                            {accessIndicator}
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-sm text-slate-600 font-mono bg-slate-100 p-2 rounded mt-2 truncate">
-                        {source.web.uri}
-                      </p>
-                    </div>
-                    <div className="ml-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        isOpenAccess ? 'bg-green-100 text-green-800' :
-                        isSubscription ? 'bg-red-100 text-red-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {isOpenAccess ? '✅ Acceso libre' : 
-                         isSubscription ? '🔒 Requiere suscripción' : 
-                         '⚠️ Acceso limitado'}
-                      </span>
+                      <div className="flex items-center justify-between text-xs lg:text-sm text-slate-500 bg-slate-100 px-3 py-2 rounded-md">
+                        <div className="flex items-center">
+                          <svg className="h-3 w-3 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                          <span className="truncate font-mono">{source.web.uri}</span>
+                        </div>
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          isOpenAccess ? 'bg-green-100 text-green-800' :
+                          isSubscription ? 'bg-red-100 text-red-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {accessMessage}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -373,22 +389,22 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
             </svg>
           </div>
           <div className="flex-1">
-            <h4 className="text-lg font-bold text-amber-800 mb-4">⚠️ Avisos Médicos Importantes</h4>
+            <h4 className="text-lg font-bold text-amber-800 mb-4">AVISOS MÉDICOS IMPORTANTES</h4>
             <div className="space-y-3 text-sm text-amber-700">
               <div className="flex items-start">
-                <span className="font-semibold mr-2">🔬</span>
+                <span className="font-semibold mr-2">•</span>
                 <p><strong>Herramienta de Investigación:</strong> Este análisis es generado por IA y está diseñado como herramienta de investigación médica, no como diagnóstico definitivo.</p>
               </div>
               <div className="flex items-start">
-                <span className="font-semibold mr-2">👨‍⚕️</span>
+                <span className="font-semibold mr-2">•</span>
                 <p><strong>Supervisión Profesional Requerida:</strong> Todas las recomendaciones y diagnósticos diferenciales deben ser validados por un médico calificado.</p>
               </div>
               <div className="flex items-start">
-                <span className="font-semibold mr-2">🚫</span>
+                <span className="font-semibold mr-2">•</span>
                 <p><strong>No Sustituye el Juicio Clínico:</strong> Este reporte complementa, pero no reemplaza, la evaluación clínica y el criterio médico profesional.</p>
               </div>
               <div className="flex items-start">
-                <span className="font-semibold mr-2">📋</span>
+                <span className="font-semibold mr-2">•</span>
                 <p><strong>Responsabilidad del Usuario:</strong> El uso de esta información es responsabilidad exclusiva del profesional médico que la consulta.</p>
               </div>
             </div>
