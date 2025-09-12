@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, Suspense, lazy, useRef } from 'react';
-import { InvestigationState, ResearchStep, Source } from './types';
+import { InvestigationState, ResearchStep, Source, StepFeedback } from './types';
 import { createResearchPlanPrompt, createExecuteStepPrompt, createFinalReportPrompt } from './constants';
 import { generateContent } from './services/geminiService';
 import { MedicalContextEngine, MedicalContext } from './contextEngineering';
@@ -18,6 +18,7 @@ import { EnhancedDataForm } from './components/EnhancedDataForm';
 import DocumentCapture from './components/DocumentCapture';
 import { EnhancedPatientData } from './types/enhancedDataTypes';
 import { MedicalDataExtractionService } from './services/medicalDataExtraction';
+import StepFeedbackModal from './components/StepFeedbackModal';
 import SplashScreen from './components/SplashScreen';
 
 // Lazy load heavy components
@@ -346,6 +347,8 @@ const App: React.FC = () => {
   const [investigationHistory, setInvestigationHistory] = useState<StoredInvestigation[]>([]);
   const [currentInvestigationId, setCurrentInvestigationId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [showStepFeedback, setShowStepFeedback] = useState(false);
+  const [currentStepForFeedback, setCurrentStepForFeedback] = useState<{id: number, title: string} | null>(null);
   
   // Refs for swipe gesture
   const contentRef = useRef<HTMLDivElement>(null);
@@ -776,6 +779,39 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     }
   };
 
+  // Handle step feedback from specialist
+  const handleStepFeedback = (feedback: StepFeedback) => {
+    if (!investigation) return;
+
+    setInvestigation(prev => {
+      if (!prev) return null;
+      const newPlan = [...prev.plan];
+      const stepIndex = newPlan.findIndex(step => step.id === feedback.stepId);
+      if (stepIndex !== -1) {
+        newPlan[stepIndex].feedback = feedback;
+      }
+      return { ...prev, plan: newPlan };
+    });
+
+    // Auto-save with feedback
+    if (currentInvestigationId) {
+      const patientInfo = {
+        age: medicalContext?.patientProfile.age?.toString() || 'No especificado',
+        sex: medicalContext?.patientProfile.sex === 'male' ? 'M' : medicalContext?.patientProfile.sex === 'female' ? 'F' : 'No especificado',
+        symptoms: medicalContext?.patientProfile.currentSymptoms?.map(s => s.description).join(', ') || 'No especificado'
+      };
+      localStorageService.updateInvestigation(currentInvestigationId, investigation);
+    }
+
+    console.log('Step feedback saved:', feedback);
+  };
+
+  // Open feedback modal for completed step
+  const handleOpenStepFeedback = (stepId: number, stepTitle: string) => {
+    setCurrentStepForFeedback({ id: stepId, title: stepTitle });
+    setShowStepFeedback(true);
+  };
+
   // Copy investigation summary to clipboard
   const handleCopyInvestigation = (investigationId: string) => {
     try {
@@ -1137,15 +1173,30 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                            </div>
                                         </button>
                                             {step.status === 'completed' && (
-                                                <button
-                                                    onClick={() => handleCopyStep(step.id)}
-                                                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-                                                    title="Copiar este paso"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                    </svg>
-                                        </button>
+                                                <div className="flex space-x-1">
+                                                    <button
+                                                        onClick={() => handleCopyStep(step.id)}
+                                                        className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                                                        title="Copiar este paso"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                        </svg>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleOpenStepFeedback(step.id, step.title)}
+                                                        className={`p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                                                            step.feedback 
+                                                                ? 'text-green-600 hover:text-green-700 hover:bg-green-50' 
+                                                                : 'text-blue-400 hover:text-blue-600 hover:bg-blue-50'
+                                                        }`}
+                                                        title={step.feedback ? "Ver/Editar feedback del especialista" : "Agregar feedback del especialista"}
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
                                     </li>
@@ -1588,6 +1639,20 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                 </div>
             </div>
         </main>
+      )}
+
+      {/* Step Feedback Modal */}
+      {currentStepForFeedback && (
+        <StepFeedbackModal
+          isOpen={showStepFeedback}
+          onClose={() => {
+            setShowStepFeedback(false);
+            setCurrentStepForFeedback(null);
+          }}
+          onSave={handleStepFeedback}
+          stepTitle={currentStepForFeedback.title}
+          stepId={currentStepForFeedback.id}
+        />
       )}
       </div>
       <Footer />
