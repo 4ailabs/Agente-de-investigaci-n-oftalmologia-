@@ -1115,30 +1115,64 @@ const App: React.FC = () => {
                                         </div>
                                         <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
                                             <ul className="space-y-4">
-                                            {activeContent.sources.map((source, index) => (
+                                            {activeContent.sources.map((source, index) => {
+                                                // Determine access type for display
+                                                const isOpenAccess = source.web.uri.includes('pubmed.ncbi.nlm.nih.gov') || 
+                                                                   source.web.uri.includes('cochrane.org') ||
+                                                                   source.web.uri.includes('clinicaltrials.gov') ||
+                                                                   source.web.uri.includes('aao.org') ||
+                                                                   source.web.uri.includes('esrs.org') ||
+                                                                   source.web.uri.includes('arvo.org');
+                                                
+                                                const isSubscription = source.web.uri.includes('uptodate.com') ||
+                                                                      source.web.uri.includes('medscape.com') ||
+                                                                      source.web.uri.includes('thelancet.com') ||
+                                                                      source.web.uri.includes('jama.ama-assn.org') ||
+                                                                      source.web.uri.includes('nejm.org');
+                                                
+                                                const accessIndicator = isOpenAccess ? '✅' : isSubscription ? '🔒' : '⚠️';
+                                                const accessMessage = isOpenAccess ? 'Acceso abierto' : 
+                                                                    isSubscription ? 'Requiere suscripción' : 'Acceso limitado';
+                                                
+                                                return (
                                                     <li key={index} className="flex items-start group">
                                                         <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium mr-4 mt-1">
                                                             {index + 1}
                                                         </span>
                                                         <div className="flex-1 min-w-0">
-                                                            <a 
-                                                                href={source.web.uri} 
-                                                                target="_blank" 
-                                                                rel="noopener noreferrer" 
-                                                                className="block text-blue-600 hover:text-blue-800 hover:underline font-semibold text-sm lg:text-base transition-all duration-200 group-hover:bg-blue-50 p-3 rounded-lg -m-3 border border-transparent hover:border-blue-200"
-                                                                title={`Abrir: ${source.web.uri}`}
-                                                            >
-                                                        {source.web.title || source.web.uri}
-                                                    </a>
-                                                            <div className="mt-2 flex items-center text-xs lg:text-sm text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                                                </svg>
-                                                                <span className="truncate font-mono">{source.web.uri}</span>
+                                                            <div className="flex items-center space-x-2 mb-1">
+                                                                <a 
+                                                                    href={source.web.uri} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer" 
+                                                                    className="text-blue-600 hover:text-blue-800 hover:underline font-semibold text-sm lg:text-base transition-all duration-200 group-hover:bg-blue-50 p-3 rounded-lg -m-3 border border-transparent hover:border-blue-200"
+                                                                    title={`Abrir: ${source.web.uri}`}
+                                                                >
+                                                                    {source.web.title || source.web.uri}
+                                                                </a>
+                                                                <span className="text-lg" title={accessMessage}>
+                                                                    {accessIndicator}
+                                                                </span>
+                                                            </div>
+                                                            <div className="mt-2 flex items-center justify-between text-xs lg:text-sm text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
+                                                                <div className="flex items-center">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                                    </svg>
+                                                                    <span className="truncate font-mono">{source.web.uri}</span>
+                                                                </div>
+                                                                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                                                    isOpenAccess ? 'bg-green-100 text-green-800' :
+                                                                    isSubscription ? 'bg-red-100 text-red-800' :
+                                                                    'bg-yellow-100 text-yellow-800'
+                                                                }`}>
+                                                                    {accessMessage}
+                                                                </span>
                                                             </div>
                                                         </div>
-                                                </li>
-                                            ))}
+                                                    </li>
+                                                );
+                                            })}
                                         </ul>
                                         </div>
                                     </div>
