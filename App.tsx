@@ -1193,16 +1193,58 @@ const App: React.FC = () => {
                                             <button
                                                 onClick={() => {
                                                     const nextStep = investigation.plan.find(step => step.id === activeView.id! + 1);
-                                                    if (nextStep && nextStep.status === 'completed') {
-                                                        setActiveView({ type: 'step', id: activeView.id! + 1 });
+                                                    if (nextStep) {
+                                                        if (nextStep.status === 'completed') {
+                                                            // Navigate to completed step
+                                                            setActiveView({ type: 'step', id: activeView.id! + 1 });
+                                                        } else if (nextStep.status === 'pending') {
+                                                            // Execute the next step
+                                                            handleExecuteStep(activeView.id!);
+                                                        }
                                                     }
                                                 }}
-                                                className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                                                className={`flex-1 sm:flex-none flex items-center justify-center px-6 py-3 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md ${
+                                                    (() => {
+                                                        const nextStep = investigation.plan.find(step => step.id === activeView.id! + 1);
+                                                        if (nextStep && nextStep.status === 'completed') {
+                                                            return 'bg-blue-600 hover:bg-blue-700 text-white';
+                                                        } else if (nextStep && nextStep.status === 'pending') {
+                                                            return 'bg-green-600 hover:bg-green-700 text-white';
+                                                        }
+                                                        return 'bg-blue-600 hover:bg-blue-700 text-white';
+                                                    })()
+                                                }`}
                                             >
-                                                Siguiente Paso
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                                                </svg>
+                                                {(() => {
+                                                    const nextStep = investigation.plan.find(step => step.id === activeView.id! + 1);
+                                                    if (nextStep && nextStep.status === 'completed') {
+                                                        return 'Siguiente Paso';
+                                                    } else if (nextStep && nextStep.status === 'pending') {
+                                                        return 'Ejecutar Siguiente';
+                                                    }
+                                                    return 'Siguiente Paso';
+                                                })()}
+                                                {(() => {
+                                                    const nextStep = investigation.plan.find(step => step.id === activeView.id! + 1);
+                                                    if (nextStep && nextStep.status === 'completed') {
+                                                        return (
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                                            </svg>
+                                                        );
+                                                    } else if (nextStep && nextStep.status === 'pending') {
+                                                        return (
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                            </svg>
+                                                        );
+                                                    }
+                                                    return (
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                                        </svg>
+                                                    );
+                                                })()}
                                             </button>
                                         )}
 
