@@ -33,20 +33,104 @@ export interface GenerationResult {
     disclaimers?: string;
 }
 
+// Function to check source relevance based on content keywords
+const filterRelevantSources = (sources: { web: { uri: string; title: string; } }[] | null, generatedText: string, originalPrompt: string): { web: { uri: string; title: string; } }[] | null => {
+  if (!sources || sources.length === 0) return sources;
+  
+  // Extract key medical terms from both the generated content and prompt
+  const combinedText = `${generatedText} ${originalPrompt}`.toLowerCase();
+  
+  // Medical terms that should be present in relevant sources
+  const medicalKeywords = [
+    // Extract ophthalmology terms
+    'oftalmol', 'ocular', 'retina', 'cornea', 'glaucoma', 'catarata', 'macular', 'vision', 'eye',
+    'conjuntiva', 'iris', 'pupila', 'cristalino', 'vitreo', 'optic', 'visual',
+    // Common symptoms
+    'dolor', 'vision', 'ceguera', 'diplopia', 'fotofobia', 'lagrimeo', 'enrojecimiento',
+    // Medical specialties and conditions
+    'diagnost', 'tratamiento', 'patolog', 'sindrome', 'enfermedad', 'medic', 'clinic',
+    'patient', 'symptom', 'diagnosis', 'treatment', 'disease', 'condition'
+  ];
+  
+  // Check if text contains medical content
+  const containsMedicalTerms = medicalKeywords.some(keyword => 
+    combinedText.includes(keyword)
+  );
+  
+  if (!containsMedicalTerms) {
+    console.warn('Generated content may not be medical in nature, keeping all sources');
+    return sources;
+  }
+  
+  // Filter sources that seem relevant to medical/ophthalmology content
+  const relevantSources = sources.filter(source => {
+    const sourceText = `${source.web.title} ${source.web.uri}`.toLowerCase();
+    
+    // Check if source is from medical domains
+    const isMedicalDomain = [
+      'pubmed', 'ncbi', 'medline', 'cochrane', 'uptodate', 'medscape', 
+      'nejm', 'jama', 'thelancet', 'bmj', 'aao.org', 'who.int', 'cdc.gov',
+      'mayoclinic', 'clevelandclinic', 'hopkinsmedicine', 'webmd',
+      'medigraphic', 'scielo', 'elsevier', 'springer', 'nature.com',
+      'ophthalmology', 'oftalmol', 'medical', 'medic', 'health', 'salud'
+    ].some(domain => sourceText.includes(domain));
+    
+    // Check if source contains medical keywords
+    const containsRelevantTerms = medicalKeywords.some(keyword => 
+      sourceText.includes(keyword)
+    );
+    
+    // Keep source if it's from medical domain OR contains relevant terms
+    return isMedicalDomain || containsRelevantTerms;
+  });
+  
+  // If filtering removed too many sources, keep at least the original ones
+  // but limit to most relevant
+  if (relevantSources.length === 0 && sources.length > 0) {
+    console.warn('Source filtering removed all sources, keeping original sources');
+    return sources.slice(0, 5); // Limit to first 5 sources
+  }
+  
+  // Limit to maximum 8 sources for better UX
+  return relevantSources.slice(0, 8);
+};
+
 export const generateContent = async (prompt: string, useSearch: boolean = false): Promise<GenerationResult> => {
   try {
     const genAI = getAI();
-    const response = await genAI.models.generateContent({
+    
+    // Log search configuration for debugging
+    console.log(`🔍 Generating content with search: ${useSearch}`);
+    
+    const requestConfig = {
         model: 'gemini-2.5-flash',
         contents: prompt,
         ...(useSearch && { config: { tools: [{googleSearch: {}}] } }),
-    });
+    };
+    
+    console.log('🔧 Request config:', JSON.stringify(requestConfig, null, 2));
+    
+    const response = await genAI.models.generateContent(requestConfig);
     
     // FIX: Transform grounding chunks to match the application's Source type.
     // The API response may have chunks without a web uri, and the title is optional.
     // We filter for valid web sources and provide a fallback for the title to ensure type compatibility.
+    // Debug grounding metadata
+    console.log('📊 Response candidates:', response.candidates?.length || 0);
+    console.log('🔗 Grounding metadata:', response.candidates?.[0]?.groundingMetadata);
+    
     const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-    const sources = groundingChunks
+    console.log(`🔍 Raw grounding chunks found: ${groundingChunks?.length || 0}`);
+    
+    if (groundingChunks) {
+      console.log('📋 Grounding chunks details:', groundingChunks.map(chunk => ({
+        hasWeb: !!chunk.web,
+        uri: chunk.web?.uri || 'NO_URI',
+        title: chunk.web?.title || 'NO_TITLE'
+      })));
+    }
+    
+    let sources = groundingChunks
       ? groundingChunks
           .filter(chunk => chunk.web?.uri)
           .map(chunk => ({
@@ -56,6 +140,20 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
             },
           }))
       : null;
+
+    console.log(`🌐 Valid web sources extracted: ${sources?.length || 0}`);
+    if (sources) {
+      console.log('🔗 Source URLs:', sources.map(s => s.web.uri));
+    }
+
+    // Filter sources for relevance to medical content
+    if (sources && sources.length > 0) {
+      sources = filterRelevantSources(sources, response.text, prompt);
+      console.log(`🎯 Source filtering: ${groundingChunks?.length || 0} original -> ${sources?.length || 0} relevant`);
+    } else if (useSearch) {
+      console.warn('⚠️ WARNING: Search was enabled but no sources were found!');
+      console.log('📝 Generated text preview:', response.text.substring(0, 200) + '...');
+    }
 
     // Validar y mejorar fuentes SIEMPRE que existan fuentes
     let enhancedResult: GenerationResult = {

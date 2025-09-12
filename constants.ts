@@ -139,7 +139,22 @@ Ejecuta el siguiente paso: "${currentStep.title}"
 - Enfócate únicamente en el contenido clínico y el razonamiento médico
 - El sistema se encarga de mostrar las fuentes de forma separada y clickeable
 
-Utiliza la Búsqueda de Google siguiendo tu protocolo de priorización de fuentes. Tu respuesta DEBE basarse en evidencia médica de alta calidad y aplicar razonamiento clínico sistemático.
+**BÚSQUEDA DIRIGIDA:**
+Utiliza la Búsqueda de Google para encontrar información ESPECÍFICAMENTE relacionada con:
+- Los síntomas y condiciones mencionados en la consulta original
+- El paso actual que estás ejecutando
+- Términos médicos oftalmológicos relevantes al caso
+
+PRIORIZA fuentes de:
+1. PubMed/NCBI (estudios revisados por pares)
+2. Cochrane Library (revisiones sistemáticas)
+3. UpToDate, Medscape (guías clínicas actualizadas)
+4. American Academy of Ophthalmology (AAO)
+5. Revistas médicas especializadas (NEJM, JAMA, The Lancet)
+
+EVITA fuentes generales, no médicas o no relacionadas con oftalmología.
+
+Tu respuesta DEBE basarse ÚNICAMENTE en evidencia médica de alta calidad encontrada en tu búsqueda y aplicar razonamiento clínico sistemático.
 `;
 };
 
@@ -192,9 +207,18 @@ El reporte DEBE seguir esta estructura médica especializada:
 - **Red Flags Identificadas:** Signos de alarma críticos
 
 ## 2. ANÁLISIS DIFERENCIAL BAYESIANO
-Tabla con formato:
-| Diagnóstico | Prob. Pre-test | Evidencia Favor | Evidencia Contra | LR+ | Prob. Post-test | Decisión |
-|-------------|----------------|-----------------|------------------|-----|-----------------|----------|
+
+**IMPORTANTE:** Presenta los diagnósticos en formato de lista estructurada, NO en tabla, para mejor legibilidad clínica:
+
+### Diagnóstico Principal:
+**[Nombre del diagnóstico]** - Probabilidad: [XX%]
+- **Evidencia a favor:** [Hallazgos que apoyan este diagnóstico]
+- **Evidencia en contra:** [Hallazgos que lo descartan]
+- **Razonamiento clínico:** [Explicación del proceso de razonamiento]
+- **Decisión:** [Confirmar/descartar/investigar más]
+
+### Diagnósticos Diferenciales:
+(Repetir formato anterior para cada diagnóstico alternativo)
 
 ## 3. RAZONAMIENTO FISIOPATOLÓGICO
 - **Mecanismo Primario:** Proceso patológico subyacente
@@ -228,6 +252,21 @@ Tabla con formato:
 ## 7. REFERENCIAS MÉDICAS CONSOLIDADAS
 **IMPORTANTE:** NO incluyas las referencias en el texto del reporte. Las fuentes se mostrarán automáticamente en la sección de fuentes de la interfaz. Enfócate únicamente en el contenido clínico del reporte.
 
-**IMPORTANTE:** Aplica razonamiento clínico en cada sección, explicitando el proceso de toma de decisiones médicas.
+**BÚSQUEDA DIRIGIDA PARA REPORTE:**
+Utiliza la búsqueda para encontrar evidencia ESPECÍFICA para:
+- Validar los diagnósticos diferenciales propuestos
+- Confirmar estrategias diagnósticas y terapéuticas
+- Obtener datos de incidencia, prevalencia y pronóstico
+- Verificar guías clínicas actualizadas
+
+BUSCA ÚNICAMENTE en fuentes médicas acreditadas relacionadas con oftalmología y las condiciones específicas identificadas en la investigación.
+
+**FORMATO PARA CLÍNICOS:**
+- EVITA tablas complejas con múltiples columnas
+- USA listas estructuradas y párrafos descriptivos
+- PRIORIZA la legibilidad y comprensión clínica
+- Si necesitas usar tablas, mantenlas simples (máximo 3 columnas)
+
+**IMPORTANTE:** Aplica razonamiento clínico en cada sección, explicitando el proceso de toma de decisiones médicas basado en la evidencia encontrada.
 `;
 };

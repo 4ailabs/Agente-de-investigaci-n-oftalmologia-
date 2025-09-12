@@ -171,6 +171,59 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       >
         {children}
       </a>
+    ),
+    // Enhanced table components for medical data
+    table: ({children}: any) => (
+      <div className="my-6 overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-t-lg border-b border-blue-200">
+          <h4 className="text-sm font-semibold text-blue-900 flex items-center">
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2a2 2 0 002-2z" />
+            </svg>
+            Análisis Clínico
+          </h4>
+        </div>
+        <div className="overflow-x-auto bg-white border border-gray-200 rounded-b-lg">
+          <table className="min-w-full divide-y divide-gray-200">
+            {children}
+          </table>
+        </div>
+      </div>
+    ),
+    thead: ({children}: any) => (
+      <thead className="bg-gray-50">
+        {children}
+      </thead>
+    ),
+    tbody: ({children}: any) => (
+      <tbody className="bg-white divide-y divide-gray-200">
+        {children}
+      </tbody>
+    ),
+    tr: ({children}: any) => (
+      <tr className="hover:bg-gray-50 transition-colors duration-150">
+        {children}
+      </tr>
+    ),
+    th: ({children, ...props}: any) => (
+      <th 
+        className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 last:border-r-0"
+        {...props}
+      >
+        <div className="flex items-center space-x-1">
+          <span>{children}</span>
+        </div>
+      </th>
+    ),
+    td: ({children, ...props}: any) => (
+      <td 
+        className="px-4 py-3 text-sm text-gray-900 border-r border-gray-100 last:border-r-0 max-w-xs"
+        {...props}
+      >
+        <div className="break-words">
+          {children}
+        </div>
+      </td>
     )
   };
 
