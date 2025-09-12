@@ -5,10 +5,15 @@ let ai: GoogleGenAI | null = null;
 
 const getAI = (): GoogleGenAI => {
   if (!ai) {
-    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+    // For Vite frontend, environment variables need VITE_ prefix
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 
+                  import.meta.env.VITE_API_KEY || 
+                  process.env.GEMINI_API_KEY;
+    
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY no está configurada en las variables de entorno.");
+      throw new Error("API Key no está configurada. Configure VITE_GEMINI_API_KEY en el archivo .env");
     }
+    
     ai = new GoogleGenAI({ apiKey });
   }
   return ai;
@@ -102,42 +107,48 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     // Log search configuration for debugging
     console.log(`🔍 Generating content with search: ${useSearch}`);
     
-    // Fix API call structure based on Google GenAI SDK documentation
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
-    
-    let requestConfig: any = {
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+    // Use the correct API structure for the current SDK version
+    const requestConfig: any = {
+        model: 'gemini-1.5-flash',
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
     };
     
-    // Add Google Search tool if needed - correct API structure
+    // Add Google Search tool if needed - correct API structure for Gemini 1.5
     if (useSearch) {
         requestConfig.tools = [{
-            googleSearch: {}
+            googleSearchRetrieval: {
+                dynamicRetrievalConfig: {
+                    mode: "MODE_DYNAMIC",
+                    dynamicThreshold: 0.7
+                }
+            }
         }];
     }
     
     console.log('🔧 Request config:', JSON.stringify(requestConfig, null, 2));
     
-    const response = await model.generateContent(requestConfig);
+    const response = await genAI.models.generateContent(requestConfig);
     
     // Debug response structure
     console.log('📊 Full response structure:', JSON.stringify(response, null, 2));
     console.log('📊 Response candidates:', response.candidates?.length || 0);
     
-    // Get text content
-    const responseText = response.response?.text() || response.text;
+    // Get text content - handle both possible response formats
+    const responseText = response.text || response.response?.text() || response.candidates?.[0]?.content?.parts?.[0]?.text;
     console.log('📝 Response text preview:', responseText?.substring(0, 200) + '...');
     
-    // Debug grounding metadata - check different possible locations
+    // Debug grounding metadata - check different possible locations for Gemini 1.5
     let groundingMetadata = response.candidates?.[0]?.groundingMetadata || 
                           response.response?.candidates?.[0]?.groundingMetadata ||
                           response.groundingMetadata;
     
-    console.log('🔗 Grounding metadata:', groundingMetadata);
+    console.log('🔗 Grounding metadata:', JSON.stringify(groundingMetadata, null, 2));
     
+    // For Gemini 1.5 with GoogleSearchRetrieval, look for different structure
     const groundingChunks = groundingMetadata?.groundingChunks || 
                           groundingMetadata?.webSearchResults ||
-                          groundingMetadata?.groundingSupports;
+                          groundingMetadata?.groundingSupports ||
+                          groundingMetadata?.retrievalMetadata?.googleSearchDynamicRetrievalScore;
     
     console.log(`🔍 Raw grounding chunks found: ${groundingChunks?.length || 0}`);
     
@@ -165,6 +176,12 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     console.log(`🌐 Valid web sources extracted: ${sources?.length || 0}`);
     if (sources) {
       console.log('🔗 Source URLs:', sources.map((s: any) => s.web.uri));
+      console.log('🔗 Source details:', sources.map((s: any) => ({
+        title: s.web.title,
+        uri: s.web.uri
+      })));
+    } else {
+      console.warn('⚠️ No sources found! This might indicate search is not working properly.');
     }
 
     // Filter sources for relevance to medical content

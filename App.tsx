@@ -411,12 +411,23 @@ const App: React.FC = () => {
 
         return updatedInvestigation;
     });
+
+    // Auto-navigate to next step or report
+    const nextStepIndex = currentStepIndex + 1;
+    if (nextStepIndex < investigation.plan.length) {
+      // Navigate to next step
+      setActiveView({ type: 'step', id: nextStepIndex + 1 });
+    } else {
+      // All steps completed, navigate to report
+      setActiveView({ type: 'report', id: null });
+    }
   };
   
   const handleGenerateReport = async () => {
     if (!investigation || !investigation.plan.every(step => step.status === 'completed')) return;
     
     setInvestigation(prev => prev ? {...prev, isGeneratingReport: true, error: null } : null);
+    // Navigate to report view when generation starts
     setActiveView({ type: 'report', id: null });
     
     const completedSteps = investigation.plan.filter(step => step.status === 'completed');
