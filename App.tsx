@@ -353,8 +353,16 @@ const App: React.FC = () => {
     
     const { text: resultText, sources: resultSources } = await generateContent(prompt, true);
     
+    // Debug sources
+    console.log('🔍 Generated sources:', resultSources);
+    console.log('🔍 Sources count:', resultSources?.length || 0);
+    
     // Validate and enhance sources with medical validation
     const { validatedSources, quality, contradictions } = await MedicalValidationService.validateAndEnhanceSources(resultSources);
+    
+    // Debug validated sources
+    console.log('✅ Validated sources:', validatedSources);
+    console.log('✅ Validated sources count:', validatedSources?.length || 0);
 
     // Perform quality assurance check
     const qualityCheck = QualityAssuranceEngine.performQualityCheck(
