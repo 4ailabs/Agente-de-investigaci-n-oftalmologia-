@@ -1,0 +1,402 @@
+import React, { useState, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+interface EnhancedReportDisplayProps {
+  content: string;
+  sources?: any[];
+  onCopy?: () => void;
+  isCopied?: boolean;
+}
+
+const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
+  content,
+  sources = [],
+  onCopy,
+  isCopied = false
+}) => {
+  const [activeSection, setActiveSection] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showTableOfContents, setShowTableOfContents] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Extract sections from markdown content
+  const extractSections = (content: string) => {
+    const sections: Array<{id: string; title: string; level: number}> = [];
+    const lines = content.split('\n');
+    
+    lines.forEach((line, index) => {
+      const match = line.match(/^(#{1,6})\s+(.+)$/);
+      if (match) {
+        const level = match[1].length;
+        const title = match[2];
+        const id = title.toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-');
+        sections.push({ id, title, level });
+      }
+    });
+    
+    return sections;
+  };
+
+  const sections = extractSections(content);
+
+  // Generate summary from content
+  const generateSummary = (content: string) => {
+    const lines = content.split('\n').filter(line => line.trim());
+    const summaryLines: string[] = [];
+    
+    // Extract key points - look for lines with strong emphasis or bullet points
+    lines.forEach(line => {
+      if (line.includes('**') || line.startsWith('- ') || line.startsWith('* ')) {
+        const cleaned = line.replace(/\*\*/g, '').replace(/^[-*]\s*/, '');
+        if (cleaned.length > 20 && cleaned.length < 200) {
+          summaryLines.push(cleaned);
+        }
+      }
+    });
+    
+    return summaryLines.slice(0, 5); // Top 5 key points
+  };
+
+  const summary = generateSummary(content);
+
+  // Scroll to section
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setActiveSection(sectionId);
+    }
+    setShowTableOfContents(false);
+  };
+
+  // Highlight search terms
+  const highlightSearchTerm = (text: string) => {
+    if (!searchTerm) return text;
+    
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>');
+  };
+
+  // Custom markdown components with search highlighting
+  const markdownComponents = {
+    h1: ({children, ...props}: any) => {
+      const id = String(children).toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-');
+      return (
+        <h1 
+          id={id} 
+          className="text-2xl lg:text-3xl font-bold mb-6 text-slate-900 border-b-2 border-blue-100 pb-3"
+          {...props}
+        >
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            {children}
+          </div>
+        </h1>
+      );
+    },
+    h2: ({children, ...props}: any) => {
+      const id = String(children).toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-');
+      return (
+        <h2 
+          id={id} 
+          className="text-xl lg:text-2xl font-semibold mb-4 text-slate-800 mt-8"
+          {...props}
+        >
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-indigo-500 rounded-md flex items-center justify-center mr-2">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            {children}
+          </div>
+        </h2>
+      );
+    },
+    h3: ({children, ...props}: any) => {
+      const id = String(children).toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-');
+      return (
+        <h3 
+          id={id} 
+          className="text-lg lg:text-xl font-medium mb-3 text-slate-700 mt-6"
+          {...props}
+        >
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-green-500 rounded-sm mr-2"></div>
+            {children}
+          </div>
+        </h3>
+      );
+    },
+    p: ({children}: any) => (
+      <p className="text-sm lg:text-base mb-4 leading-7 text-slate-700">
+        {children}
+      </p>
+    ),
+    ul: ({children}: any) => (
+      <ul className="text-sm lg:text-base mb-4 pl-6 space-y-2">
+        {children}
+      </ul>
+    ),
+    li: ({children}: any) => (
+      <li className="flex items-start">
+        <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+        <span>{children}</span>
+      </li>
+    ),
+    strong: ({children}: any) => (
+      <strong className="font-semibold text-slate-900 bg-slate-100 px-1 rounded">
+        {children}
+      </strong>
+    ),
+    a: ({href, children}: any) => (
+      <a 
+        href={href} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors duration-200"
+      >
+        {children}
+      </a>
+    )
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header with controls */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-slate-900">Reporte Clínico</h2>
+          </div>
+          
+          {sections.length > 3 && (
+            <button
+              onClick={() => setShowTableOfContents(!showTableOfContents)}
+              className="px-3 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+            >
+              <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              Índice
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-3">
+          {/* Search */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Buscar en el reporte..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-64 px-4 py-2 pl-10 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <svg className="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          {/* Copy button */}
+          {onCopy && (
+            <button
+              onClick={onCopy}
+              className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span>{isCopied ? '¡Copiado!' : 'Copiar Reporte'}</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Table of Contents */}
+      {showTableOfContents && sections.length > 0 && (
+        <div className="bg-blue-50 p-6 rounded-xl border border-blue-200 mb-6">
+          <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            Índice de Contenidos
+          </h3>
+          <div className="space-y-2">
+            {sections.map((section, index) => (
+              <button
+                key={index}
+                onClick={() => scrollToSection(section.id)}
+                className={`block w-full text-left px-3 py-2 rounded-lg transition-colors text-sm
+                  ${section.level === 1 ? 'font-semibold text-blue-800 bg-blue-100' : 
+                    section.level === 2 ? 'font-medium text-blue-700 ml-4 hover:bg-blue-100' : 
+                    'text-blue-600 ml-8 hover:bg-blue-100'}`}
+              >
+                {section.title}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Executive Summary */}
+      {summary.length > 0 && (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 mb-6">
+          <h3 className="text-lg font-semibold text-green-900 mb-4 flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Resumen Ejecutivo
+          </h3>
+          <div className="space-y-2">
+            {summary.map((point, index) => (
+              <div key={index} className="flex items-start">
+                <span className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3 mt-0.5">
+                  {index + 1}
+                </span>
+                <p className="text-sm text-green-800 leading-relaxed">{point}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="bg-white p-6 lg:p-8 rounded-xl border border-slate-200 shadow-sm">
+        <div 
+          ref={contentRef}
+          className="prose prose-slate max-w-none text-slate-800 leading-relaxed"
+        >
+          <ReactMarkdown 
+            remarkPlugins={[remarkGfm]}
+            components={markdownComponents}
+          >
+            {content}
+          </ReactMarkdown>
+        </div>
+      </div>
+
+      {/* Enhanced Sources Section */}
+      {sources && sources.length > 0 && (
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h4 className="text-xl font-bold text-indigo-900">Referencias y Fuentes</h4>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full">
+                {sources.length} fuente{sources.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid gap-4">
+            {sources.map((source, index) => {
+              const isOpenAccess = source.web.uri.includes('pubmed.ncbi.nlm.nih.gov') || 
+                                 source.web.uri.includes('cochrane.org') ||
+                                 source.web.uri.includes('clinicaltrials.gov') ||
+                                 source.web.uri.includes('aao.org');
+              
+              const isSubscription = source.web.uri.includes('uptodate.com') ||
+                                    source.web.uri.includes('medscape.com') ||
+                                    source.web.uri.includes('thelancet.com');
+              
+              return (
+                <div key={index} className="bg-white p-4 rounded-lg border border-indigo-200 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <span className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          {index + 1}
+                        </span>
+                        <a 
+                          href={source.web.uri} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-indigo-700 hover:text-indigo-900 font-semibold text-base hover:underline transition-colors"
+                        >
+                          {source.web.title || 'Fuente médica'}
+                        </a>
+                      </div>
+                      <p className="text-sm text-slate-600 font-mono bg-slate-100 p-2 rounded mt-2 truncate">
+                        {source.web.uri}
+                      </p>
+                    </div>
+                    <div className="ml-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        isOpenAccess ? 'bg-green-100 text-green-800' :
+                        isSubscription ? 'bg-red-100 text-red-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {isOpenAccess ? '✅ Acceso libre' : 
+                         isSubscription ? '🔒 Requiere suscripción' : 
+                         '⚠️ Acceso limitado'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Medical Disclaimers */}
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+        <div className="flex items-start space-x-4">
+          <div className="flex-shrink-0">
+            <svg className="h-8 w-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h4 className="text-lg font-bold text-amber-800 mb-4">⚠️ Avisos Médicos Importantes</h4>
+            <div className="space-y-3 text-sm text-amber-700">
+              <div className="flex items-start">
+                <span className="font-semibold mr-2">🔬</span>
+                <p><strong>Herramienta de Investigación:</strong> Este análisis es generado por IA y está diseñado como herramienta de investigación médica, no como diagnóstico definitivo.</p>
+              </div>
+              <div className="flex items-start">
+                <span className="font-semibold mr-2">👨‍⚕️</span>
+                <p><strong>Supervisión Profesional Requerida:</strong> Todas las recomendaciones y diagnósticos diferenciales deben ser validados por un médico calificado.</p>
+              </div>
+              <div className="flex items-start">
+                <span className="font-semibold mr-2">🚫</span>
+                <p><strong>No Sustituye el Juicio Clínico:</strong> Este reporte complementa, pero no reemplaza, la evaluación clínica y el criterio médico profesional.</p>
+              </div>
+              <div className="flex items-start">
+                <span className="font-semibold mr-2">📋</span>
+                <p><strong>Responsabilidad del Usuario:</strong> El uso de esta información es responsabilidad exclusiva del profesional médico que la consulta.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EnhancedReportDisplay;

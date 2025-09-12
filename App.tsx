@@ -16,6 +16,7 @@ import useSwipeGesture from './hooks/useSwipeGesture';
 // Lazy load heavy components
 const ExplanationModal = lazy(() => import('./components/ExplanationModal'));
 const HistoryModal = lazy(() => import('./components/HistoryModal'));
+const EnhancedReportDisplay = lazy(() => import('./components/EnhancedReportDisplay'));
 // Import ReactMarkdown normally since it's needed for step rendering
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -1012,17 +1013,6 @@ const App: React.FC = () => {
                                                 <span>{copiedStepId === activeView.id ? '¡Copiado!' : 'Copiar Paso'}</span>
                                             </button>
                                         )}
-                                    {activeView.type === 'report' && investigation.finalReport && (
-                                        <button
-                                            onClick={handleCopyReport}
-                                                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                            </svg>
-                                                <span>{isCopied ? '¡Copiado!' : 'Copiar Reporte'}</span>
-                                        </button>
-                                    )}
                                     </div>
                                 </div>
 
@@ -1036,36 +1026,47 @@ const App: React.FC = () => {
                                         <p className="text-sm mt-1">Por favor espera mientras analizamos los datos</p>
                                     </div>
                                 ) : activeContent.content && activeContent.content.trim() ? (
-                                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                        <div className="prose prose-slate prose-xl max-w-none text-slate-800 leading-relaxed prose-headings:text-slate-900 prose-headings:font-bold prose-p:text-lg prose-p:leading-8 prose-strong:text-slate-900 prose-strong:font-semibold prose-ul:text-lg prose-ol:text-lg prose-li:text-lg prose-li:leading-8">
-                                          <ReactMarkdown 
-                                            remarkPlugins={[remarkGfm]}
-                                            components={{
-                                              // Optimize for mobile rendering
-                                              h1: ({children}) => <h1 className="text-xl lg:text-2xl mb-4">{children}</h1>,
-                                              h2: ({children}) => <h2 className="text-lg lg:text-xl mb-3">{children}</h2>,
-                                              h3: ({children}) => <h3 className="text-base lg:text-lg mb-2">{children}</h3>,
-                                              p: ({children}) => <p className="text-sm lg:text-base mb-3 leading-6">{children}</p>,
-                                              ul: ({children}) => <ul className="text-sm lg:text-base mb-3 pl-4 space-y-1">{children}</ul>,
-                                              ol: ({children}) => <ol className="text-sm lg:text-base mb-3 pl-4 space-y-1">{children}</ol>,
-                                              // Make links clickable with proper styling
-                                              a: ({href, children}) => (
-                                                <a 
-                                                  href={href} 
-                                                  target="_blank" 
-                                                  rel="noopener noreferrer"
-                                                  className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors duration-200"
-                                                  title={`Abrir enlace: ${href}`}
-                                                >
-                                                  {children}
-                                                </a>
-                                              )
-                                            }}
-                                          >
-                                            {activeContent.content}
-                                          </ReactMarkdown>
+                                    activeView.type === 'report' ? (
+                                        <Suspense fallback={<div className="flex items-center justify-center h-32"><Spinner /></div>}>
+                                            <EnhancedReportDisplay 
+                                                content={activeContent.content}
+                                                sources={activeContent.sources}
+                                                onCopy={handleCopyReport}
+                                                isCopied={isCopied}
+                                            />
+                                        </Suspense>
+                                    ) : (
+                                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                            <div className="prose prose-slate prose-xl max-w-none text-slate-800 leading-relaxed prose-headings:text-slate-900 prose-headings:font-bold prose-p:text-lg prose-p:leading-8 prose-strong:text-slate-900 prose-strong:font-semibold prose-ul:text-lg prose-ol:text-lg prose-li:text-lg prose-li:leading-8">
+                                              <ReactMarkdown 
+                                                remarkPlugins={[remarkGfm]}
+                                                components={{
+                                                  // Optimize for mobile rendering
+                                                  h1: ({children}) => <h1 className="text-xl lg:text-2xl mb-4">{children}</h1>,
+                                                  h2: ({children}) => <h2 className="text-lg lg:text-xl mb-3">{children}</h2>,
+                                                  h3: ({children}) => <h3 className="text-base lg:text-lg mb-2">{children}</h3>,
+                                                  p: ({children}) => <p className="text-sm lg:text-base mb-3 leading-6">{children}</p>,
+                                                  ul: ({children}) => <ul className="text-sm lg:text-base mb-3 pl-4 space-y-1">{children}</ul>,
+                                                  ol: ({children}) => <ol className="text-sm lg:text-base mb-3 pl-4 space-y-1">{children}</ol>,
+                                                  // Make links clickable with proper styling
+                                                  a: ({href, children}) => (
+                                                    <a 
+                                                      href={href} 
+                                                      target="_blank" 
+                                                      rel="noopener noreferrer"
+                                                      className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors duration-200"
+                                                      title={`Abrir enlace: ${href}`}
+                                                    >
+                                                      {children}
+                                                    </a>
+                                                  )
+                                                }}
+                                              >
+                                                {activeContent.content}
+                                              </ReactMarkdown>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )
                                 ) : (
                                     <div className="text-center text-slate-500 py-16">
                                         <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -1078,29 +1079,8 @@ const App: React.FC = () => {
                                     </div>
                                 )}
 
-                                {/* Medical Disclaimers */}
-                                {activeView.type === 'report' && (
-                                    <div className="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                                        <div className="flex items-start space-x-3">
-                                            <div className="flex-shrink-0">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                                </svg>
-                                            </div>
-                                            <div className="flex-1">
-                                                <h4 className="text-sm font-semibold text-amber-800 mb-2">Avisos Médicos Importantes</h4>
-                                                <div className="text-sm text-amber-700 space-y-1">
-                                                    <p>⚠️ <strong>IMPORTANTE:</strong> Este análisis es generado por IA y no reemplaza el juicio clínico profesional.</p>
-                                                    <p>👨‍⚕️ <strong>SUPERVISIÓN MÉDICA REQUERIDA:</strong> Todas las recomendaciones deben ser validadas por un médico calificado.</p>
-                                                    <p>🚫 <strong>NO ES DIAGNÓSTICO:</strong> Este análisis no constituye un diagnóstico médico definitivo.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Sources */}
-                                {activeContent.sources && activeContent.sources.length > 0 && (
+                                {/* Medical Disclaimers and Sources for steps (not report) */}
+                                {activeView.type !== 'report' && activeContent.sources && activeContent.sources.length > 0 && (
                                     <div className="mt-8">
                                         <div className="flex items-center mb-4">
                                             <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
