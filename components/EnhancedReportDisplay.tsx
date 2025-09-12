@@ -548,16 +548,42 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
         </div>
       )}
 
-      {/* Main Content - Conditional based on view mode */}
+      {/* Main Content - Professional Medical Report Design */}
       {viewMode !== 'summary' && (
-        <div className={`bg-white rounded-xl border border-slate-200 shadow-sm ${
-          viewMode === 'print' ? 'p-8 print:shadow-none print:border-none' : 'p-6 lg:p-8'
+        <div className={`bg-white rounded-2xl border border-slate-200/60 shadow-lg ${
+          viewMode === 'print' ? 'p-8 print:shadow-none print:border-none' : 'p-8 lg:p-10'
         }`}>
+          {/* Professional Header */}
+          <div className="border-b border-slate-200 pb-6 mb-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-md">
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Reporte Clínico Especializado</h2>
+                  <p className="text-slate-600 text-sm">Análisis oftalmológico detallado</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-slate-500">Generado por</div>
+                <div className="text-sm font-semibold text-slate-700">Agente de Investigación Clínica</div>
+                <div className="text-xs text-slate-500">4ailabs</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Report Content with Enhanced Typography */}
           <div 
             ref={contentRef}
             className={`prose prose-slate max-w-none text-slate-800 leading-relaxed ${
               viewMode === 'print' ? 'print:text-black print:text-sm' : ''
             }`}
+            style={{
+              fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+            }}
           >
             <ReactMarkdown 
               remarkPlugins={[remarkGfm]}
@@ -565,6 +591,24 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
             >
               {searchTerm ? highlightSearchTerms(content, searchTerm) : content}
             </ReactMarkdown>
+          </div>
+
+          {/* Professional Footer */}
+          <div className="mt-12 pt-6 border-t border-slate-200">
+            <div className="flex items-center justify-between text-xs text-slate-500">
+              <div className="flex items-center space-x-4">
+                <span>Confidencial - Uso médico exclusivo</span>
+                <span>•</span>
+                <span>Generado automáticamente</span>
+              </div>
+              <div className="text-right">
+                <div>{new Date().toLocaleDateString('es-ES', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}</div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -582,22 +626,25 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
         `}</style>
       )}
 
-      {/* Enhanced Sources Section */}
+      {/* Enhanced Sources Section - Professional Design */}
       {sources && sources.length > 0 && (
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center mr-3">
-                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 p-8 rounded-2xl border border-slate-200/60 shadow-lg">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl flex items-center justify-center shadow-md">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h4 className="text-lg font-bold text-indigo-900">Referencias y Fuentes</h4>
+              <div>
+                <h4 className="text-xl font-bold text-slate-900">Referencias Médicas</h4>
+                <p className="text-slate-600 text-sm">Fuentes consultadas y validadas</p>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full">
-                {sources.length} fuente{sources.length !== 1 ? 's' : ''}
-              </span>
+            <div className="flex items-center space-x-3">
+              <div className="px-4 py-2 bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-lg border border-indigo-200">
+                {sources.length} fuente{sources.length !== 1 ? 's' : ''} consultada{sources.length !== 1 ? 's' : ''}
+              </div>
             </div>
           </div>
 
@@ -668,20 +715,31 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
         </div>
       )}
 
-      {/* Medical Disclaimers - Compact */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-        <div className="flex items-start space-x-3">
+      {/* Medical Disclaimers - Professional Design */}
+      <div className="bg-gradient-to-br from-amber-50 via-orange-50/30 to-red-50/20 border border-amber-200/60 rounded-2xl p-6 shadow-sm">
+        <div className="flex items-start space-x-4">
           <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-amber-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
           </div>
           <div className="flex-1">
-            <h4 className="text-sm font-bold text-amber-800 mb-2">AVISOS MÉDICOS IMPORTANTES</h4>
-            <div className="text-xs text-amber-700 space-y-1">
-              <p><strong>Herramienta de Investigación:</strong> Este análisis es generado por IA y está diseñado como herramienta de investigación médica, no como diagnóstico definitivo.</p>
-              <p><strong>Supervisión Profesional Requerida:</strong> Todas las recomendaciones deben ser validadas por un médico calificado.</p>
-              <p><strong>No Sustituye el Juicio Clínico:</strong> Este reporte complementa, pero no reemplaza, la evaluación clínica profesional.</p>
+            <h4 className="text-lg font-bold text-amber-900 mb-4">Avisos Médicos Importantes</h4>
+            <div className="space-y-3 text-sm text-amber-800">
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0"></div>
+                <p><strong>Herramienta de Investigación:</strong> Este análisis es generado por IA y está diseñado como herramienta de investigación médica, no como diagnóstico definitivo.</p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0"></div>
+                <p><strong>Supervisión Profesional Requerida:</strong> Todas las recomendaciones deben ser validadas por un médico calificado.</p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0"></div>
+                <p><strong>No Sustituye el Juicio Clínico:</strong> Este reporte complementa, pero no reemplaza, la evaluación clínica profesional.</p>
+              </div>
             </div>
           </div>
         </div>
