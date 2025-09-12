@@ -462,7 +462,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     const enhancedQuery = `${query}\n\n### CONTEXTO MÉDICO INICIAL ###\n${contextSummary}\n\n${reasoningSummary}\n\n${knowledgeGraphData}`;
     
     const prompt = createResearchPlanPrompt(enhancedQuery);
-    const { text: planResponse } = await generateContent(prompt, false);
+    const { text: planResponse } = await generateContent(prompt, false, enhancedQuery);
 
     if (planResponse.startsWith('Ocurrió un error:')) {
       setInvestigation(prev => prev ? {...prev, error: planResponse, isGenerating: false} : null);
@@ -513,7 +513,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     
     const prompt = createExecuteStepPrompt(enhancedOriginalQuery, investigation.plan, currentStepInfo);
     
-    const { text: resultText, sources: resultSources } = await generateContent(prompt, true);
+    const { text: resultText, sources: resultSources } = await generateContent(prompt, true, enhancedOriginalQuery);
     
     // Debug sources
     console.log('Generated sources:', resultSources);
@@ -604,7 +604,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     
     const prompt = createFinalReportPrompt(enhancedQuery, completedSteps);
     
-    const { text: reportText, sources: reportSources } = await generateContent(prompt, true);
+    const { text: reportText, sources: reportSources } = await generateContent(prompt, true, enhancedQuery);
 
     // Validate and enhance report sources
     const { validatedSources, disclaimers } = await MedicalValidationService.validateAndEnhanceSources(reportSources);
