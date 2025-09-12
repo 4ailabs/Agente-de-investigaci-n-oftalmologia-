@@ -102,62 +102,83 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     // Log search configuration for debugging
     console.log(`🔍 Generating content with search: ${useSearch}`);
     
-    const requestConfig = {
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        ...(useSearch && { config: { tools: [{googleSearch: {}}] } }),
+    // Fix API call structure based on Google GenAI SDK documentation
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    
+    let requestConfig: any = {
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
     };
+    
+    // Add Google Search tool if needed - correct API structure
+    if (useSearch) {
+        requestConfig.tools = [{
+            googleSearch: {}
+        }];
+    }
     
     console.log('🔧 Request config:', JSON.stringify(requestConfig, null, 2));
     
-    const response = await genAI.models.generateContent(requestConfig);
+    const response = await model.generateContent(requestConfig);
     
-    // FIX: Transform grounding chunks to match the application's Source type.
-    // The API response may have chunks without a web uri, and the title is optional.
-    // We filter for valid web sources and provide a fallback for the title to ensure type compatibility.
-    // Debug grounding metadata
+    // Debug response structure
+    console.log('📊 Full response structure:', JSON.stringify(response, null, 2));
     console.log('📊 Response candidates:', response.candidates?.length || 0);
-    console.log('🔗 Grounding metadata:', response.candidates?.[0]?.groundingMetadata);
     
-    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+    // Get text content
+    const responseText = response.response?.text() || response.text;
+    console.log('📝 Response text preview:', responseText?.substring(0, 200) + '...');
+    
+    // Debug grounding metadata - check different possible locations
+    let groundingMetadata = response.candidates?.[0]?.groundingMetadata || 
+                          response.response?.candidates?.[0]?.groundingMetadata ||
+                          response.groundingMetadata;
+    
+    console.log('🔗 Grounding metadata:', groundingMetadata);
+    
+    const groundingChunks = groundingMetadata?.groundingChunks || 
+                          groundingMetadata?.webSearchResults ||
+                          groundingMetadata?.groundingSupports;
+    
     console.log(`🔍 Raw grounding chunks found: ${groundingChunks?.length || 0}`);
     
     if (groundingChunks) {
-      console.log('📋 Grounding chunks details:', groundingChunks.map(chunk => ({
-        hasWeb: !!chunk.web,
-        uri: chunk.web?.uri || 'NO_URI',
-        title: chunk.web?.title || 'NO_TITLE'
+      console.log('📋 Grounding chunks details:', groundingChunks.map((chunk: any) => ({
+        hasWeb: !!(chunk.web || chunk.webSearchResult),
+        uri: chunk.web?.uri || chunk.webSearchResult?.uri || chunk.uri || 'NO_URI',
+        title: chunk.web?.title || chunk.webSearchResult?.title || chunk.title || 'NO_TITLE'
       })));
     }
     
+    // Transform grounding chunks to sources with flexible structure
     let sources = groundingChunks
       ? groundingChunks
-          .filter(chunk => chunk.web?.uri)
-          .map(chunk => ({
+          .filter((chunk: any) => chunk.web?.uri || chunk.webSearchResult?.uri || chunk.uri)
+          .map((chunk: any) => ({
             web: {
-              uri: chunk.web!.uri!,
-              title: chunk.web!.title || chunk.web!.uri!,
+              uri: chunk.web?.uri || chunk.webSearchResult?.uri || chunk.uri!,
+              title: chunk.web?.title || chunk.webSearchResult?.title || chunk.title || 
+                    chunk.web?.uri || chunk.webSearchResult?.uri || chunk.uri!,
             },
           }))
       : null;
 
     console.log(`🌐 Valid web sources extracted: ${sources?.length || 0}`);
     if (sources) {
-      console.log('🔗 Source URLs:', sources.map(s => s.web.uri));
+      console.log('🔗 Source URLs:', sources.map((s: any) => s.web.uri));
     }
 
     // Filter sources for relevance to medical content
     if (sources && sources.length > 0) {
-      sources = filterRelevantSources(sources, response.text, prompt);
+      sources = filterRelevantSources(sources, responseText, prompt);
       console.log(`🎯 Source filtering: ${groundingChunks?.length || 0} original -> ${sources?.length || 0} relevant`);
     } else if (useSearch) {
       console.warn('⚠️ WARNING: Search was enabled but no sources were found!');
-      console.log('📝 Generated text preview:', response.text.substring(0, 200) + '...');
+      console.log('📝 Generated text preview:', responseText?.substring(0, 200) + '...');
     }
 
     // Validar y mejorar fuentes SIEMPRE que existan fuentes
     let enhancedResult: GenerationResult = {
-        text: response.text,
+        text: responseText,
         sources,
     };
 
@@ -166,7 +187,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
         try {
             const validation = await MedicalValidationService.validateAndEnhanceSources(sources);
             enhancedResult = {
-                text: response.text,
+                text: responseText,
                 sources: validation.validatedSources,
                 quality: {
                     overallQuality: validation.quality.length > 0 ? 
@@ -186,7 +207,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
             console.warn("Error en validación de fuentes, usando fuentes sin validar:", validationError);
             // En caso de error en validación, mantener las fuentes originales pero con advertencia
             enhancedResult = {
-                text: response.text,
+                text: responseText,
                 sources: sources,
                 quality: {
                     overallQuality: 'low',
