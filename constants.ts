@@ -115,6 +115,8 @@ Ejecuta el siguiente paso: "${currentStep.title}"
 - Identifica cualquier red flag o gap de información
 - Concluye con implicaciones para los próximos pasos
 
+**IMPORTANTE:** NO incluyas referencias o fuentes en el texto de tu respuesta. Las fuentes se mostrarán automáticamente en la sección dedicada. Enfócate únicamente en el contenido clínico y el razonamiento médico.
+
 Utiliza la Búsqueda de Google siguiendo tu protocolo de priorización de fuentes. Tu respuesta DEBE basarse en evidencia médica de alta calidad y aplicar razonamiento clínico sistemático.
 `;
 };
