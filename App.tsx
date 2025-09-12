@@ -166,13 +166,13 @@ ${clinicalInfo.trim()}`;
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                     </svg>
-                    <span>{showAudioRecorder ? 'Ocultar' : 'Grabar Audio'}</span>
+                    <span>{showAudioRecorder ? 'Ocultar' : 'Transcripción de Voz'}</span>
                   </button>
                 </div>
               </div>
             </div>
-
-            {/* Audio Recorder */}
+           
+            {/* Transcripción de Voz */}
             {showAudioRecorder && (
               <div className="mt-4">
                 <AudioRecorder
@@ -836,7 +836,7 @@ const App: React.FC = () => {
                                             }`}
                                         >
                                            <div className="flex-shrink-0 mt-0.5 lg:mt-0">
-                                               <StatusIcon status={step.status} />
+                                           <StatusIcon status={step.status} />
                                            </div>
                                            <div className="flex-1 min-w-0 ml-2 lg:ml-3">
                                                <div className="flex items-center justify-between">
@@ -865,7 +865,7 @@ const App: React.FC = () => {
                                                    </div>
                                                </div>
                                            </div>
-                                            </button>
+                                        </button>
                                             {step.status === 'completed' && (
                                                 <button
                                                     onClick={() => handleCopyStep(step.id)}
@@ -1052,17 +1052,17 @@ const App: React.FC = () => {
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         {activeView.type === 'step' && activeContent.status === 'completed' && (
-                                            <button
+                                        <button
                                                 onClick={() => handleCopyStep(activeView.id!)}
                                                 className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                </svg>
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
                                                 <span>{copiedStepId === activeView.id ? '¡Copiado!' : 'Copiar Paso'}</span>
-                                            </button>
-                                        )}
-                                    </div>
+                                        </button>
+                                    )}
+                                </div>
                                 </div>
 
                                 {/* Content */}
@@ -1070,7 +1070,7 @@ const App: React.FC = () => {
                                     <div className="flex flex-col items-center justify-center h-64 text-slate-500">
                                         <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
                                         <Spinner/>
-                                        </div>
+                                    </div>
                                         <p className="text-lg font-medium">Procesando información...</p>
                                         <p className="text-sm mt-1">Por favor espera mientras analizamos los datos</p>
                                     </div>
@@ -1177,8 +1177,8 @@ const App: React.FC = () => {
                                                                     className="text-blue-600 hover:text-blue-800 hover:underline font-semibold text-sm lg:text-base transition-all duration-200 group-hover:bg-blue-50 p-3 rounded-lg -m-3 border border-transparent hover:border-blue-200"
                                                                     title={`Abrir: ${source.web.uri}`}
                                                                 >
-                                                                    {source.web.title || source.web.uri}
-                                                                </a>
+                                                        {source.web.title || source.web.uri}
+                                                    </a>
                                                                 <span className="text-lg" title={accessMessage}>
                                                                     {accessIndicator}
                                                                 </span>
@@ -1199,7 +1199,7 @@ const App: React.FC = () => {
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                    </li>
+                                                </li>
                                                 );
                                             })}
                                         </ul>
