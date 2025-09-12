@@ -619,10 +619,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             return {...prev, error: reportText, isGeneratingReport: false };
         }
         
-        // Add medical disclaimers to the final report
-        const reportWithDisclaimers = `${reportText}\n\n---\n\n## Disclaimers Médicos\n\n${disclaimers}`;
-        
-        const finalInvestigation = {...prev, finalReport: reportWithDisclaimers, finalReportSources: validatedSources, isGeneratingReport: false };
+        // Store the report without adding disclaimers (they are shown in the UI component)
+        const finalInvestigation = {...prev, finalReport: reportText, finalReportSources: validatedSources, isGeneratingReport: false };
 
         // Auto-save final report
         if (currentInvestigationId) {
@@ -1017,7 +1015,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                                         </svg>
                                         <span>Nueva</span>
-                                    </button>
+                                </button>
                                     {investigation?.isGenerating && (
                                         <button 
                                             onClick={handleCancelInvestigation} 
@@ -1029,7 +1027,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                             <span>Cancelar</span>
                                         </button>
                                     )}
-                                </div>
+                             </div>
                              </div>
                              <div className="bg-blue-50 p-2 lg:p-3 rounded-lg">
                                  <div className="text-sm lg:text-base text-slate-700 space-y-1">

@@ -565,7 +565,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
 
       {/* Print-specific styles */}
       {viewMode === 'print' && (
-        <style jsx>{`
+        <style>{`
           @media print {
             .no-print { display: none !important; }
             .print\\:text-black { color: black !important; }
@@ -662,33 +662,20 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
         </div>
       )}
 
-      {/* Medical Disclaimers */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
-        <div className="flex items-start space-x-4">
+      {/* Medical Disclaimers - Compact */}
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <div className="flex items-start space-x-3">
           <div className="flex-shrink-0">
-            <svg className="h-8 w-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="h-5 w-5 text-amber-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
           <div className="flex-1">
-            <h4 className="text-base font-bold text-amber-800 mb-4">AVISOS MÉDICOS IMPORTANTES</h4>
-            <div className="space-y-3 text-sm text-amber-700">
-              <div className="flex items-start">
-                <span className="font-semibold mr-2">•</span>
-                <p><strong>Herramienta de Investigación:</strong> Este análisis es generado por IA y está diseñado como herramienta de investigación médica, no como diagnóstico definitivo.</p>
-              </div>
-              <div className="flex items-start">
-                <span className="font-semibold mr-2">•</span>
-                <p><strong>Supervisión Profesional Requerida:</strong> Todas las recomendaciones y diagnósticos diferenciales deben ser validados por un médico calificado.</p>
-              </div>
-              <div className="flex items-start">
-                <span className="font-semibold mr-2">•</span>
-                <p><strong>No Sustituye el Juicio Clínico:</strong> Este reporte complementa, pero no reemplaza, la evaluación clínica y el criterio médico profesional.</p>
-              </div>
-              <div className="flex items-start">
-                <span className="font-semibold mr-2">•</span>
-                <p><strong>Responsabilidad del Usuario:</strong> El uso de esta información es responsabilidad exclusiva del profesional médico que la consulta.</p>
-              </div>
+            <h4 className="text-sm font-bold text-amber-800 mb-2">AVISOS MÉDICOS IMPORTANTES</h4>
+            <div className="text-xs text-amber-700 space-y-1">
+              <p><strong>Herramienta de Investigación:</strong> Este análisis es generado por IA y está diseñado como herramienta de investigación médica, no como diagnóstico definitivo.</p>
+              <p><strong>Supervisión Profesional Requerida:</strong> Todas las recomendaciones deben ser validadas por un médico calificado.</p>
+              <p><strong>No Sustituye el Juicio Clínico:</strong> Este reporte complementa, pero no reemplaza, la evaluación clínica profesional.</p>
             </div>
           </div>
         </div>
