@@ -683,7 +683,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
   const handleNewInvestigation = () => {
     // Limpiar localStorage completamente
-    localStorageService.clearAllInvestigations();
+    localStorageService.clearAllData();
     setInvestigation(null);
     setCurrentInvestigationId(null);
     setMedicalContext(null);
