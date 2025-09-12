@@ -196,10 +196,10 @@ export const EnhancedDataForm: React.FC<EnhancedDataFormProps> = ({
         {/* Navegación por secciones */}
         <div className="flex space-x-1 bg-slate-100 rounded-lg p-1">
           {[
-            { id: 'demographics', label: 'Demográficos', icon: '👤' },
-            { id: 'symptoms', label: 'Síntomas', icon: '🔍' },
-            { id: 'exam', label: 'Examen', icon: '🔬' },
-            { id: 'history', label: 'Antecedentes', icon: '📋' }
+            { id: 'demographics', label: 'Demográficos', icon: '' },
+            { id: 'symptoms', label: 'Síntomas', icon: '' },
+            { id: 'exam', label: 'Examen', icon: '' },
+            { id: 'history', label: 'Antecedentes', icon: '' }
           ].map(section => (
             <button
               key={section.id}

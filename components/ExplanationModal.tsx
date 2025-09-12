@@ -119,7 +119,7 @@ const MobileContent: React.FC = () => (
     </div>
 
     <div className="space-y-3">
-      <h3 className="font-semibold text-base">🔬 ¿Cómo Funciona?</h3>
+      <h3 className="font-semibold text-base">¿Cómo Funciona?</h3>
       <p className="text-sm">Esta herramienta especializada en oftalmología sigue un proceso de investigación médica estructurado en tres fases:</p>
       
       <div className="space-y-3">
@@ -150,9 +150,9 @@ const MobileContent: React.FC = () => (
     </div>
 
     <div className="space-y-3">
-      <h3 className="font-semibold text-base">📱 Navegación Móvil</h3>
+      <h3 className="font-semibold text-base">Navegación Móvil</h3>
       <div className="bg-blue-50 p-3 rounded-lg">
-        <p className="text-xs text-blue-800 mb-2"><strong>💡 Consejo:</strong> Puedes deslizar hacia izquierda/derecha en el área de contenido para navegar entre pasos completados.</p>
+        <p className="text-xs text-blue-800 mb-2"><strong>Consejo:</strong> Puedes deslizar hacia izquierda/derecha en el área de contenido para navegar entre pasos completados.</p>
         <div className="flex items-center justify-center space-x-4 text-xs text-blue-600">
           <span>← Paso anterior</span>
           <span>•</span>
@@ -162,7 +162,7 @@ const MobileContent: React.FC = () => (
     </div>
 
     <div className="space-y-3">
-      <h3 className="font-semibold text-base">🏥 Fuentes Médicas</h3>
+      <h3 className="font-semibold text-base">Fuentes Médicas</h3>
       <p className="text-xs">El sistema prioriza automáticamente:</p>
       <ul className="text-xs space-y-1 pl-4">
         <li>• Revisiones sistemáticas (Cochrane, PubMed)</li>

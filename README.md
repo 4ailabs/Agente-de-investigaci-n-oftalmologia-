@@ -2,7 +2,7 @@
 
 Una aplicación web que utiliza Google Gemini para realizar investigaciones clínicas paso a paso en oftalmología, generando reportes médicos basados en evidencia.
 
-## 🚀 Características
+##  Características
 
 ### 🔬 **Investigación Médica Avanzada**
 - **Protocolo de 3 Fases**: Planificación → Ejecución → Síntesis
@@ -22,13 +22,13 @@ Una aplicación web que utiliza Google Gemini para realizar investigaciones clí
 - **Resolución de Errores**: Estrategias automáticas de recuperación
 - **Optimización de Prompts**: Templates especializados por fase
 
-### 🎯 **Funcionalidades de Usuario**
+###  **Funcionalidades de Usuario**
 - **Navegación Intuitiva**: Panel de control con indicadores de estado
 - **Copiado Inteligente**: Exportación de pasos individuales y reportes completos
 - **Fuentes Interactivas**: Enlaces directos a referencias médicas
 - **Responsive Design**: Funciona en todos los dispositivos
 
-### 📊 **Métricas y Monitoreo**
+###  **Métricas y Monitoreo**
 - **Calidad en Tiempo Real**: Evaluación continua de fuentes
 - **Consistencia**: Detección automática de contradicciones
 - **Completitud**: Cobertura de aspectos clínicos relevantes
@@ -46,7 +46,7 @@ Una aplicación web que utiliza Google Gemini para realizar investigaciones clí
 - Node.js (versión 18 o superior)
 - Cuenta de Google con acceso a Gemini API
 
-## 🏃‍♂️ Ejecutar Localmente
+##  Ejecutar Localmente
 
 1. **Clonar el repositorio**
    ```bash
@@ -79,7 +79,7 @@ Una aplicación web que utiliza Google Gemini para realizar investigaciones clí
 5. **Abrir en el navegador**
    La aplicación estará disponible en `http://localhost:5173`
 
-## 🚀 Desplegar en Vercel
+##  Desplegar en Vercel
 
 1. **Subir a GitHub**
    ```bash
@@ -117,7 +117,7 @@ Una aplicación web que utiliza Google Gemini para realizar investigaciones clí
 └── vite.config.ts        # Configuración de Vite
 ```
 
-## 🔧 Scripts Disponibles
+##  Scripts Disponibles
 
 - `npm run dev` - Ejecutar en modo desarrollo
 - `npm run build` - Construir para producción
@@ -175,10 +175,10 @@ La aplicación sigue un protocolo médico riguroso de 3 fases para garantizar in
 #### **Disclaimers Médicos Obligatorios**
 - ⚠️ **Advertencia de IA**: Clarificación de que es generado por inteligencia artificial
 - 👨‍⚕️ **Supervisión Médica**: Requerimiento de validación por médico calificado
-- 🚫 **No Diagnóstico**: Aclaración de que no constituye diagnóstico definitivo
-- 📊 **Calidad de Evidencia**: Información sobre limitaciones de las fuentes
+-  **No Diagnóstico**: Aclaración de que no constituye diagnóstico definitivo
+-  **Calidad de Evidencia**: Información sobre limitaciones de las fuentes
 
-### 🎯 **Funcionalidades Avanzadas**
+###  **Funcionalidades Avanzadas**
 
 #### **Sistema de Copiado Inteligente**
 - **Copiar Pasos Individuales**: Incluye título, resultado y fuentes
@@ -191,7 +191,7 @@ La aplicación sigue un protocolo médico riguroso de 3 fases para garantizar in
 - **Fuentes Interactivas**: Enlaces directos a referencias médicas
 - **Responsive Design**: Funciona en dispositivos móviles y escritorio
 
-### 📊 **Métricas de Calidad**
+###  **Métricas de Calidad**
 
 La aplicación implementa métricas automáticas para garantizar la seriedad de las investigaciones:
 
@@ -210,7 +210,7 @@ El sistema prioriza automáticamente las fuentes en este orden:
 4. **Revistas Médicas Revisadas por Pares** (Lancet, JAMA Ophthalmology, NEJM)
 5. **Bases de Datos de Autoridad** (UpToDate, Medscape)
 
-### ⚡ **Flujo de Trabajo Recomendado**
+###  **Flujo de Trabajo Recomendado**
 
 1. **Preparación**: Reúne toda la información clínica disponible
 2. **Ingreso de Datos**: Completa todos los campos del formulario inicial
@@ -238,7 +238,7 @@ La aplicación implementa técnicas avanzadas de context engineering para garant
 - **Estrategias de Recuperación**: Respuestas automáticas a errores comunes
 - **Validación de Fuentes**: Verificación continua de confiabilidad
 
-### 🔧 **Configuración Avanzada**
+###  **Configuración Avanzada**
 
 #### **Variables de Entorno**
 ```bash
@@ -263,28 +263,28 @@ La aplicación proporciona métricas en tiempo real para evaluar la calidad de l
 ## 🆕 **Mejoras Implementadas**
 
 ### **Validación Médica Avanzada**
-- ✅ **Sistema de Scoring**: Evaluación automática de autoridad de fuentes (0-100 puntos)
-- ✅ **Detección de Contradicciones**: Análisis automático de inconsistencias entre fuentes
-- ✅ **Filtrado Inteligente**: Eliminación automática de fuentes no confiables
-- ✅ **Disclaimers Obligatorios**: Advertencias legales y médicas en todos los reportes
+-  **Sistema de Scoring**: Evaluación automática de autoridad de fuentes (0-100 puntos)
+-  **Detección de Contradicciones**: Análisis automático de inconsistencias entre fuentes
+-  **Filtrado Inteligente**: Eliminación automática de fuentes no confiables
+-  **Disclaimers Obligatorios**: Advertencias legales y médicas en todos los reportes
 
 ### **Context Engineering Optimizado**
-- ✅ **Gestión de Contexto**: Control automático de límites de contexto
-- ✅ **Memoria Médica**: Persistencia de información del paciente
-- ✅ **Resolución de Errores**: Estrategias automáticas de recuperación
-- ✅ **Prompts Especializados**: Templates optimizados por fase de investigación
+-  **Gestión de Contexto**: Control automático de límites de contexto
+-  **Memoria Médica**: Persistencia de información del paciente
+-  **Resolución de Errores**: Estrategias automáticas de recuperación
+-  **Prompts Especializados**: Templates optimizados por fase de investigación
 
 ### **Interfaz de Usuario Mejorada**
-- ✅ **Disclaimers Visuales**: Alertas médicas prominentes en reportes
-- ✅ **Navegación Optimizada**: Panel de control con indicadores de estado
-- ✅ **Copiado Inteligente**: Exportación estructurada de contenido
-- ✅ **Responsive Design**: Funciona perfectamente en todos los dispositivos
+-  **Disclaimers Visuales**: Alertas médicas prominentes en reportes
+-  **Navegación Optimizada**: Panel de control con indicadores de estado
+-  **Copiado Inteligente**: Exportación estructurada de contenido
+-  **Responsive Design**: Funciona perfectamente en todos los dispositivos
 
 ### **Garantías de Calidad**
-- ✅ **Protocolo de Fuentes**: Jerarquía automática basada en evidencia médica
-- ✅ **Métricas en Tiempo Real**: Evaluación continua de calidad
-- ✅ **Trazabilidad Completa**: Seguimiento de todas las fuentes utilizadas
-- ✅ **Validación Profesional**: Requerimiento de supervisión médica
+-  **Protocolo de Fuentes**: Jerarquía automática basada en evidencia médica
+-  **Métricas en Tiempo Real**: Evaluación continua de calidad
+-  **Trazabilidad Completa**: Seguimiento de todas las fuentes utilizadas
+-  **Validación Profesional**: Requerimiento de supervisión médica
 
 ## ⚠️ **Importante**
 

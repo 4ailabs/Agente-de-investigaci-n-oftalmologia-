@@ -478,15 +478,15 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     const { text: resultText, sources: resultSources } = await generateContent(prompt, true);
     
     // Debug sources
-    console.log('🔍 Generated sources:', resultSources);
-    console.log('🔍 Sources count:', resultSources?.length || 0);
+    console.log('Generated sources:', resultSources);
+    console.log('Sources count:', resultSources?.length || 0);
     
     // Validate and enhance sources with medical validation
     const { validatedSources, quality, contradictions } = await MedicalValidationService.validateAndEnhanceSources(resultSources);
     
     // Debug validated sources
-    console.log('✅ Validated sources:', validatedSources);
-    console.log('✅ Validated sources count:', validatedSources?.length || 0);
+    console.log('Validated sources:', validatedSources);
+    console.log('Validated sources count:', validatedSources?.length || 0);
 
     // Perform quality assurance check
     const qualityCheck = QualityAssuranceEngine.performQualityCheck(
@@ -851,7 +851,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                              // Patient demographics (first line)
                                              return (
                                                  <div key={index} className="font-medium text-blue-800 text-sm">
-                                                     👤 {section.trim()}
+                                                     {section.trim()}
                                                  </div>
                                              );
                                          } else {
@@ -860,7 +860,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                              const truncated = symptoms.length > 120 ? symptoms.substring(0, 120) + '...' : symptoms;
                                              return (
                                                  <div key={index} className="text-slate-600">
-                                                     <div className="text-sm font-medium text-slate-500 mb-1">📋 Síntomas:</div>
+                                                     <div className="text-sm font-medium text-slate-500 mb-1">Síntomas:</div>
                                                      <div className="text-sm leading-tight" title={symptoms}>
                                                          {truncated}
                                                      </div>
@@ -1244,7 +1244,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                                       source.web.uri.includes('jama.ama-assn.org') ||
                                                                       source.web.uri.includes('nejm.org');
                                                 
-                                                const accessIndicator = isOpenAccess ? '✅' : isSubscription ? '🔒' : '⚠️';
+                                                const accessIndicator = isOpenAccess ? '✓' : isSubscription ? '🔒' : '!';
                                                 const accessMessage = isOpenAccess ? 'Acceso abierto' : 
                                                                     isSubscription ? 'Requiere suscripción' : 'Acceso limitado';
                                                 
