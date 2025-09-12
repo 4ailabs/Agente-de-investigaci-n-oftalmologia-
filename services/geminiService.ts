@@ -57,31 +57,50 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
           }))
       : null;
 
-    // Validar y mejorar fuentes si se usó búsqueda
+    // Validar y mejorar fuentes SIEMPRE que existan fuentes
     let enhancedResult: GenerationResult = {
         text: response.text,
         sources,
     };
 
-    if (useSearch && sources) {
-        const validation = await MedicalValidationService.validateAndEnhanceSources(sources);
-        enhancedResult = {
-            text: response.text,
-            sources: validation.validatedSources,
-            quality: {
-                overallQuality: validation.quality.length > 0 ? 
-                    validation.quality.filter(q => q.level === 'high').length >= validation.quality.length * 0.7 ? 'high' :
-                    validation.quality.filter(q => q.level === 'high' || q.level === 'medium').length >= validation.quality.length * 0.5 ? 'medium' : 'low'
-                    : 'low',
-                highQualityCount: validation.quality.filter(q => q.level === 'high').length,
-                mediumQualityCount: validation.quality.filter(q => q.level === 'medium').length,
-                lowQualityCount: validation.quality.filter(q => q.level === 'low').length,
-                recommendations: validation.quality.filter(q => q.level === 'low').length > 0 ? 
-                    [`Se encontraron ${validation.quality.filter(q => q.level === 'low').length} fuentes de baja calidad. Se recomienda buscar evidencia adicional.`] : []
-            },
-            contradictions: validation.contradictions,
-            disclaimers: validation.disclaimers
-        };
+    // Aplicar validación médica a todas las fuentes, independientemente de si se usó búsqueda
+    if (sources && sources.length > 0) {
+        try {
+            const validation = await MedicalValidationService.validateAndEnhanceSources(sources);
+            enhancedResult = {
+                text: response.text,
+                sources: validation.validatedSources,
+                quality: {
+                    overallQuality: validation.quality.length > 0 ? 
+                        validation.quality.filter(q => q.level === 'high').length >= validation.quality.length * 0.7 ? 'high' :
+                        validation.quality.filter(q => q.level === 'high' || q.level === 'medium').length >= validation.quality.length * 0.5 ? 'medium' : 'low'
+                        : 'low',
+                    highQualityCount: validation.quality.filter(q => q.level === 'high').length,
+                    mediumQualityCount: validation.quality.filter(q => q.level === 'medium').length,
+                    lowQualityCount: validation.quality.filter(q => q.level === 'low').length,
+                    recommendations: validation.quality.filter(q => q.level === 'low').length > 0 ? 
+                        [`Se encontraron ${validation.quality.filter(q => q.level === 'low').length} fuentes de baja calidad. Se recomienda buscar evidencia adicional.`] : []
+                },
+                contradictions: validation.contradictions,
+                disclaimers: validation.disclaimers
+            };
+        } catch (validationError) {
+            console.warn("Error en validación de fuentes, usando fuentes sin validar:", validationError);
+            // En caso de error en validación, mantener las fuentes originales pero con advertencia
+            enhancedResult = {
+                text: response.text,
+                sources: sources,
+                quality: {
+                    overallQuality: 'low',
+                    highQualityCount: 0,
+                    mediumQualityCount: 0,
+                    lowQualityCount: sources.length,
+                    recommendations: ['Error en validación de fuentes. Se recomienda verificación manual.']
+                },
+                contradictions: { hasConflicts: false, conflicts: [], resolution: '', confidence: 'low' },
+                disclaimers: '⚠️ ADVERTENCIA: Las fuentes no pudieron ser validadas automáticamente. Se recomienda verificación manual.'
+            };
+        }
     }
 
     return enhancedResult;
