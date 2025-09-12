@@ -693,6 +693,33 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     console.log('🆕 Nueva investigación iniciada - localStorage limpiado');
   };
 
+  const handleCancelInvestigation = () => {
+    if (investigation) {
+      // Marcar investigación como cancelada
+      const cancelledInvestigation = {
+        ...investigation,
+        isGenerating: false,
+        isGeneratingReport: false,
+        status: 'cancelled' as const,
+        cancelledAt: new Date().toISOString()
+      };
+      
+      // Actualizar en localStorage
+      if (currentInvestigationId) {
+        localStorageService.updateInvestigation(currentInvestigationId, cancelledInvestigation);
+      }
+      
+      // Resetear estados
+      setInvestigation(null);
+      setCurrentInvestigationId(null);
+      setMedicalContext(null);
+      setClinicalReasoning(null);
+      setQualityChecks([]);
+      
+      console.log('❌ Investigación cancelada');
+    }
+  };
+
   // Load investigation from history
   const handleLoadInvestigation = (investigationId: string) => {
     try {
@@ -868,10 +895,23 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
           isLoading={investigation?.isGenerating ?? false}
         />
       ) : investigation.isGenerating && investigation.plan.length === 0 ? (
-         <MobileLoadingCard 
-           title="Creando Plan de Investigación"
-           description="Nuestro agente de IA está analizando el caso y diseñando un plan de investigación personalizado basado en evidencia médica."
-         />
+         <div className="relative">
+           <MobileLoadingCard 
+             title="Creando Plan de Investigación"
+             description="Nuestro agente de IA está analizando el caso y diseñando un plan de investigación personalizado basado en evidencia médica."
+           />
+           <div className="mt-4 flex justify-center">
+             <button
+               onClick={handleCancelInvestigation}
+               className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors duration-200"
+             >
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+               </svg>
+               Cancelar Investigación
+             </button>
+           </div>
+         </div>
       ) : (
           <main className="max-w-7xl mx-auto py-2 lg:py-8 px-2 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 relative">
@@ -889,15 +929,28 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     </div>
                                     <h2 className="text-base lg:text-xl font-semibold text-slate-800">Investigación Actual</h2>
                                 </div>
-                                <button 
-                                    onClick={handleNewInvestigation} 
-                                    className="flex items-center px-3 lg:px-4 py-2 lg:py-2.5 text-sm lg:text-base font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    <span>Nueva Investigación</span>
-                                </button>
+                                <div className="flex space-x-2">
+                                    <button 
+                                        onClick={handleNewInvestigation} 
+                                        className="flex items-center px-3 lg:px-4 py-2 lg:py-2.5 text-sm lg:text-base font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        <span>Nueva</span>
+                                    </button>
+                                    {investigation?.isGenerating && (
+                                        <button 
+                                            onClick={handleCancelInvestigation} 
+                                            className="flex items-center px-3 lg:px-4 py-2 lg:py-2.5 text-sm lg:text-base font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            <span>Cancelar</span>
+                                        </button>
+                                    )}
+                                </div>
                              </div>
                              <div className="bg-blue-50 p-2 lg:p-3 rounded-lg">
                                  <div className="text-sm lg:text-base text-slate-700 space-y-1">
