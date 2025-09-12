@@ -329,10 +329,6 @@ const App: React.FC = () => {
   const [showExplanation, setShowExplanation] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
-  // Debug splash screen
-  useEffect(() => {
-    console.log('🎬 App: showSplash =', showSplash);
-  }, [showSplash]);
   const [isCopied, setIsCopied] = useState(false);
   const [copiedStepId, setCopiedStepId] = useState<number | null>(null);
   
@@ -812,10 +808,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 flex flex-col">
       {showSplash && (
-        <SplashScreen onComplete={() => {
-          console.log('🎬 Splash screen onComplete llamado');
-          setShowSplash(false);
-        }} />
+        <SplashScreen onComplete={() => setShowSplash(false)} />
       )}
       <Header 
         onShowExplanation={() => setShowExplanation(true)} 
