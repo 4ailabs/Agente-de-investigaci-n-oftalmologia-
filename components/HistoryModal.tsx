@@ -9,6 +9,8 @@ interface HistoryModalProps {
   onDeleteInvestigation: (id: string) => void;
   onExportInvestigation: (id: string) => void;
   onCopyInvestigation: (id: string) => void;
+  onExportPDF: (id: string) => void;
+  onExportSummaryPDF: (id: string) => void;
   currentInvestigationId: string | null;
 }
 
@@ -20,6 +22,8 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
   onDeleteInvestigation,
   onExportInvestigation,
   onCopyInvestigation,
+  onExportPDF,
+  onExportSummaryPDF,
   currentInvestigationId
 }) => {
   if (!isOpen) return null;
@@ -152,46 +156,72 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-1 ml-4">
-                      <button
-                        onClick={() => onLoadInvestigation(investigation.id)}
-                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                        title="Cargar investigación"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                        </svg>
-                      </button>
+                    <div className="flex flex-col space-y-2 ml-4">
+                      {/* Primera fila de botones */}
+                      <div className="flex items-center space-x-1">
+                        <button
+                          onClick={() => onLoadInvestigation(investigation.id)}
+                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                          title="Cargar investigación"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                          </svg>
+                        </button>
+                        
+                        <button
+                          onClick={() => onCopyInvestigation(investigation.id)}
+                          className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors"
+                          title="Copiar resumen al portapapeles"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </button>
+                        
+                        <button
+                          onClick={() => onDeleteInvestigation(investigation.id)}
+                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                          title="Eliminar investigación"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
                       
-                      <button
-                        onClick={() => onCopyInvestigation(investigation.id)}
-                        className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors"
-                        title="Copiar resumen al portapapeles"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                      </button>
-                      
-                      <button
-                        onClick={() => onExportInvestigation(investigation.id)}
-                        className="p-2 text-purple-600 hover:bg-purple-100 rounded-lg transition-colors"
-                        title="Descargar archivo JSON"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                      </button>
-                      
-                      <button
-                        onClick={() => onDeleteInvestigation(investigation.id)}
-                        className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                        title="Eliminar investigación"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
+                      {/* Segunda fila de botones - Exportar */}
+                      <div className="flex items-center space-x-1">
+                        <button
+                          onClick={() => onExportPDF(investigation.id)}
+                          className="p-2 text-orange-600 hover:bg-orange-100 rounded-lg transition-colors"
+                          title="Exportar PDF completo"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                          </svg>
+                        </button>
+                        
+                        <button
+                          onClick={() => onExportSummaryPDF(investigation.id)}
+                          className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors"
+                          title="Exportar PDF resumen"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </button>
+                        
+                        <button
+                          onClick={() => onExportInvestigation(investigation.id)}
+                          className="p-2 text-purple-600 hover:bg-purple-100 rounded-lg transition-colors"
+                          title="Descargar archivo JSON"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -204,38 +234,61 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
         <div className="bg-slate-50 px-6 py-4 border-t border-slate-200">
           <div className="space-y-3">
             {/* Leyenda de iconos */}
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600">
-              <div className="flex items-center space-x-1">
-                <div className="w-4 h-4 bg-blue-100 rounded flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                  </svg>
+            <div className="space-y-2">
+              <div className="text-xs font-medium text-slate-700">Acciones principales:</div>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600">
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 bg-blue-100 rounded flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                  </div>
+                  <span>Cargar</span>
                 </div>
-                <span>Cargar</span>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 bg-green-100 rounded flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <span>Copiar</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 bg-red-100 rounded flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </div>
+                  <span>Eliminar</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-4 h-4 bg-green-100 rounded flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
+              
+              <div className="text-xs font-medium text-slate-700">Exportar:</div>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600">
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 bg-orange-100 rounded flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <span>PDF completo</span>
                 </div>
-                <span>Copiar resumen</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-4 h-4 bg-purple-100 rounded flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 bg-amber-100 rounded flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <span>PDF resumen</span>
                 </div>
-                <span>Descargar JSON</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-4 h-4 bg-red-100 rounded flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 bg-purple-100 rounded flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <span>JSON</span>
                 </div>
-                <span>Eliminar</span>
               </div>
             </div>
             
