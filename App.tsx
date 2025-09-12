@@ -575,10 +575,7 @@ const App: React.FC = () => {
         if (nextStep && nextStep.status !== 'pending') {
           setActiveView({ type: 'step', id: currentStepId + 1 });
         }
-      } else if (currentStepId === maxStepId && investigation.finalReport) {
-        // Go to final report
-        setActiveView({ type: 'report', id: null });
-      }
+      } // Removed automatic navigation to final report - let user choose when to view it
     }
   };
 
