@@ -594,13 +594,24 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
   };
   
   const handleGenerateReport = async () => {
-    if (!investigation || !investigation.plan.every(step => step.status === 'completed')) return;
+    if (!investigation) {
+      console.log('No investigation available');
+      return;
+    }
+    
+    const completedSteps = investigation.plan.filter(step => step.status === 'completed');
+    console.log('Total steps:', investigation.plan.length);
+    console.log('Completed steps:', completedSteps.length);
+    console.log('Step statuses:', investigation.plan.map(s => ({ id: s.id, status: s.status })));
+    
+    if (completedSteps.length === 0) {
+      console.log('No completed steps to generate report');
+      return;
+    }
     
     setInvestigation(prev => prev ? {...prev, isGeneratingReport: true, error: null } : null);
     // Navigate to report view when generation starts
     setActiveView({ type: 'report', id: null });
-    
-    const completedSteps = investigation.plan.filter(step => step.status === 'completed');
     
     // Enhanced prompt with final medical context
     let enhancedQuery = investigation.originalQuery;
@@ -1272,7 +1283,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     )}
                                 </button>
                             )}
-                            {investigation.currentStep >= investigation.plan.length && !investigation.finalReport && (
+                            {investigation.plan.some(step => step.status === 'completed') && !investigation.finalReport && (
                                 <button
                                     onClick={handleGenerateReport}
                                     disabled={investigation.isGeneratingReport}
@@ -1292,6 +1303,14 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         </>
                                     )}
                                 </button>
+                            )}
+                            {!investigation.plan.some(step => step.status === 'completed') && !investigation.finalReport && (
+                                <div className="w-full flex justify-center items-center py-2.5 lg:py-3 px-3 lg:px-4 bg-slate-100 text-slate-500 font-medium rounded-lg lg:rounded-xl text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                    </svg>
+                                    Completa al menos un paso para generar el reporte
+                                </div>
                             )}
                         </div>
                          
