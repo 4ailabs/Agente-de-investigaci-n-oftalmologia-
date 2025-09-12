@@ -412,15 +412,17 @@ const App: React.FC = () => {
         return updatedInvestigation;
     });
 
-    // Auto-navigate to next step or report
-    const nextStepIndex = currentStepIndex + 1;
-    if (nextStepIndex < investigation.plan.length) {
-      // Navigate to next step
-      setActiveView({ type: 'step', id: nextStepIndex + 1 });
-    } else {
-      // All steps completed, navigate to report
-      setActiveView({ type: 'report', id: null });
-    }
+    // Auto-navigate to next step or report after state update
+    setTimeout(() => {
+      const nextStepIndex = currentStepIndex + 1;
+      if (nextStepIndex < investigation.plan.length) {
+        // Navigate to next step
+        setActiveView({ type: 'step', id: nextStepIndex + 1 });
+      } else {
+        // All steps completed, navigate to report
+        setActiveView({ type: 'report', id: null });
+      }
+    }, 100); // Small delay to ensure state is updated
   };
   
   const handleGenerateReport = async () => {
