@@ -777,6 +777,53 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     }
   };
 
+  // Copy investigation summary to clipboard
+  const handleCopyInvestigation = (investigationId: string) => {
+    try {
+      const storedInvestigation = localStorageService.getInvestigation(investigationId);
+      if (storedInvestigation) {
+        const { investigation, patientInfo } = storedInvestigation;
+        
+        let summary = `🔍 INVESTIGACIÓN OFTALMOLÓGICA\n`;
+        summary += `📅 Fecha: ${new Date(storedInvestigation.createdAt).toLocaleDateString('es-ES')}\n`;
+        summary += `👤 Paciente: ${patientInfo.age} años, ${patientInfo.sex}\n`;
+        summary += `🩺 Síntomas: ${patientInfo.symptoms}\n\n`;
+        
+        if (investigation.plan && investigation.plan.length > 0) {
+          summary += `📋 PLAN DE INVESTIGACIÓN:\n`;
+          investigation.plan.forEach((step: any, index: number) => {
+            const status = step.status === 'completed' ? '✅' : step.status === 'in-progress' ? '🔄' : '⏳';
+            summary += `${index + 1}. ${status} ${step.title}\n`;
+          });
+          summary += `\n`;
+        }
+        
+        if (investigation.finalReport) {
+          summary += `📄 REPORTE FINAL:\n`;
+          // Extraer solo las primeras líneas del reporte para el resumen
+          const reportLines = investigation.finalReport.split('\n').slice(0, 10);
+          summary += reportLines.join('\n');
+          if (investigation.finalReport.split('\n').length > 10) {
+            summary += `\n... (reporte completo disponible en la aplicación)`;
+          }
+        }
+        
+        summary += `\n\n💡 Generado por Agente de Investigación Clínica de Oftalmología - 4ailabs`;
+        
+        navigator.clipboard.writeText(summary).then(() => {
+          console.log('Investigation summary copied to clipboard');
+          // Mostrar notificación visual (opcional)
+          alert('Resumen copiado al portapapeles');
+        }).catch((error) => {
+          console.error('Error copying to clipboard:', error);
+          alert('Error al copiar al portapapeles');
+        });
+      }
+    } catch (error) {
+      console.error('Error copying investigation:', error);
+    }
+  };
+
   // Navigation functions for swipe gestures
   const navigateToNextStep = () => {
     if (!investigation) return;
@@ -883,6 +930,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             onLoadInvestigation={handleLoadInvestigation}
             onDeleteInvestigation={handleDeleteInvestigation}
             onExportInvestigation={handleExportInvestigation}
+            onCopyInvestigation={handleCopyInvestigation}
             currentInvestigationId={currentInvestigationId}
           />
         </Suspense>
