@@ -15,6 +15,10 @@ const getAI = (): GoogleGenAI => {
     }
     
     ai = new GoogleGenAI({ apiKey });
+    
+    // Debug: Check available methods
+    console.log('🔍 Available methods on ai object:', Object.getOwnPropertyNames(ai));
+    console.log('🔍 Available methods on ai.__proto__:', Object.getOwnPropertyNames(Object.getPrototypeOf(ai)));
   }
   return ai;
 };
