@@ -26,10 +26,16 @@ const DocumentCapture: React.FC<DocumentCaptureProps> = ({
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
 
+    // Limitar a máximo 10 fotos para evitar sobrecarga
+    const limitedFiles = files.slice(0, 10);
+    if (files.length > 10) {
+      onError('Se seleccionaron muchas fotos. Se procesarán solo las primeras 10.');
+    }
+
     setIsProcessing(true);
     try {
-      const processedImages = await captureService.processImages(files);
-      setImages(processedImages);
+      const processedImages = await captureService.processImages(limitedFiles);
+      setImages(prevImages => [...prevImages, ...processedImages]);
       setShowPreview(true);
     } catch (error) {
       onError('Error procesando las imágenes: ' + (error as Error).message);
@@ -74,34 +80,50 @@ const DocumentCapture: React.FC<DocumentCaptureProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Botón de captura */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <button
-          type="button"
-          onClick={handleCaptureClick}
-          disabled={isLoading || isProcessing}
-          className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors min-h-[48px]"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <span className="font-medium">
-            {isProcessing ? 'Procesando...' : 'Capturar Expediente'}
-          </span>
-        </button>
-
-        {images.length > 0 && (
+      {/* Botones de captura */}
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row gap-2">
           <button
             type="button"
-            onClick={handleUseData}
+            onClick={handleCaptureClick}
             disabled={isLoading || isProcessing}
-            className="flex-1 sm:flex-none px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors min-h-[48px]"
+            className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors min-h-[48px]"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
             <span className="font-medium">
-              {isProcessing ? 'Extrayendo...' : 'Usar Datos'}
+              {isProcessing ? 'Procesando...' : 'Agregar Fotos'}
             </span>
           </button>
+
+          {images.length > 0 && (
+            <button
+              type="button"
+              onClick={handleUseData}
+              disabled={isLoading || isProcessing}
+              className="flex-1 sm:flex-none px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors min-h-[48px]"
+            >
+              <span className="font-medium">
+                {isProcessing ? 'Extrayendo...' : 'Usar Datos'}
+              </span>
+            </button>
+          )}
+        </div>
+
+        {/* Información sobre múltiples fotos */}
+        {images.length > 0 && (
+          <div className="text-center">
+            <p className="text-sm text-slate-600">
+              {images.length} foto{images.length !== 1 ? 's' : ''} capturada{images.length !== 1 ? 's' : ''}
+              {images.length < 10 && (
+                <span className="text-green-600 ml-1">
+                  (puedes agregar más)
+                </span>
+              )}
+            </p>
+          </div>
         )}
       </div>
 
@@ -194,10 +216,11 @@ const DocumentCapture: React.FC<DocumentCaptureProps> = ({
           <div className="text-sm text-blue-800">
             <p className="font-medium mb-1">Consejos para mejor captura:</p>
             <ul className="text-xs space-y-1">
-              <li>• Asegúrate de que el texto sea legible y esté bien iluminado</li>
-              <li>• Mantén la cámara estable y perpendicular al documento</li>
-              <li>• Captura páginas completas del expediente</li>
-              <li>• Puedes tomar múltiples fotos del mismo documento</li>
+              <li>• <strong>Múltiples fotos:</strong> Puedes capturar varias páginas del expediente</li>
+              <li>• <strong>Calidad:</strong> Asegúrate de que el texto sea legible y esté bien iluminado</li>
+              <li>• <strong>Estabilidad:</strong> Mantén la cámara estable y perpendicular al documento</li>
+              <li>• <strong>Completitud:</strong> Captura páginas completas del expediente</li>
+              <li>• <strong>Agregar más:</strong> Puedes seguir agregando fotos después de la primera captura</li>
             </ul>
           </div>
         </div>
