@@ -522,20 +522,26 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
 
       {/* Executive Summary */}
       {summary.length > 0 && (
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 mb-6">
-          <h3 className="text-base font-semibold text-green-900 mb-4 flex items-center">
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+        <div className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 p-6 rounded-xl border border-slate-200 mb-6 shadow-sm">
+          <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
             Resumen Ejecutivo
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-4">
             {summary.map((point, index) => (
-              <div key={index} className="flex items-start">
-                <span className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3 mt-0.5">
-                  {index + 1}
-                </span>
-                <p className="text-sm text-green-800 leading-relaxed">{point}</p>
+              <div key={index} className="flex items-start group">
+                <div className="flex-shrink-0 mr-4">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-lg flex items-center justify-center text-sm font-bold shadow-md group-hover:shadow-lg transition-all duration-200">
+                    {index + 1}
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm lg:text-base text-slate-700 leading-relaxed font-medium">{point}</p>
+                </div>
               </div>
             ))}
           </div>
