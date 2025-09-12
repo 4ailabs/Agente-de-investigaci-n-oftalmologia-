@@ -883,7 +883,19 @@ const App: React.FC = () => {
                                               h3: ({children}) => <h3 className="text-base lg:text-lg mb-2">{children}</h3>,
                                               p: ({children}) => <p className="text-sm lg:text-base mb-3 leading-6">{children}</p>,
                                               ul: ({children}) => <ul className="text-sm lg:text-base mb-3 pl-4 space-y-1">{children}</ul>,
-                                              ol: ({children}) => <ol className="text-sm lg:text-base mb-3 pl-4 space-y-1">{children}</ol>
+                                              ol: ({children}) => <ol className="text-sm lg:text-base mb-3 pl-4 space-y-1">{children}</ol>,
+                                              // Make links clickable with proper styling
+                                              a: ({href, children}) => (
+                                                <a 
+                                                  href={href} 
+                                                  target="_blank" 
+                                                  rel="noopener noreferrer"
+                                                  className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors duration-200"
+                                                  title={`Abrir enlace: ${href}`}
+                                                >
+                                                  {children}
+                                                </a>
+                                              )
                                             }}
                                           >
                                             {activeContent.content}
