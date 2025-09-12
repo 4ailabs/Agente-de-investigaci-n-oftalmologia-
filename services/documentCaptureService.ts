@@ -30,7 +30,12 @@ export class DocumentCaptureService {
   async initializeWorker(): Promise<void> {
     if (!this.worker) {
       this.worker = await Tesseract.createWorker('spa+eng', 1, {
-        logger: m => console.log('OCR Progress:', m)
+        logger: m => {
+          // Solo mostrar logs importantes, no todos los de progreso
+          if (m.status === 'recognizing text' && m.progress === 1) {
+            console.log('OCR completado');
+          }
+        }
       });
       await this.worker.load();
       await (this.worker as any).loadLanguage('spa+eng');
@@ -74,16 +79,32 @@ export class DocumentCaptureService {
       };
       
       try {
+        // Validar tamaño de imagen antes de procesar
+        const isValidSize = await this.validateImageSize(file);
+        if (!isValidSize) {
+          image.extractedText = 'Imagen demasiado pequeña para OCR. Intenta con una imagen más grande y clara.';
+          images.push(image);
+          continue;
+        }
+
         // Extraer texto usando OCR
         await this.initializeWorker();
         if (this.worker) {
           const { data: { text, confidence } } = await this.worker.recognize(file);
           image.extractedText = text;
           
-          // Extraer datos médicos estructurados
+          // Solo extraer datos médicos si hay texto y no hay error de cuota
           if (text.trim()) {
-            const { structuredData } = await MedicalDataExtractionService.extractFromAudioTranscription(text);
-            image.processedData = structuredData;
+            try {
+              const { structuredData } = await MedicalDataExtractionService.extractFromAudioTranscription(text);
+              image.processedData = structuredData;
+            } catch (apiError: any) {
+              if (apiError.message?.includes('429') || apiError.message?.includes('quota')) {
+                image.extractedText = text + '\n\n[Nota: Cuota de API excedida. Los datos se extraerán cuando esté disponible.]';
+              } else {
+                throw apiError;
+              }
+            }
           }
         }
       } catch (error) {
@@ -95,6 +116,19 @@ export class DocumentCaptureService {
     }
     
     return images;
+  }
+
+  private async validateImageSize(file: File): Promise<boolean> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        // Validar que la imagen tenga al menos 100x100 píxeles
+        const isValid = img.width >= 100 && img.height >= 100;
+        resolve(isValid);
+      };
+      img.onerror = () => resolve(false);
+      img.src = URL.createObjectURL(file);
+    });
   }
 
   async extractMedicalDataFromImages(images: CapturedImage[]): Promise<DocumentCaptureResult> {
