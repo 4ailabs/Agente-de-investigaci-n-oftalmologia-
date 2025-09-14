@@ -50,7 +50,64 @@ export class MedicalImageAnalysisService {
   }
 
   /**
-   * Analiza una imagen médica oftalmológica
+   * Análisis simplificado de imagen (similar al servicio externo)
+   * Retorna texto estructurado en markdown
+   */
+  async analyzeImageSimple(
+    imageFile: File,
+    imageType: MedicalImageType = 'other'
+  ): Promise<string> {
+    try {
+      console.log(`Iniciando análisis simplificado de imagen tipo: ${imageType}`);
+
+      // Convertir imagen a base64
+      const imageBase64 = await this.fileToBase64(imageFile);
+      
+      // Configurar modelo con system instruction
+      const model = this.genAI.getGenerativeModel({
+        model: 'gemini-2.0-flash-exp',
+        generationConfig: {
+          temperature: 0.3,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 4096,
+        },
+        systemInstruction: `Eres un asistente de IA altamente especializado en oftalmología. Tu tarea es analizar imágenes médicas proporcionadas por profesionales de la salud.
+
+Tu análisis debe ser:
+- **Estructurado:** Usa markdown con encabezados claros (p. ej., "Observaciones", "Posibles Hallazgos", "Descargo de Responsabilidad").
+- **Detallado:** Describe las estructuras anatómicas visibles y cualquier posible anomalía, patología o signo de enfermedad.
+- **Contextual:** Relaciona los hallazgos con condiciones oftalmológicas comunes.
+- **Cauteloso:** Enmarca los posibles hallazgos como posibilidades, no como diagnósticos definitivos. Incluye siempre un descargo de responsabilidad.
+
+Si la imagen proporcionada es de baja calidad o no parece ser una imagen oftalmológica reconocible, indica claramente esta limitación y evita proporcionar un análisis clínico detallado.`
+      });
+
+      // Analizar imagen
+      const result = await model.generateContent([
+        `Analiza esta imagen oftalmológica (tipo: ${imageType}) y proporciona un informe estructurado.`,
+        {
+          inlineData: {
+            data: imageBase64,
+            mimeType: imageFile.type
+          }
+        }
+      ]);
+
+      const response = await result.response;
+      return response.text();
+
+    } catch (error) {
+      console.error('Error en análisis simplificado de imagen:', error);
+      if (error instanceof Error && error.message.includes('429')) {
+        throw new Error('Cuota de API excedida. Has alcanzado el límite de requests por día. Intenta mañana o actualiza tu plan de Gemini API.');
+      }
+      throw new Error(`Error en análisis de imagen: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    }
+  }
+
+  /**
+   * Analiza una imagen médica oftalmológica (método completo estructurado)
    */
   async analyzeImage(
     imageFile: File, 
@@ -66,15 +123,24 @@ export class MedicalImageAnalysisService {
       // Crear prompt específico para el tipo de imagen
       const prompt = this.createAnalysisPrompt(imageType, config);
       
-      // Configurar modelo con capacidades de visión
+      // Configurar modelo con capacidades de visión (usando modelo más reciente)
       const model = this.genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.0-flash-exp', // Modelo más reciente y avanzado
         generationConfig: {
-          temperature: 0.1,
-          topK: 32,
-          topP: 1,
+          temperature: 0.3, // Aumentado para mejor creatividad en análisis
+          topK: 40, // Aumentado para mejor diversidad
+          topP: 0.95, // Optimizado para análisis médico
           maxOutputTokens: 4096,
-        }
+        },
+        systemInstruction: `Eres un asistente de IA altamente especializado en oftalmología. Tu tarea es analizar imágenes médicas proporcionadas por profesionales de la salud.
+
+Tu análisis debe ser:
+- **Estructurado:** Usa markdown con encabezados claros (p. ej., "Observaciones", "Posibles Hallazgos", "Descargo de Responsabilidad").
+- **Detallado:** Describe las estructuras anatómicas visibles y cualquier posible anomalía, patología o signo de enfermedad.
+- **Contextual:** Relaciona los hallazgos con condiciones oftalmológicas comunes.
+- **Cauteloso:** Enmarca los posibles hallazgos como posibilidades, no como diagnósticos definitivos. Incluye siempre un descargo de responsabilidad.
+
+Si la imagen proporcionada es de baja calidad o no parece ser una imagen oftalmológica reconocible, indica claramente esta limitación y evita proporcionar un análisis clínico detallado.`
       });
 
       // Analizar imagen
