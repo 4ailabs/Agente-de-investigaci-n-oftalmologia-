@@ -101,7 +101,7 @@ export class ManualResearchProvider implements ResearchProvider {
                             groundingMetadata?.retrievalMetadata?.googleSearchDynamicRetrievalScore;
       
       // Transform grounding chunks to sources with flexible structure
-      let sources = groundingChunks
+      let sources = groundingChunks && Array.isArray(groundingChunks)
         ? groundingChunks
             .filter((chunk: any) => chunk.web?.uri || chunk.webSearchResult?.uri || chunk.uri)
             .map((chunk: any) => ({

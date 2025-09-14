@@ -213,7 +213,7 @@ Como agente de investigación médica especializado en oftalmología, debes real
       console.log(`📊 Deep Research grounding chunks found: ${groundingChunks?.length || 0}`);
       
       // Transform grounding chunks to sources with flexible structure
-      let sources = groundingChunks
+      let sources = groundingChunks && Array.isArray(groundingChunks)
         ? groundingChunks
             .filter((chunk: any) => chunk.web?.uri || chunk.webSearchResult?.uri || chunk.uri)
             .map((chunk: any) => ({
