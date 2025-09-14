@@ -117,7 +117,7 @@ const getAI = (): GoogleGenerativeAI => {
       throw new Error("API Key no está configurada. Configure VITE_GEMINI_API_KEY en el archivo .env");
     }
     
-    ai = new GoogleGenerativeAI({ apiKey });
+    ai = new GoogleGenerativeAI(apiKey);
   }
   return ai;
 };
@@ -350,9 +350,8 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     };
 
     // Use the correct method for Gemini 1.5 with search capabilities
-    const response = await genAI.models.generateContent({
+    const model = genAI.getGenerativeModel({
         model: modelSelection.model,
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
         generationConfig,
         ...(useSearch && { tools: [{
             googleSearchRetrieval: {
@@ -362,7 +361,9 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
                 }
             }
         }] })
-    } as any);
+    });
+    
+    const response = await model.generateContent(prompt);
     
     // Debug response structure
     console.log('Full response structure:', JSON.stringify(response, null, 2));

@@ -31,7 +31,7 @@ export class DeepResearchProvider implements ResearchProvider {
       throw new Error('API Key no está configurada. Configure VITE_GEMINI_API_KEY en el archivo .env');
     }
     
-    this.genAI = new GoogleGenerativeAI({ apiKey });
+    this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
   async generateContent(
@@ -60,9 +60,8 @@ export class DeepResearchProvider implements ResearchProvider {
       console.log('🔍 Iniciando Deep Research...');
       
       // Execute Deep Research with Google Search
-      const response = await this.genAI.models.generateContent({
+      const model = this.genAI.getGenerativeModel({ 
         model: 'gemini-1.5-flash',
-        contents: [{ role: 'user', parts: [{ text: deepResearchPrompt }] }],
         generationConfig,
         tools: [{
           googleSearchRetrieval: {
@@ -74,6 +73,8 @@ export class DeepResearchProvider implements ResearchProvider {
           }
         }]
       });
+      
+      const response = await model.generateContent(deepResearchPrompt);
       
       // Parse results and extract metadata  
       const content = response.response.text();

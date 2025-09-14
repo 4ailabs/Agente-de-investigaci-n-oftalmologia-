@@ -12,7 +12,7 @@ const getAI = (): GoogleGenerativeAI => {
       throw new Error("API Key no está configurada para transcripción de audio");
     }
     
-    ai = new GoogleGenerativeAI({ apiKey });
+    ai = new GoogleGenerativeAI(apiKey);
   }
   return ai;
 };
@@ -49,22 +49,8 @@ export const transcribeAudio = async (audioBlob: Blob): Promise<TranscriptionRes
     const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
     
     // Usar la API correcta de Gemini para audio
-    const response = await genAI.models.generateContent({
+    const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
-      contents: [{
-        role: 'user',
-        parts: [
-          {
-            text: `Transcribe the following audio recording of a medical consultation in Spanish. Focus on medical terminology, symptoms, and clinical findings.`
-          },
-          {
-            inlineData: {
-              mimeType: 'audio/webm',
-              data: base64Audio
-            }
-          }
-        ]
-      }],
       generationConfig: {
         temperature: 0.1,
         topK: 1,
@@ -72,6 +58,18 @@ export const transcribeAudio = async (audioBlob: Blob): Promise<TranscriptionRes
         maxOutputTokens: 2048,
       }
     });
+    
+    const response = await model.generateContent([
+      {
+        text: `Transcribe the following audio recording of a medical consultation in Spanish. Focus on medical terminology, symptoms, and clinical findings.`
+      },
+      {
+        inlineData: {
+          mimeType: 'audio/webm',
+          data: base64Audio
+        }
+      }
+    ]);
 
     const transcriptionText = response.response.text();
 

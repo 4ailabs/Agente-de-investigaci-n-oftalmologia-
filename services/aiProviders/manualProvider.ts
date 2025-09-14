@@ -28,7 +28,7 @@ export class ManualResearchProvider implements ResearchProvider {
       throw new Error('API Key no está configurada. Configure VITE_GEMINI_API_KEY en el archivo .env');
     }
     
-    this.genAI = new GoogleGenerativeAI({ apiKey });
+    this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
   async generateContent(
@@ -53,14 +53,15 @@ export class ManualResearchProvider implements ResearchProvider {
       
       const useSearch = config.searchDepth === 'comprehensive';
       
-      const response = await this.genAI.models.generateContent({
+      const model = this.genAI.getGenerativeModel({ 
         model: 'gemini-1.5-flash',
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
         generationConfig,
         ...(useSearch && { tools: [{
           googleSearchRetrieval: {}
         }] })
       });
+      
+      const response = await model.generateContent(prompt);
       const content = response.response.text();
       const sources = this.extractSources(response.response);
 

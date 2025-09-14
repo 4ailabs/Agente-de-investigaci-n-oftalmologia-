@@ -13,7 +13,7 @@ const getAI = (): GoogleGenerativeAI => {
       throw new Error("API Key no está configurada para extracción de datos médicos");
     }
     
-    ai = new GoogleGenerativeAI({ apiKey });
+    ai = new GoogleGenerativeAI(apiKey);
   }
   return ai;
 };
@@ -105,12 +105,8 @@ INSTRUCCIONES:
 - Mantén la estructura JSON válida
 - No agregues campos adicionales`;
 
-      const response = await genAI.models.generateContent({
+      const model = genAI.getGenerativeModel({
         model: 'gemini-1.5-flash',
-        contents: [{
-          role: 'user',
-          parts: [{ text: prompt }]
-        }],
         generationConfig: {
           temperature: 0.1,
           topK: 1,
@@ -118,6 +114,8 @@ INSTRUCCIONES:
           maxOutputTokens: 2048,
         }
       });
+      
+      const response = await model.generateContent(prompt);
 
       const jsonText = response.response.text();
       
@@ -177,12 +175,8 @@ CRITERIOS PARA RED FLAGS:
 - rash: Erupción cutánea
 - other: Otros signos de alarma específicos`;
 
-      const response = await genAI.models.generateContent({
+      const model = genAI.getGenerativeModel({
         model: 'gemini-1.5-flash',
-        contents: [{
-          role: 'user',
-          parts: [{ text: prompt }]
-        }],
         generationConfig: {
           temperature: 0.1,
           topK: 1,
@@ -190,6 +184,8 @@ CRITERIOS PARA RED FLAGS:
           maxOutputTokens: 512,
         }
       });
+      
+      const response = await model.generateContent(prompt);
 
       const jsonText = response.response.text();
       
