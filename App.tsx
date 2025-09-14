@@ -392,7 +392,7 @@ const App: React.FC = () => {
   const [showImageUploader, setShowImageUploader] = useState(false);
   const [imageAnalyses, setImageAnalyses] = useState<MedicalImageAnalysis[]>([]);
   const [showImageResults, setShowImageResults] = useState(false);
-  const [showImageAnnouncement, setShowImageAnnouncement] = useState(true);
+  const [showImageAnnouncement, setShowImageAnnouncement] = useState(false);
   
   // Refs for swipe gesture
   const contentRef = useRef<HTMLDivElement>(null);
