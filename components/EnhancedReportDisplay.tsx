@@ -451,30 +451,18 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
           {(() => {
             const metrics = calculateQualityMetrics();
             return (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="flex items-center justify-center space-x-6">
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-purple-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
+                  <div className="w-12 h-12 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
                     {metrics.sourceCount}
                   </div>
-                  <p className="text-xs text-purple-800 font-medium">Fuentes Total</p>
+                  <p className="text-xs text-slate-600 font-medium">Fuentes Consultadas</p>
                 </div>
                 <div className="text-center">
                   <div className="w-12 h-12 bg-green-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
                     {metrics.highQualitySources}
                   </div>
-                  <p className="text-xs text-purple-800 font-medium">Alta Calidad</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
-                    {metrics.averageRelevance}%
-                  </div>
-                  <p className="text-xs text-purple-800 font-medium">Relevancia</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
-                    {metrics.completeness}%
-                  </div>
-                  <p className="text-xs text-purple-800 font-medium">Completitud</p>
+                  <p className="text-xs text-slate-600 font-medium">Fuentes Confiables</p>
                 </div>
               </div>
             );
