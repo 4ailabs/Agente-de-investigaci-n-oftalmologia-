@@ -13,7 +13,7 @@ Hay discrepancias entre el host local y el despliegue en Vercel. Esto se debe a 
 1. Ir a **Settings** > **Environment Variables**
 2. Agregar nueva variable:
    - **Name:** `VITE_GEMINI_API_KEY`
-   - **Value:** `AIzaSyBFyH7X_zVXMbpOOJitHWY72zlKGpNJKmk`
+   - **Value:** `tu_api_key_aqui`
    - **Environment:** Production, Preview, Development (todas)
 
 ### Paso 3: Forzar Nuevo Despliegue
