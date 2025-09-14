@@ -23,15 +23,21 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
   const [serviceError, setServiceError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Intentar inicializar el servicio
-  let analysisService: MedicalImageAnalysisService | null = null;
-  try {
-    analysisService = MedicalImageAnalysisService.getInstance();
-  } catch (error) {
-    console.warn('MedicalImageAnalysisService no disponible:', error);
-    setIsServiceAvailable(false);
-    setServiceError(error instanceof Error ? error.message : 'Servicio no disponible');
-  }
+  // Intentar inicializar el servicio de forma segura
+  const [analysisService, setAnalysisService] = useState<MedicalImageAnalysisService | null>(null);
+
+  useEffect(() => {
+    try {
+      const service = MedicalImageAnalysisService.getInstance();
+      setAnalysisService(service);
+      setIsServiceAvailable(true);
+    } catch (error) {
+      console.warn('MedicalImageAnalysisService no disponible:', error);
+      setIsServiceAvailable(false);
+      setServiceError(error instanceof Error ? error.message : 'Servicio no disponible');
+      setAnalysisService(null);
+    }
+  }, []);
 
   // Verificar disponibilidad del servicio al montar
   useEffect(() => {

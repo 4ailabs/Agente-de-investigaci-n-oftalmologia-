@@ -39,7 +39,12 @@ export class MedicalImageAnalysisService {
 
   public static getInstance(): MedicalImageAnalysisService {
     if (!MedicalImageAnalysisService.instance) {
-      MedicalImageAnalysisService.instance = new MedicalImageAnalysisService();
+      try {
+        MedicalImageAnalysisService.instance = new MedicalImageAnalysisService();
+      } catch (error) {
+        console.error('Error creando instancia de MedicalImageAnalysisService:', error);
+        throw error;
+      }
     }
     return MedicalImageAnalysisService.instance;
   }

@@ -22,6 +22,7 @@ import StepFeedbackModal from './components/StepFeedbackModal';
 import SplashScreen from './components/SplashScreen';
 import MedicalImageUploader from './components/MedicalImageUploader';
 import ImageAnalysisResults from './components/ImageAnalysisResults';
+import ErrorBoundary from './components/ErrorBoundary';
 import { MedicalImageAnalysis } from './types/medicalImageTypes';
 
 // Lazy load heavy components
@@ -1771,12 +1772,14 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
               </button>
             </div>
             <div className="p-6 overflow-y-auto max-h-[70vh]">
-              <MedicalImageUploader
-                onAnalysisComplete={handleImageAnalysisComplete}
-                onError={handleImageAnalysisError}
-                isLoading={false}
-                maxImages={5}
-              />
+              <ErrorBoundary>
+                <MedicalImageUploader
+                  onAnalysisComplete={handleImageAnalysisComplete}
+                  onError={handleImageAnalysisError}
+                  isLoading={false}
+                  maxImages={5}
+                />
+              </ErrorBoundary>
             </div>
           </div>
         </div>
@@ -1784,10 +1787,12 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
       {/* Image Analysis Results Modal */}
       {showImageResults && (
-        <ImageAnalysisResults
-          analyses={imageAnalyses}
-          onClose={handleCloseImageResults}
-        />
+        <ErrorBoundary>
+          <ImageAnalysisResults
+            analyses={imageAnalyses}
+            onClose={handleCloseImageResults}
+          />
+        </ErrorBoundary>
       )}
       </div>
       <Footer />
