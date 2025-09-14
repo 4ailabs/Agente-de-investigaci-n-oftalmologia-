@@ -22,6 +22,7 @@ import StepFeedbackModal from './components/StepFeedbackModal';
 import SplashScreen from './components/SplashScreen';
 import MedicalImageUploader from './components/MedicalImageUploader';
 import ImageAnalysisResults from './components/ImageAnalysisResults';
+import ImageAnalysisAnnouncement from './components/ImageAnalysisAnnouncement';
 import ErrorBoundary from './components/ErrorBoundary';
 import { MedicalImageAnalysis } from './types/medicalImageTypes';
 
@@ -391,6 +392,7 @@ const App: React.FC = () => {
   const [showImageUploader, setShowImageUploader] = useState(false);
   const [imageAnalyses, setImageAnalyses] = useState<MedicalImageAnalysis[]>([]);
   const [showImageResults, setShowImageResults] = useState(false);
+  const [showImageAnnouncement, setShowImageAnnouncement] = useState(true);
   
   // Refs for swipe gesture
   const contentRef = useRef<HTMLDivElement>(null);
@@ -898,6 +900,10 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
   const handleCloseImageUploader = () => {
     setShowImageUploader(false);
+  };
+
+  const handleCloseImageAnnouncement = () => {
+    setShowImageAnnouncement(false);
   };
 
   // Copy investigation summary to clipboard
@@ -1793,6 +1799,14 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             onClose={handleCloseImageResults}
           />
         </ErrorBoundary>
+      )}
+
+      {/* Image Analysis Announcement */}
+      {showImageAnnouncement && (
+        <ImageAnalysisAnnouncement
+          onClose={handleCloseImageAnnouncement}
+          onShowImageUploader={handleOpenImageUploader}
+        />
       )}
       </div>
       <Footer />
