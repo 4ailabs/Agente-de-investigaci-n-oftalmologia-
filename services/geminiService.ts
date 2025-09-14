@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { MedicalValidationService } from "../medicalValidation.js";
 
 // Sistema de caché inteligente para búsquedas
@@ -104,9 +104,9 @@ class MedicalModelClassifier {
   }
 }
 
-let ai: GoogleGenAI | null = null;
+let ai: GoogleGenerativeAI | null = null;
 
-const getAI = (): GoogleGenAI => {
+const getAI = (): GoogleGenerativeAI => {
   if (!ai) {
     // For Vite frontend, environment variables need VITE_ prefix
     const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || 
@@ -117,7 +117,7 @@ const getAI = (): GoogleGenAI => {
       throw new Error("API Key no está configurada. Configure VITE_GEMINI_API_KEY en el archivo .env");
     }
     
-    ai = new GoogleGenAI({ apiKey });
+    ai = new GoogleGenerativeAI({ apiKey });
   }
   return ai;
 };

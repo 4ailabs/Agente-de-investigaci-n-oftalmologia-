@@ -1,8 +1,8 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-let ai: GoogleGenAI | null = null;
+let ai: GoogleGenerativeAI | null = null;
 
-const getAI = (): GoogleGenAI => {
+const getAI = (): GoogleGenerativeAI => {
   if (!ai) {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 
                   import.meta.env.VITE_API_KEY || 
@@ -12,7 +12,7 @@ const getAI = (): GoogleGenAI => {
       throw new Error("API Key no está configurada para transcripción de audio");
     }
     
-    ai = new GoogleGenAI({ apiKey });
+    ai = new GoogleGenerativeAI({ apiKey });
   }
   return ai;
 };

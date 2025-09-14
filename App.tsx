@@ -28,9 +28,12 @@ const EnhancedReportDisplay = lazy(() => import('./components/EnhancedReportDisp
 // Import ReactMarkdown normally since it's needed for step rendering
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import ResearchModeSelector, { ResearchMode } from './components/ResearchModeSelector';
+import ResearchMetricsPanel from './components/ResearchMetricsPanel';
+import { ResearchOrchestrator, ResearchRequest } from './services/researchOrchestrator';
 
 const InitialQueryInput: React.FC<{
-  onSubmit: (query: string) => void;
+  onSubmit: (query: string, mode?: ResearchMode) => void;
   onSubmitEnhanced: (data: EnhancedPatientData) => void;
   isLoading: boolean;
 }> = ({ onSubmit, onSubmitEnhanced, isLoading }) => {
@@ -41,6 +44,8 @@ const InitialQueryInput: React.FC<{
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [showDocumentCapture, setShowDocumentCapture] = useState(false);
   const [extractedData, setExtractedData] = useState<Partial<EnhancedPatientData> | null>(null);
+  const [selectedResearchMode, setSelectedResearchMode] = useState<ResearchMode>('auto');
+  const [showModeSelector, setShowModeSelector] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,8 +55,13 @@ const InitialQueryInput: React.FC<{
 ---
 Síntomas y Antecedentes Clínicos:
 ${clinicalInfo.trim()}`;
-      onSubmit(fullQuery);
+      onSubmit(fullQuery, selectedResearchMode);
     }
+  };
+
+  const handleModeSelection = (mode: ResearchMode) => {
+    setSelectedResearchMode(mode);
+    setShowModeSelector(false);
   };
 
   const handleAudioTranscription = async (transcription: string, medicalInfo?: any) => {
@@ -154,8 +164,21 @@ ${clinicalInfo.trim()}`;
             </div>
           </div>
 
+          {/* Research Mode Selector */}
+          {showModeSelector && (
+            <ResearchModeSelector
+              onModeSelect={handleModeSelection}
+              patientData={{
+                age: age || undefined,
+                sex: sex || undefined,
+                clinicalInfo: clinicalInfo || undefined
+              }}
+              isLoading={isLoading}
+            />
+          )}
+
           {/* Content based on selected mode */}
-          {inputMode === 'quick' ? (
+          {!showModeSelector && inputMode === 'quick' ? (
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {/* Quick Entry Form */}
               <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm">
@@ -281,10 +304,22 @@ ${clinicalInfo.trim()}`;
                   className="w-full flex justify-center items-center py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 min-h-[56px] text-base"
                 >
                   {isLoading ? (
-                    <>
-                      <Spinner />
-                      <span className="ml-3">Creando Plan de Investigación...</span>
-                    </>
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center">
+                        <Spinner />
+                        <span className="ml-3">Creando Plan de Investigación...</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsLoading(false);
+                          setShowModeSelector(true);
+                        }}
+                        className="ml-4 px-3 py-1 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
                   ) : (
                     <>
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -402,34 +437,38 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     handleStartInvestigation(query);
   };
 
-  const handleStartInvestigation = async (query: string) => {
-    // Initialize medical context from query
-    const initialContext = MedicalContextEngine.parseInitialContext(query);
-    setMedicalContext(initialContext);
+  const handleStartInvestigation = async (query: string, mode: ResearchMode = 'auto') => {
+    try {
+      console.log(`🚀 Starting investigation with mode: ${mode}`);
+      
+      // Initialize medical context from query (preserve existing logic)
+      const initialContext = MedicalContextEngine.parseInitialContext(query);
+      setMedicalContext(initialContext);
 
-    // Extract patient information for enhanced reasoning
-    const patientInfo = {
-      age: initialContext.patientProfile.age || 65, // Fallback age
-      sex: initialContext.patientProfile.sex || 'no especificado',
-      history: initialContext.patientProfile.medicalHistory
-    };
-    
-    // Generate initial clinical reasoning
-    const symptoms = initialContext.patientProfile.currentSymptoms.length > 0 
-      ? initialContext.patientProfile.currentSymptoms.map(s => s.description)
-      : ['síntomas no específicos']; // Fallback para casos sin síntomas detectados
-    const findings = Object.values(initialContext.clinicalFindings).filter(f => f !== null) as string[];
-    
-    const initialReasoning = EnhancedMedicalReasoning.synthesizeReasoning(
-      symptoms,
-      patientInfo,
-      findings,
-      ['initial_query'] // Initial evidence quality
-    );
-    
-    setClinicalReasoning(initialReasoning);
+      // Extract patient information for enhanced reasoning
+      const patientInfo = {
+        age: initialContext.patientProfile.age || 65,
+        sex: initialContext.patientProfile.sex || 'no especificado',
+        history: initialContext.patientProfile.medicalHistory
+      };
+      
+      // Generate initial clinical reasoning
+      const symptoms = initialContext.patientProfile.currentSymptoms.length > 0 
+        ? initialContext.patientProfile.currentSymptoms.map(s => s.description)
+        : ['síntomas no específicos'];
+      const findings = Object.values(initialContext.clinicalFindings).filter(f => f !== null) as string[];
+      
+      const initialReasoning = EnhancedMedicalReasoning.synthesizeReasoning(
+        symptoms,
+        patientInfo,
+        findings,
+        ['initial_query']
+      );
+      
+      setClinicalReasoning(initialReasoning);
 
-    const newInvestigation: InvestigationState = {
+      // Set initial loading state
+      const loadingInvestigation: InvestigationState = {
         originalQuery: query,
         plan: [],
         currentStep: 0,
@@ -438,62 +477,69 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
         finalReport: null,
         finalReportSources: null,
         isGeneratingReport: false,
-    };
-    
-    setInvestigation(newInvestigation);
-    setActiveView({ type: 'step', id: 1 });
+      };
+      
+      setInvestigation(loadingInvestigation);
+      setActiveView({ type: 'step', id: 1 });
 
-    // Extract patient info for storage
-    const patientInfoForStorage = {
-      age: initialContext.patientProfile.age?.toString() || 'No especificado',
-      sex: initialContext.patientProfile.sex || 'No especificado',
-      symptoms: initialContext.patientProfile.currentSymptoms.map(s => s.description).join(', ') || 'No especificados'
-    };
+      // Create research request for orchestrator
+      const researchRequest: ResearchRequest = {
+        query,
+        mode: mode === 'auto' ? 'auto' : mode,
+        patientContext: {
+          age: initialContext.patientProfile.age,
+          sex: initialContext.patientProfile.sex as 'M' | 'F' | undefined,
+          symptoms,
+          complexity: symptoms.length > 3 ? 'complex' : symptoms.length > 1 ? 'moderate' : 'simple',
+          urgency: 'routine'
+        },
+        preferences: {
+          preferredSources: ['pubmed', 'cochrane', 'aao'],
+          maxTimeMinutes: 10,
+          detailLevel: 'detailed'
+        }
+      };
 
-    // Save investigation to localStorage
-    const investigationId = localStorageService.saveInvestigation(newInvestigation, patientInfoForStorage);
-    setCurrentInvestigationId(investigationId);
-    
-    // Update history
-    const history = localStorageService.getInvestigationHistory();
-    setInvestigationHistory(history.investigations);
+      // Use Research Orchestrator
+      const orchestrator = ResearchOrchestrator.getInstance();
+      const completedInvestigation = await orchestrator.conductResearch(researchRequest);
+      
+      console.log('✅ Investigation completed:', completedInvestigation);
+      
+      setInvestigation(completedInvestigation);
+      
+      // Set appropriate view based on mode
+      if (completedInvestigation.researchMetadata?.mode === 'deep_research') {
+        // Deep Research goes directly to final report
+        setActiveView({ type: 'report', id: null });
+      } else {
+        // Manual/Hybrid modes show step navigation
+        setActiveView({ type: 'step', id: 1 });
+      }
 
-    // Enhanced prompt with medical context, clinical reasoning AND knowledge graph
-    const contextSummary = MedicalContextEngine.generateContextSummary(initialContext);
-    const reasoningSummary = ReasoningIntegration.formatReasoningForPrompt(initialReasoning);
-    
-    // Extract relevant ophthalmology knowledge
-    const suspectedDiagnoses = initialReasoning.differentialDiagnoses.slice(0, 3).map(d => d.diagnosis);
-    const knowledgeGraphData = OphthalmologyKnowledgeGraph.extractRelevantKnowledge(symptoms, suspectedDiagnoses);
-    
-    const enhancedQuery = `${query}\n\n### CONTEXTO MÉDICO INICIAL ###\n${contextSummary}\n\n${reasoningSummary}\n\n${knowledgeGraphData}`;
-    
-    const prompt = createResearchPlanPrompt(enhancedQuery);
-    const { text: planResponse } = await generateContent(prompt, false, enhancedQuery);
+      // Extract patient info for storage
+      const patientInfoForStorage = {
+        age: initialContext.patientProfile.age?.toString() || 'No especificado',
+        sex: initialContext.patientProfile.sex || 'No especificado',
+        symptoms: symptoms.join(', ') || 'No especificados'
+      };
 
-    if (planResponse.startsWith('Ocurrió un error:')) {
-      setInvestigation(prev => prev ? {...prev, error: planResponse, isGenerating: false} : null);
-      return;
-    }
-    
-    const planSteps: ResearchStep[] = planResponse
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => /^\d+\./.test(line))
-        .map((line, index) => ({
-            id: index + 1,
-            title: line.replace(/^\d+\.\s*/, ''),
-            status: 'pending',
-            result: null,
-            prompt: '',
-            sources: null,
-        }));
-
-    setInvestigation(prev => prev ? {
-        ...prev,
-        plan: planSteps,
+      // Save investigation to localStorage
+      const investigationId = localStorageService.saveInvestigation(completedInvestigation, patientInfoForStorage);
+      setCurrentInvestigationId(investigationId);
+      
+      // Update history
+      const history = localStorageService.getInvestigationHistory();
+      setInvestigationHistory(history.investigations);
+      
+    } catch (error) {
+      console.error('❌ Investigation failed:', error);
+      setInvestigation(prev => prev ? {
+        ...prev, 
+        error: `Investigation failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 
         isGenerating: false
-    } : null);
+      } : null);
+    }
   };
 
   const handleExecuteNextStep = async () => {
@@ -1123,6 +1169,12 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 ></div>
                             </div>
                         </div>
+
+                        {/* Research Metrics Panel */}
+                        <ResearchMetricsPanel 
+                            investigation={investigation} 
+                            className="mb-4 lg:mb-6" 
+                        />
 
                         {/* Navigation */}
                         <nav className="mb-4 lg:mb-6">
