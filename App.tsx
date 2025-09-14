@@ -878,8 +878,13 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
   const handleImageAnalysisError = (error: string) => {
     console.error('Error en análisis de imagen:', error);
-    // Mostrar error al usuario
-    alert(`Error en análisis de imagen: ${error}`);
+    
+    // Mostrar error más amigable para cuota excedida
+    if (error.includes('Cuota de API excedida')) {
+      alert(`⚠️ ${error}\n\nPara continuar usando el análisis de imágenes:\n• Espera hasta mañana para que se reinicie la cuota\n• O actualiza tu plan de Gemini API para obtener más requests`);
+    } else {
+      alert(`Error en análisis de imagen: ${error}`);
+    }
   };
 
   const handleCloseImageResults = () => {

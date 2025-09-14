@@ -16,10 +16,11 @@ import {
 } from '../types/medicalImageTypes';
 
 // Configuración de la API
-const getAI = (): GoogleGenerativeAI => {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const getAI = (): GoogleGenerativeAI | null => {
+  const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('VITE_GEMINI_API_KEY no está configurada');
+    console.warn('VITE_GEMINI_API_KEY no está configurada. El análisis de imágenes no estará disponible.');
+    return null;
   }
   return new GoogleGenerativeAI(apiKey);
 };
@@ -29,7 +30,11 @@ export class MedicalImageAnalysisService {
   private genAI: GoogleGenerativeAI;
 
   private constructor() {
-    this.genAI = getAI();
+    const ai = getAI();
+    if (!ai) {
+      throw new Error('GoogleGenerativeAI no está disponible. Verifica la configuración de VITE_GEMINI_API_KEY');
+    }
+    this.genAI = ai;
   }
 
   public static getInstance(): MedicalImageAnalysisService {
@@ -101,6 +106,13 @@ export class MedicalImageAnalysisService {
 
     } catch (error) {
       console.error('Error analizando imagen médica:', error);
+      
+      // Manejar error de cuota excedida
+      if (error instanceof Error && error.message.includes('429')) {
+        throw new Error('Cuota de API excedida. Has alcanzado el límite de 50 requests por día. Intenta mañana o actualiza tu plan de Gemini API.');
+      }
+      
+      // Manejar otros errores
       throw new Error(`Error en análisis de imagen: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   }
@@ -645,8 +657,7 @@ INSTRUCCIONES GENERALES:
         findings: {
           quality: 'poor',
           artifacts: ['Error en análisis'],
-          laterality: 'unknown',
-          pathology: []
+          laterality: 'unknown'
         },
         confidence: 0,
         recommendations: ['Error en análisis de imagen. Revisar calidad y formato.'],

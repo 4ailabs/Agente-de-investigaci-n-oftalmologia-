@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MedicalImageAnalysisService } from '../services/medicalImageAnalysisService';
 import { MedicalImageAnalysis, MedicalImageType, ImageAnalysisConfig } from '../types/medicalImageTypes';
+import ImageAnalysisFallback from './ImageAnalysisFallback';
 
 interface MedicalImageUploaderProps {
   onAnalysisComplete: (analysis: MedicalImageAnalysis) => void;
@@ -18,8 +19,26 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
   const [selectedImages, setSelectedImages] = useState<{ file: File; type: MedicalImageType; config?: ImageAnalysisConfig }[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<{ current: number; total: number } | null>(null);
+  const [isServiceAvailable, setIsServiceAvailable] = useState(true);
+  const [serviceError, setServiceError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const analysisService = MedicalImageAnalysisService.getInstance();
+  
+  // Intentar inicializar el servicio
+  let analysisService: MedicalImageAnalysisService | null = null;
+  try {
+    analysisService = MedicalImageAnalysisService.getInstance();
+  } catch (error) {
+    console.warn('MedicalImageAnalysisService no disponible:', error);
+    setIsServiceAvailable(false);
+    setServiceError(error instanceof Error ? error.message : 'Servicio no disponible');
+  }
+
+  // Verificar disponibilidad del servicio al montar
+  useEffect(() => {
+    if (!isServiceAvailable) {
+      console.warn('Análisis de imágenes no disponible - API key no configurada');
+    }
+  }, [isServiceAvailable]);
 
   const imageTypes: { value: MedicalImageType; label: string; description: string }[] = [
     { value: 'fundus', label: 'Fondo de Ojo', description: 'Fotografías de retina y nervio óptico' },
@@ -93,6 +112,11 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
   };
 
   const handleAnalyzeImages = async () => {
+    if (!analysisService) {
+      onError('Servicio de análisis no disponible. Verifica la configuración de la API key.');
+      return;
+    }
+
     if (selectedImages.length === 0) {
       onError('Selecciona al menos una imagen para analizar');
       return;
@@ -136,6 +160,11 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
         </div>
       </div>
     );
+  }
+
+  // Mostrar fallback si el servicio no está disponible
+  if (!isServiceAvailable || !analysisService) {
+    return <ImageAnalysisFallback onClose={() => onError('Servicio no disponible')} />;
   }
 
   return (
