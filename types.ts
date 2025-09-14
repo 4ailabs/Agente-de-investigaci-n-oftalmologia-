@@ -25,7 +25,11 @@ export interface ResearchStep {
   prompt: string;
   sources: Source[] | null;
   feedback?: StepFeedback;
+  imageAnalysis?: MedicalImageAnalysis[];
 }
+
+// Re-export medical image types
+export * from './medicalImageTypes';
 
 export interface InvestigationState {
   originalQuery: string;

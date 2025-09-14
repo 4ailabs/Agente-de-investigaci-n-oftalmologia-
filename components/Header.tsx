@@ -3,8 +3,9 @@ import React from 'react';
 const Header: React.FC<{ 
   onShowExplanation: () => void;
   onShowHistory: () => void;
+  onShowImageUploader: () => void;
   investigationCount: number;
-}> = ({ onShowExplanation, onShowHistory, investigationCount }) => {
+}> = ({ onShowExplanation, onShowHistory, onShowImageUploader, investigationCount }) => {
   return (
     <header className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 lg:py-6">
@@ -57,6 +58,17 @@ const Header: React.FC<{
                     )}
                 </button>
 
+                {/* Image Analysis button - Mobile */}
+                <button 
+                    onClick={onShowImageUploader} 
+                    className="lg:hidden flex items-center justify-center w-12 h-12 text-slate-700 hover:bg-slate-100 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px]"
+                    aria-label="Analizar imágenes médicas"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </button>
+
                 {/* Guide button - Mobile */}
                 <button 
                     onClick={onShowExplanation} 
@@ -83,6 +95,17 @@ const Header: React.FC<{
                             {investigationCount}
                         </span>
                     )}
+                </button>
+
+                <button 
+                    onClick={onShowImageUploader} 
+                    className="hidden lg:flex items-center space-x-2 px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm min-h-[44px]"
+                    aria-label="Analizar imágenes médicas"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>Analizar Imágenes</span>
                 </button>
 
                 <button 

@@ -20,6 +20,9 @@ import { EnhancedPatientData } from './types/enhancedDataTypes';
 import { MedicalDataExtractionService } from './services/medicalDataExtraction';
 import StepFeedbackModal from './components/StepFeedbackModal';
 import SplashScreen from './components/SplashScreen';
+import MedicalImageUploader from './components/MedicalImageUploader';
+import ImageAnalysisResults from './components/ImageAnalysisResults';
+import { MedicalImageAnalysis } from './types/medicalImageTypes';
 
 // Lazy load heavy components
 const ExplanationModal = lazy(() => import('./components/ExplanationModal'));
@@ -382,6 +385,11 @@ const App: React.FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showStepFeedback, setShowStepFeedback] = useState(false);
   const [currentStepForFeedback, setCurrentStepForFeedback] = useState<{id: number, title: string} | null>(null);
+  
+  // Medical Image Analysis State
+  const [showImageUploader, setShowImageUploader] = useState(false);
+  const [imageAnalyses, setImageAnalyses] = useState<MedicalImageAnalysis[]>([]);
+  const [showImageResults, setShowImageResults] = useState(false);
   
   // Refs for swipe gesture
   const contentRef = useRef<HTMLDivElement>(null);
@@ -862,6 +870,30 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     setShowStepFeedback(true);
   };
 
+  // Handle medical image analysis
+  const handleImageAnalysisComplete = (analysis: MedicalImageAnalysis) => {
+    setImageAnalyses(prev => [...prev, analysis]);
+    setShowImageResults(true);
+  };
+
+  const handleImageAnalysisError = (error: string) => {
+    console.error('Error en análisis de imagen:', error);
+    // Mostrar error al usuario
+    alert(`Error en análisis de imagen: ${error}`);
+  };
+
+  const handleCloseImageResults = () => {
+    setShowImageResults(false);
+  };
+
+  const handleOpenImageUploader = () => {
+    setShowImageUploader(true);
+  };
+
+  const handleCloseImageUploader = () => {
+    setShowImageUploader(false);
+  };
+
   // Copy investigation summary to clipboard
   const handleCopyInvestigation = (investigationId: string) => {
     try {
@@ -1012,6 +1044,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       <Header 
         onShowExplanation={() => setShowExplanation(true)} 
         onShowHistory={() => setShowHistory(true)}
+        onShowImageUploader={handleOpenImageUploader}
         investigationCount={investigationHistory.length}
       />
       {showExplanation && (
@@ -1712,6 +1745,43 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
           onSave={handleStepFeedback}
           stepTitle={currentStepForFeedback.title}
           stepId={currentStepForFeedback.id}
+        />
+      )}
+
+      {/* Medical Image Uploader Modal */}
+      {showImageUploader && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <h3 className="text-xl font-semibold text-slate-800">
+                Análisis de Imágenes Médicas
+              </h3>
+              <button
+                onClick={handleCloseImageUploader}
+                className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              <MedicalImageUploader
+                onAnalysisComplete={handleImageAnalysisComplete}
+                onError={handleImageAnalysisError}
+                isLoading={false}
+                maxImages={5}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Analysis Results Modal */}
+      {showImageResults && (
+        <ImageAnalysisResults
+          analyses={imageAnalyses}
+          onClose={handleCloseImageResults}
         />
       )}
       </div>
