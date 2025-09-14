@@ -57,7 +57,7 @@ export class DeepResearchProvider implements ResearchProvider {
       // Create Deep Research prompt
       const deepResearchPrompt = this.createDeepResearchPrompt(prompt, config);
       
-      console.log('🔍 Iniciando Deep Research...');
+      console.log('Iniciando Deep Research...');
       
       // Execute Deep Research with Google Search
       const model = this.genAI.getGenerativeModel({ 
@@ -83,8 +83,8 @@ export class DeepResearchProvider implements ResearchProvider {
       
       const executionTime = Date.now() - this.startTime;
 
-      console.log(`✅ Deep Research completado en ${executionTime}ms`);
-      console.log(`📊 Fuentes encontradas: ${sources.length}`);
+      console.log(`Deep Research completado en ${executionTime}ms`);
+      console.log(`Fuentes encontradas: ${sources.length}`);
 
       return {
         content,
@@ -101,7 +101,7 @@ export class DeepResearchProvider implements ResearchProvider {
       };
 
     } catch (error) {
-      console.error('❌ Error en Deep Research:', error);
+      console.error('Error en Deep Research:', error);
       throw new Error(`Deep Research failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -141,10 +141,10 @@ Como agente de investigación médica especializado en oftalmología, debes real
 
 **ESTRUCTURA DE RESPUESTA REQUERIDA:**
 
-## 🎯 RESUMEN EJECUTIVO
+## RESUMEN EJECUTIVO
 [Diagnóstico más probable, nivel de urgencia, siguiente paso crítico]
 
-## 🔍 PROCESO DE INVESTIGACIÓN REALIZADO
+## PROCESO DE INVESTIGACIÓN REALIZADO
 ### Estrategia de Búsqueda Implementada
 - Líneas de investigación identificadas
 - Número de búsquedas ejecutadas
@@ -155,7 +155,7 @@ Como agente de investigación médica especializado en oftalmología, debes real
 - Distribución por tipo (meta-análisis, RCTs, guidelines, etc.)
 - Criterios de calidad aplicados
 
-## 🧠 ANÁLISIS CLÍNICO INTEGRAL
+## ANÁLISIS CLÍNICO INTEGRAL
 ### Diagnósticos Diferenciales con Razonamiento Bayesiano
 [Lista priorizada con probabilidades y justificación]
 
@@ -165,7 +165,7 @@ Como agente de investigación médica especializado en oftalmología, debes real
 ### Análisis de Contradiciones
 [Identificación y resolución de información conflictiva]
 
-## ⚕️ RECOMENDACIONES BASADAS EN EVIDENCIA
+## RECOMENDACIONES BASADAS EN EVIDENCIA
 ### Próximos Pasos Diagnósticos
 [Secuencia lógica basada en costo-efectividad]
 
@@ -175,11 +175,12 @@ Como agente de investigación médica especializado en oftalmología, debes real
 ### Gaps de Información Identificados
 [Qué información adicional mejoraría el diagnóstico]
 
-## 📋 METADATOS DE INVESTIGACIÓN
+## METADATOS DE INVESTIGACIÓN
 ### Proceso de Búsqueda Ejecutado
 [Transparencia del proceso para validación]
 
 **IMPORTANTE:** 
+- NO uses emojis en ninguna parte del reporte médico
 - Proporciona un análisis EXHAUSTIVO (mínimo 2000 palabras)
 - Cada conclusión debe estar respaldada por evidencia específica
 - Incluye razonamiento clínico explícito paso a paso
@@ -210,7 +211,7 @@ Como agente de investigación médica especializado en oftalmología, debes real
                             groundingMetadata?.groundingSupports ||
                             groundingMetadata?.retrievalMetadata?.googleSearchDynamicRetrievalScore;
       
-      console.log(`📊 Deep Research grounding chunks found: ${groundingChunks?.length || 0}`);
+      console.log(`Deep Research grounding chunks found: ${groundingChunks?.length || 0}`);
       
       // Transform grounding chunks to sources with flexible structure
       let sources = groundingChunks && Array.isArray(groundingChunks)

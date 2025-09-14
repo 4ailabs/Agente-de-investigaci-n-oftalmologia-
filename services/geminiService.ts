@@ -147,7 +147,7 @@ const getCachedResult = (query: string, medicalKeywords: string[]): SearchCache 
   const cached = searchCache.get(cacheKey);
   
   if (cached && cached.expiresAt > new Date()) {
-    console.log('🎯 Using cached search result');
+    console.log('Using cached search result');
     return cached;
   }
   
@@ -313,9 +313,9 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     // Clasificar y seleccionar modelo híbrido
     const modelSelection = MedicalModelClassifier.classify(prompt, context);
     
-    console.log(`🤖 Modelo seleccionado: ${modelSelection.model}`);
-    console.log(`📊 Razón: ${modelSelection.reason}`);
-    console.log(`🎯 Confianza: ${(modelSelection.confidence * 100).toFixed(1)}%`);
+    console.log(`Modelo seleccionado: ${modelSelection.model}`);
+    console.log(`Razón: ${modelSelection.reason}`);
+    console.log(`Confianza: ${(modelSelection.confidence * 100).toFixed(1)}%`);
     
     // Extraer palabras clave médicas del prompt para caché
     const medicalKeywords = extractMedicalKeywords(prompt);
@@ -325,7 +325,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
       const cacheKey = `${modelSelection.model}_${prompt}`;
       const cachedResult = getCachedResult(cacheKey, medicalKeywords);
       if (cachedResult) {
-        console.log('🎯 Returning cached search result with relevance score:', cachedResult.relevanceScore);
+        console.log('Returning cached search result with relevance score:', cachedResult.relevanceScore);
         return cachedResult.results;
       }
     }
@@ -417,7 +417,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
         uri: s.web.uri
       })));
     } else {
-      console.warn('⚠️ No sources found! This might indicate search is not working properly.');
+      console.warn('No sources found! This might indicate search is not working properly.');
     }
 
     // Filter sources for relevance to medical content
@@ -470,7 +470,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
                     recommendations: ['Error en validación de fuentes. Se recomienda verificación manual.']
                 },
                 contradictions: { hasConflicts: false, conflicts: [], resolution: '', confidence: 'low' },
-                disclaimers: '⚠️ ADVERTENCIA: Las fuentes no pudieron ser validadas automáticamente. Se recomienda verificación manual.'
+                disclaimers: 'ADVERTENCIA: Las fuentes no pudieron ser validadas automáticamente. Se recomienda verificación manual.'
             };
         }
     }

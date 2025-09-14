@@ -260,7 +260,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
     // Enhanced table components for medical data
     table: ({children}: any) => (
       <div className="my-6 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-t-lg border-b border-blue-200">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 rounded-t-lg border-b border-blue-200">
           <h4 className="text-sm lg:text-base font-semibold text-blue-900 flex items-center">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2a2 2 0 002-2z" />
@@ -292,7 +292,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
     ),
     th: ({children, ...props}: any) => (
       <th 
-        className="px-4 py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 last:border-r-0"
+        className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 last:border-r-0"
         {...props}
       >
         <div className="flex items-center space-x-1">
@@ -302,7 +302,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
     ),
     td: ({children, ...props}: any) => (
       <td 
-        className="px-4 py-3 text-sm lg:text-base text-gray-900 border-r border-gray-100 last:border-r-0 max-w-xs"
+        className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 border-r border-gray-100 last:border-r-0 max-w-xs"
         {...props}
       >
         <div className="break-words">
@@ -315,7 +315,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
   return (
     <div className="space-y-6">
       {/* Header with controls */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
@@ -323,13 +323,13 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h2 className="text-xl lg:text-2xl font-bold text-slate-900">Reporte Clínico</h2>
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">Reporte Clínico</h2>
           </div>
           
           {sections.length > 3 && (
             <button
               onClick={() => setShowTableOfContents(!showTableOfContents)}
-              className="px-3 py-2 text-sm lg:text-base font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+              className="px-3 py-2 text-xs sm:text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
             >
               <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -339,12 +339,12 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
           )}
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-center space-y-3 lg:space-y-0 lg:space-x-3">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
           {/* View Mode Selector */}
           <div className="flex items-center bg-slate-100 rounded-lg p-1">
             <button
               onClick={() => setViewMode('full')}
-              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+              className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-md transition-colors ${
                 viewMode === 'full' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
               }`}
             >
@@ -352,7 +352,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
             </button>
             <button
               onClick={() => setViewMode('summary')}
-              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+              className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-md transition-colors ${
                 viewMode === 'summary' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
               }`}
             >
@@ -377,9 +377,9 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                 placeholder="Buscar en el reporte..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 pl-10 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 sm:px-4 py-2 pl-8 sm:pl-10 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
-              <svg className="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-slate-400 absolute left-2.5 sm:left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
@@ -388,7 +388,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
             {onCopy && (
               <button
                 onClick={onCopy}
-                className="flex items-center justify-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm whitespace-nowrap"
+                className="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm whitespace-nowrap"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />

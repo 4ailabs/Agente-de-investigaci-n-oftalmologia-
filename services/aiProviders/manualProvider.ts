@@ -81,7 +81,7 @@ export class ManualResearchProvider implements ResearchProvider {
       };
 
     } catch (error) {
-      console.error('❌ Error en Manual Research:', error);
+      console.error('Error en Manual Research:', error);
       throw new Error(`Manual Research failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }

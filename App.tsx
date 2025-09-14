@@ -317,7 +317,7 @@ ${clinicalInfo.trim()}`;
                         className="ml-4 px-3 py-1 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
                       >
                         Cancelar
-                      </button>
+            </button>
                     </div>
                   ) : (
                     <>
@@ -438,7 +438,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
   const handleStartInvestigation = async (query: string, mode: ResearchMode = 'auto') => {
     try {
-      console.log(`🚀 Starting investigation with mode: ${mode}`);
+      console.log(`Starting investigation with mode: ${mode}`);
       
       // Initialize medical context from query (preserve existing logic)
       const initialContext = MedicalContextEngine.parseInitialContext(query);
@@ -479,7 +479,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       };
       
       setInvestigation(loadingInvestigation);
-      setActiveView({ type: 'step', id: 1 });
+    setActiveView({ type: 'step', id: 1 });
 
       // Create research request for orchestrator
       const researchRequest: ResearchRequest = {
@@ -503,7 +503,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       const orchestrator = ResearchOrchestrator.getInstance();
       const completedInvestigation = await orchestrator.conductResearch(researchRequest);
       
-      console.log('✅ Investigation completed:', completedInvestigation);
+      console.log('Investigation completed:', completedInvestigation);
       
       setInvestigation(completedInvestigation);
       
@@ -532,12 +532,12 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       setInvestigationHistory(history.investigations);
       
     } catch (error) {
-      console.error('❌ Investigation failed:', error);
-      setInvestigation(prev => prev ? {
-        ...prev, 
+      console.error('Investigation failed:', error);
+    setInvestigation(prev => prev ? {
+        ...prev,
         error: `Investigation failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 
         isGenerating: false
-      } : null);
+    } : null);
     }
   };
 
@@ -774,7 +774,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       setClinicalReasoning(null);
       setQualityChecks([]);
       
-      console.log('❌ Investigación cancelada');
+      console.log('Investigación cancelada');
     }
   };
 
@@ -875,22 +875,22 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       if (storedInvestigation) {
         const { investigation, patientInfo } = storedInvestigation;
         
-        let summary = `🔍 INVESTIGACIÓN OFTALMOLÓGICA\n`;
-        summary += `📅 Fecha: ${new Date(storedInvestigation.createdAt).toLocaleDateString('es-ES')}\n`;
-        summary += `👤 Paciente: ${patientInfo.age} años, ${patientInfo.sex}\n`;
-        summary += `🩺 Síntomas: ${patientInfo.symptoms}\n\n`;
+        let summary = `INVESTIGACIÓN OFTALMOLÓGICA\n`;
+        summary += `Fecha: ${new Date(storedInvestigation.createdAt).toLocaleDateString('es-ES')}\n`;
+        summary += `Paciente: ${patientInfo.age} años, ${patientInfo.sex}\n`;
+        summary += `Síntomas: ${patientInfo.symptoms}\n\n`;
         
         if (investigation.plan && investigation.plan.length > 0) {
-          summary += `📋 PLAN DE INVESTIGACIÓN:\n`;
+          summary += `PLAN DE INVESTIGACIÓN:\n`;
           investigation.plan.forEach((step: any, index: number) => {
-            const status = step.status === 'completed' ? '✅' : step.status === 'in-progress' ? '🔄' : '⏳';
+            const status = step.status === 'completed' ? '[COMPLETADO]' : step.status === 'in-progress' ? '[EN PROGRESO]' : '[PENDIENTE]';
             summary += `${index + 1}. ${status} ${step.title}\n`;
           });
           summary += `\n`;
         }
         
         if (investigation.finalReport) {
-          summary += `📄 REPORTE FINAL:\n`;
+          summary += `REPORTE FINAL:\n`;
           // Extraer solo las primeras líneas del reporte para el resumen
           const reportLines = investigation.finalReport.split('\n').slice(0, 10);
           summary += reportLines.join('\n');
@@ -899,7 +899,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
           }
         }
         
-        summary += `\n\n💡 Generado por Agente de Investigación Clínica de Oftalmología - 4ailabs`;
+        summary += `\n\nGenerado por Agente de Investigación Clínica de Oftalmología - 4ailabs`;
         
         navigator.clipboard.writeText(summary).then(() => {
           console.log('Investigation summary copied to clipboard');
@@ -1082,13 +1082,13 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
            </div>
          </div>
       ) : (
-          <main className="max-w-7xl mx-auto py-2 lg:py-8 px-2 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 relative">
+          <main className="max-w-7xl mx-auto py-2 sm:py-4 lg:py-8 px-2 sm:px-4 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-8 relative">
                 {/* Left Column: Control Panel */}
                 <div className="lg:col-span-4 order-2 lg:order-1">
-                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-2 lg:p-6 rounded-lg lg:rounded-2xl shadow-md lg:shadow-xl border border-slate-200 lg:sticky lg:top-28 z-20">
+                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-3 sm:p-4 lg:p-6 rounded-lg lg:rounded-2xl shadow-md lg:shadow-xl border border-slate-200 lg:sticky lg:top-28 z-20">
                         {/* Header */}
-                        <div className="pb-2 lg:pb-6 border-b border-slate-200">
+                        <div className="pb-3 sm:pb-4 lg:pb-6 border-b border-slate-200">
                              <div className="flex justify-between items-center mb-2 lg:mb-3">
                                 <div className="flex items-center">
                                     <div className="w-6 h-6 lg:w-8 lg:h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-2 lg:mr-3">
@@ -1356,7 +1356,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                                     </svg>
                                     Completa al menos un paso para generar el reporte
-                                </div>
+                        </div>
                             )}
                         </div>
                          

@@ -172,12 +172,12 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
       </div>
 
       {/* Mode Selection Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
         {modes.map((mode) => (
           <div
             key={mode.id}
             onClick={() => handleModeSelect(mode.id)}
-            className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+            className={`relative p-3 sm:p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
               selectedMode === mode.id
                 ? 'border-blue-500 bg-blue-50 shadow-md'
                 : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
@@ -192,16 +192,16 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
 
             {/* Mode header */}
             <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center">
-                <div className="bg-slate-600 text-white text-xs font-bold px-2 py-1 rounded mr-2">
+              <div className="flex items-center min-w-0">
+                <div className="bg-slate-600 text-white text-xs font-bold px-2 py-1 rounded mr-2 flex-shrink-0">
                   {mode.icon}
                 </div>
-                <h4 className="font-semibold text-slate-900">{mode.name}</h4>
+                <h4 className="font-semibold text-slate-900 text-sm sm:text-base truncate">{mode.name}</h4>
               </div>
-              <span className="text-xs text-slate-500 font-mono">{mode.timeEstimate}</span>
+              <span className="text-xs text-slate-500 font-mono ml-2 flex-shrink-0">{mode.timeEstimate}</span>
             </div>
             
-            <p className="text-xs text-slate-600 mb-2">{mode.description}</p>
+            <p className="text-xs sm:text-sm text-slate-600 mb-2 line-clamp-2">{mode.description}</p>
 
             {/* Selection indicator */}
             {selectedMode === mode.id && (
@@ -230,72 +230,80 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
         {showAdvanced && (
           <div className="mt-4">
             <div className="overflow-x-auto">
-              <table className="w-full text-xs">
+              <table className="w-full text-xs min-w-[480px]">
                 <thead>
                   <tr className="border-b border-slate-200">
                     <th className="text-left py-2 text-slate-600 font-medium">Modo</th>
-                    <th className="text-center py-2 text-slate-600 font-medium">Tiempo</th>
+                    <th className="text-center py-2 text-slate-600 font-medium whitespace-nowrap">Tiempo</th>
                     <th className="text-center py-2 text-slate-600 font-medium">Control</th>
-                    <th className="text-center py-2 text-slate-600 font-medium">Transparencia</th>
+                    <th className="text-center py-2 text-slate-600 font-medium hidden sm:table-cell">Transparencia</th>
                     <th className="text-center py-2 text-slate-600 font-medium">Fuentes</th>
                   </tr>
                 </thead>
                 <tbody className="space-y-2">
                   <tr className="border-b border-slate-100">
-                    <td className="py-2 flex items-center">
-                      <span className="bg-slate-600 text-white text-xs font-bold px-2 py-1 rounded mr-2">AUTO</span>
-                      Automático
+                    <td className="py-2">
+                      <div className="flex items-center">
+                        <span className="bg-slate-600 text-white text-xs font-bold px-1.5 py-0.5 rounded mr-1.5 flex-shrink-0">AUTO</span>
+                        <span className="text-xs sm:text-sm">Automático</span>
+                      </div>
                     </td>
-                    <td className="text-center py-2">3-10 min</td>
+                    <td className="text-center py-2 text-xs">3-10 min</td>
                     <td className="text-center py-2">
-                      <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Medio</span>
+                      <span className="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded text-xs">Medio</span>
                     </td>
-                    <td className="text-center py-2">
-                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded">Alta</span>
+                    <td className="text-center py-2 hidden sm:table-cell">
+                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">Alta</span>
                     </td>
-                    <td className="text-center py-2">8-15</td>
+                    <td className="text-center py-2 text-xs">8-15</td>
                   </tr>
                   <tr className="border-b border-slate-100">
-                    <td className="py-2 flex items-center">
-                      <span className="bg-slate-600 text-white text-xs font-bold px-2 py-1 rounded mr-2">AI</span>
-                      Deep Research
+                    <td className="py-2">
+                      <div className="flex items-center">
+                        <span className="bg-slate-600 text-white text-xs font-bold px-1.5 py-0.5 rounded mr-1.5 flex-shrink-0">AI</span>
+                        <span className="text-xs sm:text-sm">Deep Research</span>
+                      </div>
                     </td>
-                    <td className="text-center py-2">3-5 min</td>
+                    <td className="text-center py-2 text-xs">3-5 min</td>
                     <td className="text-center py-2">
-                      <span className="bg-red-100 text-red-700 px-2 py-1 rounded">Bajo</span>
+                      <span className="bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-xs">Bajo</span>
                     </td>
-                    <td className="text-center py-2">
-                      <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Media</span>
+                    <td className="text-center py-2 hidden sm:table-cell">
+                      <span className="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded text-xs">Media</span>
                     </td>
-                    <td className="text-center py-2">15-25</td>
+                    <td className="text-center py-2 text-xs">15-25</td>
                   </tr>
                   <tr className="border-b border-slate-100">
-                    <td className="py-2 flex items-center">
-                      <span className="bg-slate-600 text-white text-xs font-bold px-2 py-1 rounded mr-2">HYB</span>
-                      Híbrido
+                    <td className="py-2">
+                      <div className="flex items-center">
+                        <span className="bg-slate-600 text-white text-xs font-bold px-1.5 py-0.5 rounded mr-1.5 flex-shrink-0">HYB</span>
+                        <span className="text-xs sm:text-sm">Híbrido</span>
+                      </div>
                     </td>
-                    <td className="text-center py-2">4-7 min</td>
+                    <td className="text-center py-2 text-xs">4-7 min</td>
                     <td className="text-center py-2">
-                      <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Medio</span>
+                      <span className="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded text-xs">Medio</span>
                     </td>
-                    <td className="text-center py-2">
-                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded">Alta</span>
+                    <td className="text-center py-2 hidden sm:table-cell">
+                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">Alta</span>
                     </td>
-                    <td className="text-center py-2">12-20</td>
+                    <td className="text-center py-2 text-xs">12-20</td>
                   </tr>
                   <tr>
-                    <td className="py-2 flex items-center">
-                      <span className="bg-slate-600 text-white text-xs font-bold px-2 py-1 rounded mr-2">MAN</span>
-                      Manual
+                    <td className="py-2">
+                      <div className="flex items-center">
+                        <span className="bg-slate-600 text-white text-xs font-bold px-1.5 py-0.5 rounded mr-1.5 flex-shrink-0">MAN</span>
+                        <span className="text-xs sm:text-sm">Manual</span>
+                      </div>
                     </td>
-                    <td className="text-center py-2">10-20 min</td>
+                    <td className="text-center py-2 text-xs">10-20 min</td>
                     <td className="text-center py-2">
-                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded">Total</span>
+                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">Total</span>
                     </td>
-                    <td className="text-center py-2">
-                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded">Máxima</span>
+                    <td className="text-center py-2 hidden sm:table-cell">
+                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">Máxima</span>
                     </td>
-                    <td className="text-center py-2">6-12</td>
+                    <td className="text-center py-2 text-xs">6-12</td>
                   </tr>
                 </tbody>
               </table>

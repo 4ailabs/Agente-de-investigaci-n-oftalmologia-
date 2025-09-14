@@ -58,9 +58,9 @@ export class ResearchOrchestrator {
       ProviderFactory.registerProvider(deepProvider);
       ProviderFactory.registerProvider(manualProvider);
 
-      console.log('✅ Research providers initialized:', Array.from(this.providers.keys()));
+      console.log('Research providers initialized:', Array.from(this.providers.keys()));
     } catch (error) {
-      console.error('❌ Failed to initialize providers:', error);
+      console.error('Failed to initialize providers:', error);
     }
   }
 
@@ -90,7 +90,7 @@ export class ResearchOrchestrator {
           throw new Error(`Unsupported research mode: ${selectedMode}`);
       }
     } catch (error) {
-      console.error('❌ Research failed:', error);
+      console.error('Research failed:', error);
       throw error;
     }
   }
