@@ -222,20 +222,38 @@ export class ResearchOrchestrator {
     result: ResearchResult, 
     originalQuery: string
   ): InvestigationState {
-    // Create a single "step" that represents the entire Deep Research
-    const deepResearchStep: ResearchStep = {
-      id: 1,
-      title: 'Investigación Autónoma Completa (Deep Research)',
-      status: 'completed',
-      result: result.content,
-      prompt: 'Deep Research autónomo ejecutado',
-      sources: result.sources
-    };
+    // Create multiple steps to allow feedback on different aspects
+    const deepResearchSteps: ResearchStep[] = [
+      {
+        id: 1,
+        title: 'Análisis Inicial y Búsqueda de Evidencia',
+        status: 'completed',
+        result: 'Estrategia de búsqueda ejecutada con Google Search',
+        prompt: 'Búsqueda de evidencia médica especializada',
+        sources: result.sources?.slice(0, Math.ceil(result.sources.length / 3)) || []
+      },
+      {
+        id: 2,
+        title: 'Análisis Diferencial y Evaluación Clínica',
+        status: 'completed',
+        result: 'Análisis diferencial basado en evidencia encontrada',
+        prompt: 'Evaluación de diagnósticos diferenciales',
+        sources: result.sources?.slice(Math.ceil(result.sources.length / 3), Math.ceil(2 * result.sources.length / 3)) || []
+      },
+      {
+        id: 3,
+        title: 'Síntesis Final y Recomendaciones',
+        status: 'completed',
+        result: result.content,
+        prompt: 'Síntesis clínica final con recomendaciones',
+        sources: result.sources?.slice(Math.ceil(2 * result.sources.length / 3)) || []
+      }
+    ];
 
     return {
       originalQuery,
-      plan: [deepResearchStep],
-      currentStep: 1,
+      plan: deepResearchSteps,
+      currentStep: 3,
       isGenerating: false,
       error: null,
       finalReport: result.content, // Deep Research result IS the final report

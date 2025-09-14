@@ -311,7 +311,6 @@ ${clinicalInfo.trim()}`;
                       <button
                         type="button"
                         onClick={() => {
-                          setIsLoading(false);
                           setShowModeSelector(true);
                         }}
                         className="ml-4 px-3 py-1 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
@@ -507,14 +506,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       
       setInvestigation(completedInvestigation);
       
-      // Set appropriate view based on mode
-      if (completedInvestigation.researchMetadata?.mode === 'deep_research') {
-        // Deep Research goes directly to final report
-        setActiveView({ type: 'report', id: null });
-      } else {
-        // Manual/Hybrid modes show step navigation
-        setActiveView({ type: 'step', id: 1 });
-      }
+      // Always show step navigation first, regardless of mode
+      // This allows users to see the process and add feedback
+      setActiveView({ type: 'step', id: 1 });
 
       // Extract patient info for storage
       const patientInfoForStorage = {
@@ -1242,10 +1236,10 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     </button>
                                                     <button
                                                         onClick={() => handleOpenStepFeedback(step.id, step.title)}
-                                                        className={`p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                                                        className={`p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center border ${
                                                             step.feedback 
-                                                                ? 'text-green-600 hover:text-green-700 hover:bg-green-50' 
-                                                                : 'text-blue-400 hover:text-blue-600 hover:bg-blue-50'
+                                                                ? 'text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200 bg-green-50' 
+                                                                : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200'
                                                         }`}
                                                         title={step.feedback ? "Ver/Editar feedback del especialista" : "Agregar feedback del especialista"}
                                                     >
