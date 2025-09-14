@@ -38,12 +38,6 @@ interface ReportSection {
   subsections: ReportSection[];
 }
 
-interface QualityMetrics {
-  sourceCount: number;
-  highQualitySources: number;
-  averageRelevance: number;
-  completeness: number;
-}
 
 const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
   content,
@@ -55,7 +49,6 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
   const [activeSection, setActiveSection] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showTableOfContents, setShowTableOfContents] = useState(false);
-  const [showQualityMetrics, setShowQualityMetrics] = useState(true);
   const [viewMode, setViewMode] = useState<'full' | 'summary' | 'print'>('full');
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -99,26 +92,6 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
     return content.replace(regex, '**$1**');
   };
 
-  // Calculate quality metrics from sources
-  const calculateQualityMetrics = (): QualityMetrics => {
-    const sourceCount = sources.length;
-    const highQualitySources = sources.filter(source => 
-      source.web?.title?.includes('PubMed') || 
-      source.web?.title?.includes('Cochrane') ||
-      source.web?.uri?.includes('pubmed') ||
-      source.web?.uri?.includes('cochrane')
-    ).length;
-    
-    const averageRelevance = sourceCount > 0 ? (highQualitySources / sourceCount) * 100 : 0;
-    const completeness = Math.min((sourceCount / 5) * 100, 100); // Max score with 5+ sources
-    
-    return {
-      sourceCount,
-      highQualitySources,
-      averageRelevance: Math.round(averageRelevance),
-      completeness: Math.round(completeness)
-    };
-  };
 
   // Generate executive summary from content
   const generateExecutiveSummary = (content: string) => {
@@ -428,47 +401,6 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
         </div>
       </div>
 
-      {/* Quality Metrics Panel */}
-      {showQualityMetrics && sources.length > 0 && (
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-semibold text-purple-900 flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              Métricas de Calidad del Reporte
-            </h3>
-            <button
-              onClick={() => setShowQualityMetrics(!showQualityMetrics)}
-              className="text-purple-600 hover:text-purple-800 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={showQualityMetrics ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
-              </svg>
-            </button>
-          </div>
-          
-          {(() => {
-            const metrics = calculateQualityMetrics();
-            return (
-              <div className="flex items-center justify-center space-x-6">
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
-                    {metrics.sourceCount}
-                  </div>
-                  <p className="text-xs text-slate-600 font-medium">Fuentes Consultadas</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-green-600 text-white rounded-lg flex items-center justify-center text-sm font-semibold mx-auto mb-2">
-                    {metrics.highQualitySources}
-                  </div>
-                  <p className="text-xs text-slate-600 font-medium">Fuentes Confiables</p>
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-      )}
 
       {/* Executive Summary for Summary View */}
       {viewMode === 'summary' && (() => {

@@ -29,7 +29,6 @@ const EnhancedReportDisplay = lazy(() => import('./components/EnhancedReportDisp
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import ResearchModeSelector, { ResearchMode } from './components/ResearchModeSelector';
-import ResearchMetricsPanel from './components/ResearchMetricsPanel';
 import { ResearchOrchestrator, ResearchRequest } from './services/researchOrchestrator';
 
 const InitialQueryInput: React.FC<{
@@ -1170,11 +1169,6 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                             </div>
                         </div>
 
-                        {/* Research Metrics Panel */}
-                        <ResearchMetricsPanel 
-                            investigation={investigation} 
-                            className="mb-4 lg:mb-6" 
-                        />
 
                         {/* Navigation */}
                         <nav className="mb-4 lg:mb-6">
