@@ -79,18 +79,33 @@ Ejemplo de formato de salida:
 
 export const createExecuteStepPrompt = (
     userQuery: string,
-    plan: { id: number, title: string, result: string | null }[],
+    plan: { id: number, title: string, result: string | null, feedback?: any }[],
     currentStep: { id: number, title: string }
 ): string => {
     
     const previousStepsContext = plan
         .filter(step => step.id < currentStep.id && step.result)
-        .map(step => `
+        .map(step => {
+            let stepContent = `
 ### RESULTADO DEL PASO ${step.id}: ${step.title} ###
 """
 ${step.result}
-"""
-        `)
+"""`;
+
+            // Agregar feedback del especialista si existe
+            if (step.feedback) {
+                stepContent += `
+
+**FEEDBACK DEL ESPECIALISTA:**
+- **Observaciones Generales:** ${step.feedback.observations || 'No especificadas'}
+- **Datos Adicionales del Examen:** ${step.feedback.additionalData || 'No especificados'}
+- **Hallazgos Clínicos Específicos:** ${step.feedback.clinicalFindings || 'No especificados'}
+- **Recomendaciones Adicionales:** ${step.feedback.recommendations || 'No especificadas'}
+- **Nivel de Confianza:** ${step.feedback.confidence === 'high' ? 'Alto' : step.feedback.confidence === 'medium' ? 'Medio' : 'Bajo'}`;
+            }
+
+            return stepContent;
+        })
         .join('\n');
 
     return `
@@ -113,6 +128,7 @@ Basándote en la información anterior, mantén awareness de:
 - **Diagnósticos Diferenciales Activos:** Lista priorizada con probabilidades actualizadas
 - **Evidencia Acumulada:** Calidad y coherencia de hallazgos previos
 - **Gaps de Información:** Qué necesita clarificarse o confirmarse
+- **Feedback del Especialista:** Si hay observaciones, hallazgos o recomendaciones del especialista en pasos anteriores, **PRIORÍZALAS** y úsalas para dirigir tu investigación actual
 
 ### TAREA ACTUAL CON RAZONAMIENTO CLÍNICO (Paso ${currentStep.id}) ###
 Ejecuta el siguiente paso: "${currentStep.title}"
@@ -123,6 +139,7 @@ Ejecuta el siguiente paso: "${currentStep.title}"
 3. **Red Flag Monitoring:** Detecta nuevos signos de alarma
 4. **Evidence Quality:** Evalúa y reporta la calidad de fuentes encontradas
 5. **Clinical Coherence:** Asegura coherencia con patrón temporal y anatómico
+6. **Specialist Feedback Integration:** Si hay feedback del especialista, úsalo para dirigir tu investigación y validar/refutar sus observaciones con evidencia científica
 
 **FORMATO DE RESPUESTA DETALLADO:**
 Debes proporcionar un análisis EXHAUSTIVO y DETALLADO siguiendo esta estructura:
@@ -149,6 +166,7 @@ Debes proporcionar un análisis EXHAUSTIVO y DETALLADO siguiendo esta estructura
 - Impacto en los diagnósticos diferenciales actuales
 - Recomendaciones específicas para próximos pasos
 - Gaps de información identificados que requieren investigación adicional
+- **Integración del Feedback del Especialista:** Si hay feedback del especialista disponible, explica cómo se utilizó para dirigir la investigación y cómo la evidencia encontrada valida, refuta o complementa las observaciones del especialista
 
 **LONGITUD REQUERIDA:** Tu respuesta debe ser EXTENSA y DETALLADA (mínimo 1500 palabras), proporcionando análisis profundo y razonamiento clínico exhaustivo.
 
@@ -165,6 +183,11 @@ Utiliza la Búsqueda de Google para encontrar información ESPECÍFICAMENTE rela
 - Los síntomas y condiciones mencionados en la consulta original
 - El paso actual que estás ejecutando
 - Términos médicos oftalmológicos relevantes al caso
+- **IMPORTANTE:** Si hay feedback del especialista en pasos anteriores, ÚSALO para refinar tu búsqueda:
+  - Busca evidencia que valide o contradiga las observaciones del especialista
+  - Investiga específicamente los hallazgos clínicos mencionados por el especialista
+  - Busca información sobre las recomendaciones adicionales del especialista
+  - Prioriza fuentes que aborden los datos adicionales del examen mencionados
 
 PRIORIZA fuentes de:
 1. PubMed/NCBI (estudios revisados por pares) - Busca metaanálisis y revisiones sistemáticas
@@ -178,6 +201,11 @@ PRIORIZA fuentes de:
 - Busca evidencia tanto para el diagnóstico principal como para diagnósticos diferenciales
 - Incluye búsquedas sobre epidemiología, fisiopatología, diagnóstico y tratamiento
 - Consulta guías de práctica clínica más recientes (últimos 5 años)
+- **INTEGRACIÓN DEL FEEDBACK DEL ESPECIALISTA:** Si hay feedback del especialista disponible:
+  - Busca evidencia específica sobre los hallazgos clínicos mencionados por el especialista
+  - Investiga las recomendaciones adicionales del especialista para validar su aplicabilidad
+  - Busca información sobre los datos adicionales del examen para contextualizar mejor el caso
+  - Prioriza fuentes que aborden las observaciones específicas del especialista
 
 EVITA fuentes generales, no médicas o no relacionadas con oftalmología.
 
