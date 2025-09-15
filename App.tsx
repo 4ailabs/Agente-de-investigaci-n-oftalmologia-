@@ -124,46 +124,47 @@ ${clinicalInfo.trim()}`;
 
   return (
      <main className="max-w-4xl mx-auto py-2 lg:py-8 px-2 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-white to-blue-50/30 p-3 lg:p-8 rounded-xl lg:rounded-2xl shadow-lg lg:shadow-xl border border-blue-100">
-          {/* Header Section */}
-          <div className="text-center mb-4 lg:mb-6">
-            <div className="inline-flex items-center justify-center w-10 h-10 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl lg:rounded-2xl mb-2 lg:mb-4 shadow-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <div className="bg-white p-4 lg:p-8 rounded-xl lg:rounded-2xl shadow-xl border-2 border-slate-200">
+          {/* Header Section - Medical Professional Style */}
+          <div className="text-center mb-6 lg:mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 lg:w-20 lg:h-20 bg-slate-800 rounded-xl lg:rounded-2xl mb-4 lg:mb-6 shadow-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 lg:h-10 lg:w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
             </div>
-            <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-3">Nueva Investigación Clínica</h2>
-            <p className="text-sm lg:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              Nuestro agente de IA especializado en oftalmología creará un plan de investigación personalizado basado en evidencia médica.
+            <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">Sistema de Investigación Clínica</h2>
+            <p className="text-base lg:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-medium">
+              Plataforma especializada en oftalmología para análisis clínico basado en evidencia médica y protocolos de investigación sistemática.
             </p>
           </div>
           
-          {/* Mode Selector - Optimizado para móvil */}
-          <div className="mb-4 sm:mb-6">
-            <div className="flex items-center justify-center space-x-1 bg-slate-100 p-1 rounded-lg">
+          {/* Mode Selector - Medical Professional Style */}
+          <div className="mb-6 sm:mb-8">
+            <div className="flex items-center justify-center space-x-2 bg-slate-100 p-2 rounded-xl border border-slate-200">
               <button
                 type="button"
                 onClick={() => setInputMode('quick')}
-                className={`flex-1 sm:flex-none px-4 py-3 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-all min-h-[44px] sm:min-h-[36px] ${
+                className={`flex-1 sm:flex-none px-6 py-3 sm:py-3 rounded-lg text-base sm:text-sm font-semibold transition-all min-h-[48px] sm:min-h-[44px] ${
                   inputMode === 'quick'
-                    ? 'bg-white text-blue-600 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-800'
+                    ? 'bg-slate-800 text-white shadow-lg'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
-                <span className="hidden sm:inline">Entrada Rápida</span>
+                <span className="hidden sm:inline">Consulta Rápida</span>
                 <span className="sm:hidden">Rápida</span>
               </button>
               <button
                 type="button"
                 onClick={() => setInputMode('structured')}
-                className={`flex-1 sm:flex-none px-4 py-3 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-all min-h-[44px] sm:min-h-[36px] ${
+                className={`flex-1 sm:flex-none px-6 py-3 sm:py-3 rounded-lg text-base sm:text-sm font-semibold transition-all min-h-[48px] sm:min-h-[44px] ${
                   inputMode === 'structured'
-                    ? 'bg-white text-blue-600 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-800'
+                    ? 'bg-slate-800 text-white shadow-lg'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
-                <span className="hidden sm:inline">Formulario Detallado</span>
-                <span className="sm:hidden">Detallado</span>
+                <span className="hidden sm:inline">Evaluación Completa</span>
+                <span className="sm:hidden">Completa</span>
               </button>
             </div>
           </div>
@@ -183,13 +184,13 @@ ${clinicalInfo.trim()}`;
 
           {/* Content based on selected mode */}
           {!showModeSelector && inputMode === 'quick' ? (
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-              {/* Quick Entry Form */}
-              <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-sm">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
+            <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+              {/* Quick Entry Form - Medical Professional Style */}
+              <div className="bg-slate-50 p-6 sm:p-8 rounded-xl border-2 border-slate-200 shadow-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 sm:mb-8">
             <div>
-                    <label htmlFor="age" className="block text-sm lg:text-base font-medium text-slate-700 mb-2">
-                      Edad <span className="text-red-500">*</span>
+                    <label htmlFor="age" className="block text-sm lg:text-base font-bold text-slate-800 mb-3">
+                      Edad del Paciente <span className="text-red-600">*</span>
                     </label>
                     <div className="relative">
                         <input
@@ -197,29 +198,29 @@ ${clinicalInfo.trim()}`;
                             id="age"
                         value={age || ''}
                         onChange={(e) => setAge(parseInt(e.target.value) || 0)}
-                        className="w-full px-4 py-3 sm:px-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base sm:text-sm min-h-[48px] sm:min-h-[40px]"
+                        className="w-full px-4 py-3 sm:px-4 sm:py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-colors text-base sm:text-base min-h-[52px] sm:min-h-[48px] font-medium"
                         placeholder="Ej: 65"
                         min="1"
                         max="120"
                             required
                         />
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-slate-400 text-sm lg:text-base">años</span>
+                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                        <span className="text-slate-500 text-sm lg:text-base font-semibold">años</span>
                       </div>
                     </div>
                      </div>
                      <div>
-                    <label htmlFor="sex" className="block text-sm lg:text-base font-medium text-slate-700 mb-2">
-                      Sexo <span className="text-red-500">*</span>
+                    <label htmlFor="sex" className="block text-sm lg:text-base font-bold text-slate-800 mb-3">
+                      Sexo <span className="text-red-600">*</span>
                     </label>
                          <select
                             id="sex"
                             value={sex}
                       onChange={(e) => setSex(e.target.value as 'M' | 'F' | '')}
-                      className="w-full px-4 py-3 sm:px-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base sm:text-sm min-h-[48px] sm:min-h-[40px]"
+                      className="w-full px-4 py-3 sm:px-4 sm:py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-colors text-base sm:text-base min-h-[52px] sm:min-h-[48px] font-medium"
                             required
                         >
-                            <option value="" disabled>Seleccionar...</option>
+                            <option value="" disabled>Seleccionar sexo...</option>
                       <option value="M">Masculino</option>
                       <option value="F">Femenino</option>
                         </select>
@@ -227,48 +228,48 @@ ${clinicalInfo.trim()}`;
                 </div>
                 
             <div>
-                  <label htmlFor="clinical-info" className="block text-sm lg:text-base font-medium text-slate-700 mb-2">
-                    Información Clínica <span className="text-red-500">*</span>
+                  <label htmlFor="clinical-info" className="block text-sm lg:text-base font-bold text-slate-800 mb-3">
+                    Motivo de Consulta y Antecedentes <span className="text-red-600">*</span>
                   </label>
                  <textarea
                     id="clinical-info"
                     value={clinicalInfo}
                     onChange={(e) => setClinicalInfo(e.target.value)}
-                    rows={5}
-                    className="w-full px-4 py-3 sm:px-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base sm:text-sm resize-none"
-                    placeholder="Síntomas actuales, antecedentes médicos, medicamentos, tiempo de evolución...&#10;&#10;Ejemplo: Paciente presenta disminución de agudeza visual bilateral de 3 semanas de evolución, acompañada de dolor ocular moderado. Antecedente de diabetes mellitus tipo 2."
+                    rows={6}
+                    className="w-full px-4 py-4 sm:px-4 sm:py-4 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-colors text-base sm:text-base resize-none font-medium"
+                    placeholder="Describa detalladamente el motivo de consulta, síntomas actuales, antecedentes médicos relevantes, medicamentos actuales, alergias conocidas, etc.&#10;&#10;Ejemplo: Paciente presenta disminución de agudeza visual bilateral de 3 semanas de evolución, acompañada de dolor ocular moderado. Antecedente de diabetes mellitus tipo 2."
                     required
                 />
                   
-                  {/* Audio y Documento Buttons - Móvil optimizado */}                                         
-                  <div className="mt-3 space-y-2">                                     
+                  {/* Audio y Documento Buttons - Medical Professional Style */}                                         
+                  <div className="mt-4 space-y-3">                                     
                     <div className="flex items-center justify-between">
-                      <span className="text-xs lg:text-sm text-slate-500 flex items-center">                            
-                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">               
+                      <span className="text-sm lg:text-base text-slate-600 flex items-center font-medium">                            
+                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">               
                           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />            
                         </svg>
-                        Sea específico para mejores resultados                                               
+                        Sea específico y detallado para obtener mejores resultados                                               
                       </span>
             </div>
            
-                    <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <button
                         type="button"
                         onClick={() => setShowAudioRecorder(!showAudioRecorder)}                             
-                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-base sm:text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200 min-h-[44px] sm:min-h-[36px]"                                                   
+                        className="flex-1 flex items-center justify-center space-x-3 px-6 py-3 text-base sm:text-base font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 rounded-lg transition-colors duration-200 min-h-[48px] sm:min-h-[44px]"                                                   
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>         
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>         
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />                               
                         </svg>
-                        <span>{showAudioRecorder ? 'Ocultar Audio' : 'Dictar Texto'}</span>                  
+                        <span>{showAudioRecorder ? 'Ocultar Grabación' : 'Grabar Audio'}</span>                  
                       </button>
                       
                       <button
                         type="button"
                         onClick={() => setShowDocumentCapture(!showDocumentCapture)}                             
-                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-base sm:text-sm font-medium text-green-600 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition-colors duration-200 min-h-[44px] sm:min-h-[36px]"                                                   
+                        className="flex-1 flex items-center justify-center space-x-3 px-6 py-3 text-base sm:text-base font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 rounded-lg transition-colors duration-200 min-h-[48px] sm:min-h-[44px]"                                                   
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>         
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>         
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
@@ -300,18 +301,18 @@ ${clinicalInfo.trim()}`;
                 </div>
               </div>
               
-              {/* Submit Button */}
-              <div className="pt-2">
+              {/* Submit Button - Medical Professional Style */}
+              <div className="pt-4">
             <button
               type="submit"
               disabled={isFormInvalid}
-                  className="w-full flex justify-center items-center py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 min-h-[56px] text-base"
+                  className="w-full flex justify-center items-center py-4 px-8 bg-slate-800 text-white font-bold rounded-xl shadow-xl hover:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 min-h-[60px] text-lg"
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center">
                         <Spinner />
-                        <span className="ml-3">Creando Plan de Investigación...</span>
+                        <span className="ml-3">Iniciando Protocolo de Investigación...</span>
                       </div>
                       <button
                         type="button"
@@ -328,7 +329,7 @@ ${clinicalInfo.trim()}`;
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
-                      Iniciar Investigación Clínica
+                      Iniciar Protocolo de Investigación
                     </>
                   )}
             </button>
@@ -1348,22 +1349,22 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                             </div>
                         </nav>
 
-                        {/* Action Buttons */}
-                        <div className="pt-3 lg:pt-6 border-t border-slate-200 space-y-2 lg:space-y-3">
+                        {/* Action Buttons - Medical Professional Style */}
+                        <div className="pt-4 lg:pt-6 border-t-2 border-slate-300 space-y-3 lg:space-y-4">
                             {investigation.currentStep < investigation.plan.length && (
                                 <button
                                     onClick={handleExecuteNextStep}
                                     disabled={investigation.isGenerating}
-                                    className="w-full flex justify-center items-center py-2.5 lg:py-3 px-3 lg:px-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-lg lg:rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 text-sm"
+                                    className="w-full flex justify-center items-center py-3 lg:py-4 px-4 lg:px-6 bg-slate-800 text-white font-bold rounded-lg lg:rounded-xl shadow-xl hover:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-base"
                                 >
                                     {investigation.isGenerating ? (
                                         <>
                                             <Spinner />
-                                            <span className="ml-2">Ejecutando...</span>
+                                            <span className="ml-3">Ejecutando Protocolo...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                             </svg>
                                             Ejecutar Paso {investigation.currentStep + 1}
@@ -1375,29 +1376,29 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 <button
                                     onClick={handleGenerateReport}
                                     disabled={investigation.isGeneratingReport}
-                                    className="w-full flex justify-center items-center py-2.5 lg:py-3 px-3 lg:px-4 bg-gradient-to-r from-green-600 to-emerald-700 text-white font-semibold rounded-lg lg:rounded-xl shadow-lg hover:from-green-700 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-200 text-sm"
+                                    className="w-full flex justify-center items-center py-3 lg:py-4 px-4 lg:px-6 bg-emerald-700 text-white font-bold rounded-lg lg:rounded-xl shadow-xl hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-base"
                                 >
                                     {investigation.isGeneratingReport ? (
                                         <>
                                             <Spinner />
-                                            <span className="ml-2">Generando...</span>
+                                            <span className="ml-3">Generando Reporte...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
-                                            Generar Reporte Final
+                                            Generar Reporte Clínico
                                         </>
                                     )}
                                 </button>
                             )}
                             {!investigation.plan.some(step => step.status === 'completed') && !investigation.finalReport && (
-                                <div className="w-full flex justify-center items-center py-2.5 lg:py-3 px-3 lg:px-4 bg-slate-100 text-slate-500 font-medium rounded-lg lg:rounded-xl text-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <div className="w-full flex justify-center items-center py-3 lg:py-4 px-4 lg:px-6 bg-slate-100 text-slate-600 font-semibold rounded-lg lg:rounded-xl text-base border-2 border-slate-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                                     </svg>
-                                    Completa al menos un paso para generar el reporte
+                                    Complete al menos un paso del protocolo para generar el reporte
                         </div>
                             )}
                         </div>
