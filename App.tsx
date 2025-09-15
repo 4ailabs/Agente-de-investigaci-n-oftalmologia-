@@ -367,7 +367,7 @@ const App: React.FC = () => {
   const [investigation, setInvestigation] = useState<InvestigationState | null>(null);
   const [activeView, setActiveView] = useState<{ type: 'step' | 'report'; id: number | null }>({ type: 'step', id: 1 });
   const [showExplanation, setShowExplanation] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
 
   const [isCopied, setIsCopied] = useState(false);
   const [copiedStepId, setCopiedStepId] = useState<number | null>(null);
