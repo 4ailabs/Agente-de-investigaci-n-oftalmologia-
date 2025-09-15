@@ -1049,7 +1049,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
   }, [investigation, activeView]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-200/30 flex flex-col">
       {showSplash && (
         <SplashScreen onComplete={() => setShowSplash(false)} />
       )}
@@ -1123,36 +1123,39 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       ) : (
           <main className="max-w-7xl mx-auto py-2 sm:py-4 lg:py-8 px-2 sm:px-4 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-8 relative">
-                {/* Left Column: Control Panel */}
+                {/* Left Column: Control Panel - Medical Professional Style */}
                 <div className="lg:col-span-4 order-2 lg:order-1">
-                    <div className="bg-gradient-to-br from-white to-slate-50/50 p-3 sm:p-4 lg:p-6 rounded-lg lg:rounded-2xl shadow-md lg:shadow-xl border border-slate-200 lg:sticky lg:top-28 z-20">
-                        {/* Header */}
-                        <div className="pb-3 sm:pb-4 lg:pb-6 border-b border-slate-200">
-                             <div className="flex justify-between items-center mb-2 lg:mb-3">
+                    <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-lg lg:rounded-xl shadow-lg border-2 border-slate-200 lg:sticky lg:top-28 z-20">
+                        {/* Header - Medical Professional Style */}
+                        <div className="pb-4 sm:pb-5 lg:pb-6 border-b-2 border-slate-300">
+                             <div className="flex justify-between items-center mb-3 lg:mb-4">
                                 <div className="flex items-center">
-                                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-2 lg:mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-5 lg:w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <div className="w-8 h-8 lg:w-10 lg:h-10 bg-slate-800 rounded-lg flex items-center justify-center mr-3 lg:mr-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 lg:h-6 lg:w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                         </svg>
                                     </div>
-                                    <h2 className="text-base lg:text-xl font-semibold text-slate-800">Investigación Actual</h2>
+                                    <div>
+                                        <h2 className="text-lg lg:text-xl font-bold text-slate-900">Caso Clínico Activo</h2>
+                                        <p className="text-xs lg:text-sm text-slate-600 font-medium">Protocolo de Investigación</p>
+                                    </div>
                                 </div>
                                 <div className="flex space-x-2">
                                     <button 
                                         onClick={handleNewInvestigation} 
-                                        className="flex items-center px-3 lg:px-4 py-2 lg:py-2.5 text-sm lg:text-base font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md"
+                                        className="flex items-center px-4 lg:px-5 py-2.5 lg:py-3 text-sm lg:text-base font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                                         </svg>
-                                        <span>Nueva</span>
+                                        <span>Nuevo Caso</span>
                                 </button>
                                     {investigation?.isGenerating && (
                                         <button 
                                             onClick={handleCancelInvestigation} 
-                                            className="flex items-center px-3 lg:px-4 py-2 lg:py-2.5 text-sm lg:text-base font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                                            className="flex items-center px-4 lg:px-5 py-2.5 lg:py-3 text-sm lg:text-base font-semibold text-red-700 bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                             <span>Cancelar</span>
@@ -1160,13 +1163,13 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     )}
                              </div>
                              </div>
-                             <div className="bg-blue-50 p-2 lg:p-3 rounded-lg">
-                                 <div className="text-sm lg:text-base text-slate-700 space-y-1">
+                             <div className="bg-slate-50 p-3 lg:p-4 rounded-lg border border-slate-200">
+                                 <div className="text-sm lg:text-base text-slate-800 space-y-2">
                                      {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
                                          if (index === 0) {
                                              // Patient demographics (first line)
                                              return (
-                                                 <div key={index} className="font-medium text-blue-800 text-sm lg:text-base">
+                                                 <div key={index} className="font-bold text-slate-900 text-sm lg:text-base border-b border-slate-300 pb-2">
                                                      {section.trim()}
                                                  </div>
                                              );
@@ -1175,32 +1178,32 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                              const symptoms = section.replace('Síntomas y Antecedentes Clínicos:', '').trim();
                                              const truncated = symptoms.length > 120 ? symptoms.substring(0, 120) + '...' : symptoms;
                                              return (
-                                                 <div key={index} className="text-slate-600">
-                                                     <div className="text-sm font-medium text-slate-500 mb-1">Síntomas:</div>
-                                                     <div className="text-sm leading-tight" title={symptoms}>
+                                                 <div key={index} className="text-slate-700">
+                                                     <div className="text-sm font-semibold text-slate-600 mb-2">Motivo de Consulta:</div>
+                                                     <div className="text-sm leading-relaxed" title={symptoms}>
                                                          {truncated}
                                                      </div>
                                                  </div>
                                              );
                                          }
                                      }) : (
-                                         <div className="text-sm text-slate-500">Cargando información del caso...</div>
+                                         <div className="text-sm text-slate-500 font-medium">Cargando información del caso...</div>
                                      )}
                                  </div>
                              </div>
                         </div>
 
-                        {/* Progress Indicator */}
-                        <div className="my-4 lg:my-6">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm lg:text-base font-medium text-slate-700">Progreso</span>
-                                <span className="text-sm lg:text-base text-slate-500 font-mono">
-                                    {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length}
+                        {/* Progress Indicator - Medical Style */}
+                        <div className="my-5 lg:my-6">
+                            <div className="flex items-center justify-between mb-3">
+                                <span className="text-sm lg:text-base font-bold text-slate-800">Estado del Protocolo</span>
+                                <span className="text-sm lg:text-base text-slate-600 font-semibold bg-slate-100 px-3 py-1 rounded-full">
+                                    {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length} Completados
                                 </span>
                             </div>
-                            <div className="w-full bg-slate-200 rounded-full h-1.5 lg:h-2">
+                            <div className="w-full bg-slate-200 rounded-full h-2 lg:h-3 border border-slate-300">
                                 <div 
-                                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-1.5 lg:h-2 rounded-full transition-all duration-300"
+                                    className="bg-gradient-to-r from-slate-700 to-slate-800 h-2 lg:h-3 rounded-full transition-all duration-500 shadow-sm"
                                     style={{ 
                                         width: `${(investigation.plan.filter(step => step.status === 'completed').length / investigation.plan.length) * 100}%` 
                                     }}
@@ -1209,15 +1212,15 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                         </div>
 
 
-                        {/* Navigation */}
-                        <nav className="mb-4 lg:mb-6">
-                            <div className="flex items-center justify-between mb-2 lg:mb-3">
-                                <h3 className="text-sm lg:text-base font-semibold text-slate-700">Pasos de Investigación</h3>
-                                <div className="hidden lg:flex items-center space-x-1 text-xs lg:text-sm text-slate-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        {/* Navigation - Medical Protocol Style */}
+                        <nav className="mb-5 lg:mb-6">
+                            <div className="flex items-center justify-between mb-3 lg:mb-4">
+                                <h3 className="text-base lg:text-lg font-bold text-slate-900">Protocolo de Investigación</h3>
+                                <div className="hidden lg:flex items-center space-x-2 text-xs lg:text-sm text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span>Haz clic para ver</span>
+                                    <span className="font-medium">Seleccionar paso</span>
                                 </div>
                             </div>
                             <ul className="space-y-1 lg:space-y-2">
