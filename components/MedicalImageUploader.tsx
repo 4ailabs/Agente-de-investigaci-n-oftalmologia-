@@ -81,18 +81,37 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
         continue;
       }
 
-      // Agregar con tipo por defecto
-      newImages.push({
-        file,
-        type: 'other',
-        config: {
-          imageType: 'other',
-          priority: 'routine',
-          includeDifferential: true,
-          includeRecommendations: true,
-          detailLevel: 'detailed'
-        }
-      });
+      // Detectar tipo automáticamente
+      try {
+        const detectedType = await analysisService.detectImageType(file);
+        console.log(`Tipo detectado para ${file.name}: ${detectedType}`);
+        
+        newImages.push({
+          file,
+          type: detectedType,
+          config: {
+            imageType: detectedType,
+            priority: 'routine',
+            includeDifferential: true,
+            includeRecommendations: true,
+            detailLevel: 'detailed'
+          }
+        });
+      } catch (error) {
+        console.warn(`Error detectando tipo para ${file.name}:`, error);
+        // Fallback a tipo genérico
+        newImages.push({
+          file,
+          type: 'other',
+          config: {
+            imageType: 'other',
+            priority: 'routine',
+            includeDifferential: true,
+            includeRecommendations: true,
+            detailLevel: 'detailed'
+          }
+        });
+      }
     }
 
     setSelectedImages(prev => [...prev, ...newImages]);
@@ -255,10 +274,14 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
                   <p className="text-xs text-slate-500">
                     {(image.file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
+                  <p className="text-xs text-blue-600 font-medium">
+                    Tipo detectado: {imageTypes.find(t => t.value === image.type)?.label || 'Desconocido'}
+                  </p>
                 </div>
 
                 {/* Selector de tipo */}
                 <div className="flex-shrink-0">
+                  <label className="text-xs text-slate-600 block mb-1">Tipo:</label>
                   <select
                     value={image.type}
                     onChange={(e) => handleImageTypeChange(index, e.target.value as MedicalImageType)}
