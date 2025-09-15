@@ -699,6 +699,11 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
           console.log('Final report auto-saved');
         }
 
+        // Clear active investigation after report completion
+        localStorageService.clearActiveInvestigation();
+        setCurrentInvestigationId(null);
+        console.log('Active investigation cleared after report completion');
+
         return finalInvestigation;
     });
   };
