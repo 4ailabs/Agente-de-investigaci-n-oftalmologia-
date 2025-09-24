@@ -146,46 +146,57 @@ export interface GenerationResult {
     };
 }
 
-// Sistema de manejo de caché inteligente
-const getCachedResult = (query: string, medicalKeywords: string[]): SearchCache | null => {
-  const cacheKey = generateCacheKey(query, medicalKeywords);
-  const cached = searchCache.get(cacheKey);
-  
-  if (cached && cached.expiresAt > new Date()) {
-    console.log('Using cached search result');
-    return cached;
-  }
+// Importar el nuevo sistema de caché avanzado
+import { advancedCache, MedicalCacheUtils } from './advancedCacheService';
+
+// Sistema de manejo de caché inteligente optimizado
+const getCachedResult = (query: string, medicalKeywords: string[], model: string): SearchCache | null => {
+  const cacheKey = MedicalCacheUtils.generateMedicalKey(query, model, medicalKeywords);
+  const cached = advancedCache.get<SearchCache>(cacheKey);
   
   if (cached) {
-    searchCache.delete(cacheKey);
+    console.log('Using advanced cached search result');
+    return cached;
   }
   
   return null;
 };
 
-const setCachedResult = (query: string, medicalKeywords: string[], result: GenerationResult, relevanceScore: number) => {
-  const cacheKey = generateCacheKey(query, medicalKeywords);
-  const expiresAt = new Date();
-  expiresAt.setHours(expiresAt.getHours() + CACHE_EXPIRY_HOURS);
+const setCachedResult = (query: string, medicalKeywords: string[], result: GenerationResult, relevanceScore: number, model: string): void => {
+  const cacheKey = MedicalCacheUtils.generateMedicalKey(query, model, medicalKeywords);
   
-  // Limpiar caché si está lleno
-  if (searchCache.size >= MAX_CACHE_SIZE) {
-    const oldestKey = Array.from(searchCache.keys())[0];
-    searchCache.delete(oldestKey);
-  }
+  // Determinar prioridad basada en relevancia y tipo de consulta
+  const priority = relevanceScore > 80 ? 'high' : 
+                   relevanceScore > 60 ? 'medium' : 'low';
   
-  searchCache.set(cacheKey, {
+  // Tags para categorización
+  const tags = [
+    MedicalCacheUtils.MEDICAL_TAGS.SEARCH,
+    MedicalCacheUtils.MEDICAL_TAGS.INVESTIGATION,
+    ...(priority === 'high' ? [MedicalCacheUtils.MEDICAL_TAGS.HIGH_PRIORITY] : [])
+  ];
+  
+  const cacheEntry: SearchCache = {
     query,
     timestamp: new Date(),
     results: result,
     relevanceScore,
     medicalKeywords,
-    expiresAt
+    expiresAt: new Date(Date.now() + CACHE_EXPIRY_HOURS * 60 * 60 * 1000)
+  };
+  
+  advancedCache.set(cacheKey, cacheEntry, {
+    ttl: CACHE_EXPIRY_HOURS * 60 * 60 * 1000,
+    priority,
+    tags
   });
+  
+  console.log(`Cached search result with priority: ${priority}, relevance: ${relevanceScore}`);
 };
 
+// Mantener función de compatibilidad
 const generateCacheKey = (query: string, keywords: string[]): string => {
-  return `${query.toLowerCase()}-${keywords.sort().join(',').toLowerCase()}`;
+  return MedicalCacheUtils.generateMedicalKey(query, 'legacy', keywords);
 };
 
 // Sistema de scoring de relevancia mejorado
@@ -357,8 +368,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     
     // Verificar caché si se usa búsqueda (incluyendo modelo en la clave)
     if (useSearch) {
-      const cacheKey = `${modelSelection.model}_${prompt}`;
-      const cachedResult = getCachedResult(cacheKey, medicalKeywords);
+      const cachedResult = getCachedResult(prompt, medicalKeywords, modelSelection.model);
       if (cachedResult) {
         console.log('Returning cached search result with relevance score:', cachedResult.relevanceScore);
         return cachedResult.results;
@@ -517,7 +527,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     // Guardar en caché si se usó búsqueda y hay fuentes válidas
     if (useSearch && enhancedResult.sources && enhancedResult.sources.length > 0) {
       const averageRelevanceScore = enhancedResult.sources.length * 20; // Score estimado basado en cantidad de fuentes
-      setCachedResult(prompt, medicalKeywords, enhancedResult, averageRelevanceScore);
+      setCachedResult(prompt, medicalKeywords, enhancedResult, averageRelevanceScore, modelSelection.model);
       console.log('💾 Search result cached for future use');
     }
 

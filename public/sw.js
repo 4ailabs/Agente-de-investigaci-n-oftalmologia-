@@ -1,7 +1,9 @@
-// Service Worker for Agente de Investigación Clínica de Oftalmología
-const CACHE_NAME = 'oftalmologia-agent-v1.0.0';
-const STATIC_CACHE = 'oftalmologia-static-v1';
-const DYNAMIC_CACHE = 'oftalmologia-dynamic-v1';
+// Service Worker for Agente de Investigación Clínica de Oftalmología - Optimized
+const CACHE_NAME = 'oftalmologia-agent-v2.0.0';
+const STATIC_CACHE = 'oftalmologia-static-v2';
+const DYNAMIC_CACHE = 'oftalmologia-dynamic-v2';
+const API_CACHE = 'oftalmologia-api-v2';
+const IMAGE_CACHE = 'oftalmologia-images-v2';
 
 // Essential files to cache for offline functionality
 const STATIC_ASSETS = [
@@ -138,27 +140,69 @@ async function handleNavigationRequest(request) {
   }
 }
 
-// Handle API requests with caching strategy
+// Handle API requests with intelligent caching strategy
 async function handleApiRequest(request) {
-  const cache = await caches.open(DYNAMIC_CACHE);
+  const apiCache = await caches.open(API_CACHE);
+  const dynamicCache = await caches.open(DYNAMIC_CACHE);
   
   try {
-    // Try network first
+    // Try network first for fresh data
     const networkResponse = await fetch(request);
     
-    // Cache successful API responses
     if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone());
+      // Clone response for caching
+      const responseToCache = networkResponse.clone();
+      
+      // Determine cache strategy based on request type
+      const url = new URL(request.url);
+      const isGeminiAPI = url.hostname.includes('generativelanguage.googleapis.com');
+      
+      if (isGeminiAPI) {
+        // Cache Gemini API responses with longer TTL
+        const headers = new Headers(responseToCache.headers);
+        headers.set('sw-cache-ttl', '3600000'); // 1 hour
+        headers.set('sw-cache-timestamp', Date.now().toString());
+        
+        const cachedResponse = new Response(responseToCache.body, {
+          status: responseToCache.status,
+          statusText: responseToCache.statusText,
+          headers: headers
+        });
+        
+        apiCache.put(request, cachedResponse);
+        console.log('SW: Cached Gemini API response', request.url);
+      } else {
+        // Cache other API responses with shorter TTL
+        dynamicCache.put(request, responseToCache);
+        console.log('SW: Cached API response', request.url);
+      }
     }
     
     return networkResponse;
   } catch (error) {
-    // Fallback to cache for API requests
-    const cachedResponse = await cache.match(request);
+    console.log('SW: Network failed, trying cache for', request.url);
+    
+    // Try API cache first
+    let cachedResponse = await apiCache.match(request);
+    
+    // If not in API cache, try dynamic cache
+    if (!cachedResponse) {
+      cachedResponse = await dynamicCache.match(request);
+    }
     
     if (cachedResponse) {
       console.log('SW: Serving API request from cache', request.url);
-      return cachedResponse;
+      
+      // Add cache headers to indicate this is cached
+      const headers = new Headers(cachedResponse.headers);
+      headers.set('x-sw-cached', 'true');
+      headers.set('x-sw-cache-timestamp', Date.now().toString());
+      
+      return new Response(cachedResponse.body, {
+        status: cachedResponse.status,
+        statusText: cachedResponse.statusText,
+        headers: headers
+      });
     }
     
     throw error;
@@ -194,6 +238,48 @@ async function handleStaticAssetRequest(request) {
 function shouldCacheApiRequest(url) {
   return CACHE_API_PATTERNS.some(pattern => pattern.test(url));
 }
+
+// Cleanup expired cache entries
+async function cleanupExpiredCache() {
+  const caches = [STATIC_CACHE, DYNAMIC_CACHE, API_CACHE, IMAGE_CACHE];
+  
+  for (const cacheName of caches) {
+    try {
+      const cache = await caches.open(cacheName);
+      const requests = await cache.keys();
+      
+      for (const request of requests) {
+        const response = await cache.match(request);
+        if (response) {
+          const cacheTimestamp = response.headers.get('sw-cache-timestamp');
+          const cacheTTL = response.headers.get('sw-cache-ttl');
+          
+          if (cacheTimestamp && cacheTTL) {
+            const age = Date.now() - parseInt(cacheTimestamp);
+            const ttl = parseInt(cacheTTL);
+            
+            if (age > ttl) {
+              await cache.delete(request);
+              console.log('SW: Cleaned up expired cache entry', request.url);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('SW: Error cleaning up cache', cacheName, error);
+    }
+  }
+}
+
+// Background sync for cache maintenance
+self.addEventListener('sync', event => {
+  if (event.tag === 'cache-cleanup') {
+    event.waitUntil(cleanupExpiredCache());
+  }
+});
+
+// Periodic cleanup every 30 minutes
+setInterval(cleanupExpiredCache, 30 * 60 * 1000);
 
 function isStaticAsset(url) {
   return /\.(js|css|woff2?|png|jpg|jpeg|gif|svg|ico)$/i.test(url) ||
