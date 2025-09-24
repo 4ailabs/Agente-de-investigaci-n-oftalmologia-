@@ -298,7 +298,7 @@ El reporte DEBE seguir esta estructura médica especializada:
 
 ## 1. SÍNTESIS CLÍNICA EJECUTIVA
 
-**CRÍTICO:** NO incluyas secciones sobre "PROCESO DE INVESTIGACIÓN REALIZADO", "ESTRATEGIA DE BÚSQUEDA", "FUENTES ANALIZADAS", "METADATOS DE INVESTIGACIÓN" o cualquier información sobre búsquedas simuladas. Estas secciones son ficticias y no deben aparecer en el reporte.
+**CRÍTICO:** NO incluyas secciones sobre "PROCESO DE INVESTIGACIÓN REALIZADO", "ESTRATEGIA DE BÚSQUEDA", "FUENTES ANALIZADAS", "METADATOS DE INVESTIGACIÓN", "Fuentes Analizadas y Validadas", "Número total de fuentes evaluadas", "Distribución por tipo" o cualquier información sobre búsquedas simuladas. Estas secciones son ficticias y no deben aparecer en el reporte.
 
 ### Diagnóstico Más Probable
 **[Nombre del diagnóstico principal]** - Probabilidad: [XX%]
@@ -435,6 +435,9 @@ El reporte final debe ser DETALLADO y BASADO EN EVIDENCIA REAL:
 - NO incluyas secciones sobre "proceso de búsqueda", "estrategia de investigación", "metadatos" o "fuentes analizadas"
 - NO menciones números específicos de búsquedas (ej: "35 búsquedas", "38 fuentes evaluadas")
 - NO inventes criterios de selección de fuentes o herramientas de evaluación de calidad
+- NO incluyas secciones como "Fuentes Analizadas y Validadas" con números ficticios
+- NO menciones "Número total de fuentes evaluadas" con números inventados
+- NO incluyas "Distribución por tipo" con conteos ficticios de meta-análisis, RCTs, etc.
 - NO incluyas texto entre paréntesis indicando que se necesita más información o referencias
 - NO incluyas notas internas como "(Se requiere referencia específica...)" o "(Esta sección debe expandirse...)"
 - NO incluyas texto sobre "limitación de espacio" o "mínimo de palabras"
