@@ -1,6 +1,7 @@
 // Enhanced Report Display - Muestra reportes con fuentes médicas mejoradas
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { Copy, FileText, ExternalLink, Database } from 'lucide-react';
 import { Source } from '../types';
 import EnhancedSourcesDisplay from './EnhancedSourcesDisplay';
 import { EnhancedSource } from '../services/enhancedMedicalSourcesService';
@@ -125,9 +126,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
                   : 'bg-blue-600 hover:bg-blue-700'
               } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
             >
-              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
+              <Copy className="h-4 w-4 mr-2" />
               {isCopied ? 'Copiado' : 'Copiar Reporte'}
             </button>
           </div>
@@ -210,9 +209,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
               </div>
             ) : (
               <div className="text-center py-8 text-slate-500">
-                <svg className="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <FileText className="mx-auto h-12 w-12 text-slate-400" />
                 <p className="mt-2">No hay fuentes disponibles</p>
               </div>
             )}
