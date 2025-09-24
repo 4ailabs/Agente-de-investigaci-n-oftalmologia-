@@ -673,6 +673,21 @@ ${medicalSearchResult.sources.map((source, index) => `
 - Incluye una sección de referencias al final con formato académico completo
 - Para cada referencia, incluye: autores, año, título, revista, DOI/URL cuando esté disponible
 - Prioriza las fuentes de mayor calidad y relevancia para el tema
+- **CRÍTICO:** Usa SOLO las fuentes reales listadas arriba, NO inventes referencias
+- **OBLIGATORIO:** Incluye al menos 5-8 referencias reales de las fuentes encontradas
+
+### REFERENCIAS REALES DISPONIBLES ###
+Usa estas fuentes reales para crear las referencias:
+
+${medicalSearchResult.sources.map((source, index) => `
+[${index + 1}] ${source.title}
+   - Autores: ${source.authors?.join(', ') || 'No especificados'}
+   - Revista: ${source.journal || 'N/A'}
+   - Año: ${source.publicationDate ? new Date(source.publicationDate).getFullYear() : 'N/A'}
+   - DOI: ${source.doi || 'N/A'}
+   - URL: ${source.url}
+   - PMID: ${source.id.replace('pubmed_', '') || 'N/A'}
+`).join('\n')}
 
 Utiliza estas fuentes especializadas para proporcionar una respuesta médica precisa y basada en evidencia con referencias completas.`;
 

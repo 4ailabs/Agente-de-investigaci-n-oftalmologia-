@@ -121,14 +121,25 @@ export class PubMedAPIService {
       `email=${PubMedAPIService.EMAIL}&` +
       `tool=${PubMedAPIService.TOOL}`;
 
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      throw new Error(`PubMed search failed: ${response.status} ${response.statusText}`);
-    }
+    console.log(`📡 PubMed Search URL: ${url}`);
+    console.log(`📡 Search Query: ${searchQuery}`);
 
-    const data = await response.json();
-    return data.esearchresult?.idlist || [];
+    try {
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        console.error(`PubMed search failed: ${response.status} ${response.statusText}`);
+        return []; // Retornar array vacío en caso de error
+      }
+
+      const data = await response.json();
+      const ids = data.esearchresult?.idlist || [];
+      console.log(`📚 Found ${ids.length} PubMed articles`);
+      return ids;
+    } catch (error) {
+      console.error('PubMed search error:', error);
+      return []; // Retornar array vacío en caso de error
+    }
   }
 
   /**
@@ -159,33 +170,37 @@ export class PubMedAPIService {
    * Construir consulta de búsqueda optimizada para oftalmología
    */
   private buildSearchQuery(params: PubMedSearchParams): string {
-    let query = params.query;
+    // Simplificar la query para evitar problemas de URL
+    let query = params.query
+      .replace(/[^\w\s]/g, ' ') // Remover caracteres especiales
+      .replace(/\s+/g, ' ') // Normalizar espacios
+      .trim()
+      .substring(0, 100); // Limitar longitud
     
-    // Agregar filtros de oftalmología si no están presentes
+    // Solo agregar filtros básicos de oftalmología
     if (!query.toLowerCase().includes('ophthalmol') && 
         !query.toLowerCase().includes('eye') && 
-        !query.toLowerCase().includes('retina') &&
-        !query.toLowerCase().includes('cornea')) {
-      query += ' AND (ophthalmology[MeSH] OR eye[MeSH] OR vision[MeSH])';
+        !query.toLowerCase().includes('retina')) {
+      query += ' ophthalmology';
     }
 
-    // Filtro por tipo de artículo
+    // Filtro por tipo de artículo (simplificado)
     if (params.articleType && params.articleType.length > 0) {
       const articleTypes = params.articleType.map(type => 
-        type === 'review' ? 'review[pt]' : 
-        type === 'clinical_trial' ? 'clinical trial[pt]' :
-        type === 'meta_analysis' ? 'meta-analysis[pt]' :
-        `${type}[pt]`
+        type === 'review' ? 'review' : 
+        type === 'clinical_trial' ? 'clinical trial' :
+        type === 'meta_analysis' ? 'meta-analysis' :
+        type
       ).join(' OR ');
-      query += ` AND (${articleTypes})`;
+      query += ` ${articleTypes}`;
     }
 
-    // Filtro por idioma
+    // Filtro por idioma (simplificado)
     if (params.language) {
-      query += ` AND ${params.language}[la]`;
+      query += ` ${params.language}`;
     }
 
-    // Filtro por fecha
+    // Filtro por fecha (simplificado)
     if (params.startDate || params.endDate) {
       const startDate = params.startDate || '1900/01/01';
       const endDate = params.endDate || new Date().toISOString().split('T')[0].replace(/-/g, '/');

@@ -391,6 +391,8 @@ El reporte DEBE seguir esta estructura médica especializada:
 
 **Incluye al menos 5-10 referencias de alta calidad** que respalden los hallazgos principales del reporte.
 
+**CRÍTICO:** NO uses ejemplos de referencias. Debes incluir las referencias REALES de las fuentes que encontraste durante la investigación. Si no tienes acceso a las fuentes completas, incluye al menos el título, autores y revista de las fuentes que consultaste.
+
 **BÚSQUEDA DIRIGIDA PARA REPORTE:**
 Utiliza la búsqueda para encontrar evidencia ESPECÍFICA para:
 - Validar los diagnósticos diferenciales propuestos
