@@ -8,7 +8,7 @@ const Header: React.FC<{
   investigationCount: number;
 }> = ({ onShowExplanation, onShowHistory, onShowImageUploader, investigationCount }) => {
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <header className="bg-white border-b border-slate-200 sticky top-0 z-[100] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
         <div className="flex items-center justify-between h-12 lg:h-14">
             {/* Logo and Title - Medical Professional Style */}
