@@ -461,5 +461,6 @@ El reporte final debe ser DETALLADO y BASADO EN EVIDENCIA REAL:
 - **REFERENCIAS:** Solo incluye la sección de referencias si tienes fuentes reales. Si no las tienes, omite completamente esta sección
 - **NO cites referencias con números** si no puedes proporcionar las fuentes completas
 - **PROHIBIDO ABSOLUTAMENTE:** NO incluyas NINGUNA sección sobre investigación, búsquedas, fuentes, metadatos, o procesos de investigación. Estas secciones son FICTICIAS y están COMPLETAMENTE PROHIBIDAS.
+- **PERMITIDO:** Incluye referencias reales si tienes fuentes reales disponibles de la búsqueda médica.
 `;
 };
