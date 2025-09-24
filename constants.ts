@@ -418,6 +418,8 @@ El reporte final debe ser DETALLADO y BASADO EN EVIDENCIA REAL:
 - **NO inventes ni simules búsquedas, fuentes o metadatos que no existen**
 - **NO menciones números específicos de búsquedas o fuentes a menos que sean reales**
 - **NO incluyas secciones sobre "proceso de búsqueda" o "metadatos de investigación"**
+- **COMPLETA TODAS LAS SECCIONES del reporte sin dejar notas de expansión**
+- **NO incluyas texto entre paréntesis con notas internas o requerimientos**
 - Evaluación crítica de limitaciones y incertidumbres
 - Recomendaciones específicas y accionables
 
@@ -430,7 +432,13 @@ El reporte final debe ser DETALLADO y BASADO EN EVIDENCIA REAL:
 - NO incluyas secciones sobre "proceso de búsqueda", "estrategia de investigación", "metadatos" o "fuentes analizadas"
 - NO menciones números específicos de búsquedas (ej: "35 búsquedas", "38 fuentes evaluadas")
 - NO inventes criterios de selección de fuentes o herramientas de evaluación de calidad
+- NO incluyas texto entre paréntesis indicando que se necesita más información o referencias
+- NO incluyas notas internas como "(Se requiere referencia específica...)" o "(Esta sección debe expandirse...)"
+- NO incluyas texto sobre "limitación de espacio" o "mínimo de palabras"
 - Basa tus conclusiones únicamente en el conocimiento médico disponible y las fuentes reales encontradas
 - Si no hay fuentes reales disponibles, simplemente omite las referencias en lugar de inventarlas
+- Escribe el reporte completo sin dejar secciones incompletas o con notas de expansión
+- **CRÍTICO:** El reporte debe estar COMPLETO y TERMINADO, no debe contener texto como "(Esta sección debe expandirse...)" o "(Se requiere referencia específica...)"
+- **OBLIGATORIO:** Incluye todas las secciones del reporte (1-8) con contenido real, no notas de expansión
 `;
 };
