@@ -1247,7 +1247,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
           />
         </Suspense>
       )}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400">
       {!investigation ? (
         <InitialQueryInput 
           onSubmit={handleStartInvestigation} 
