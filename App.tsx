@@ -1201,7 +1201,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
   }, [investigation, activeView]);
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-200/30 flex flex-col overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-200/30 flex flex-col">
       {showSplash && (
         <SplashScreen onComplete={() => setShowSplash(false)} />
       )}
