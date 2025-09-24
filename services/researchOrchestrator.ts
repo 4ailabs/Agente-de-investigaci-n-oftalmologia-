@@ -349,11 +349,12 @@ ${process.synthesisPhase.gapsIdentified.map((gap, i) => `${i + 1}. ${gap}`).join
   }
 
   private parsePlanToSteps(planText: string): ResearchStep[] {
-    // Reuse your existing logic from App.tsx
-    return planText
+    // Reuse your existing logic from App.tsx with step limit
+    const steps = planText
       .split('\n')
       .map(line => line.trim())
       .filter(line => /^\d+\./.test(line))
+      .slice(0, 8) // Limit to maximum 8 steps
       .map((line, index) => ({
         id: index + 1,
         title: line.replace(/^\d+\.\s*/, ''),
@@ -362,6 +363,14 @@ ${process.synthesisPhase.gapsIdentified.map((gap, i) => `${i + 1}. ${gap}`).join
         prompt: '',
         sources: null,
       }));
+
+    // Ensure we have at least 4 steps for a meaningful investigation
+    if (steps.length < 4) {
+      console.warn(`Only ${steps.length} steps generated, this might be insufficient for a complete investigation`);
+    }
+
+    console.log(`Generated ${steps.length} investigation steps (max 8 allowed)`);
+    return steps;
   }
 
   // Get provider statistics for UI

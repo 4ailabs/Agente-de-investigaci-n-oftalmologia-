@@ -67,6 +67,8 @@ ${userQuery}
 ### TAREA ###
 Analiza la SOLICITUD DEL USUARIO y crea un plan de investigación paso a paso para abordarla, siguiendo tu protocolo de búsqueda. El plan debe ser una lista numerada que describa las acciones de búsqueda y análisis que realizarás. No ejecutes el plan todavía. Solo proporciona la lista del plan.
 
+**IMPORTANTE:** El plan debe tener entre 4 y 8 pasos máximo. Prioriza los pasos más críticos y evita la fragmentación excesiva.
+
 Ejemplo de formato de salida:
 1. Identificar los síntomas clave (p. ej., disminución súbita de la visión) y el perfil del paciente.
 2. Generar una lista priorizada de diagnósticos diferenciales buscando en fuentes de autoridad (UpToDate, PubMed) las causas de [síntomas] en un paciente de [perfil].
