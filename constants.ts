@@ -264,6 +264,8 @@ ${step.sources?.map((s, idx) => `[${idx + 1}] ${s.web.title} - ${s.web.uri}`).jo
   return `
 ${SYSTEM_INSTRUCTION}
 
+**PROHIBICIÓN ABSOLUTA:** NO incluyas NINGUNA sección sobre investigación, búsquedas, fuentes, metadatos, o procesos de investigación. Estas secciones son FICTICIAS y están COMPLETAMENTE PROHIBIDAS.
+
 Has completado la fase de ejecución de una investigación clínica. Ahora debes entrar en la **Fase de Síntesis con Razonamiento Médico Avanzado**.
 
 ### SOLICITUD ORIGINAL DEL USUARIO ###
@@ -298,7 +300,17 @@ El reporte DEBE seguir esta estructura médica especializada:
 
 ## 1. SÍNTESIS CLÍNICA EJECUTIVA
 
-**CRÍTICO:** NO incluyas secciones sobre "PROCESO DE INVESTIGACIÓN REALIZADO", "ESTRATEGIA DE BÚSQUEDA", "FUENTES ANALIZADAS", "METADATOS DE INVESTIGACIÓN", "Fuentes Analizadas y Validadas", "Número total de fuentes evaluadas", "Distribución por tipo" o cualquier información sobre búsquedas simuladas. Estas secciones son ficticias y no deben aparecer en el reporte.
+**CRÍTICO:** 
+- NO incluyas NINGUNA sección sobre investigación, búsquedas, fuentes o metadatos
+- NO incluyas "PROCESO DE INVESTIGACIÓN REALIZADO"
+- NO incluyas "ESTRATEGIA DE BÚSQUEDA IMPLEMENTADA" 
+- NO incluyas "FUENTES ANALIZADAS Y VALIDADAS"
+- NO incluyas "METADATOS DE INVESTIGACIÓN"
+- NO menciones números de búsquedas (35, 42, etc.)
+- NO menciones distribución de fuentes por tipo
+- NO incluyas criterios de selección de fuentes
+- NO incluyas herramientas de evaluación de calidad
+- Estas secciones son COMPLETAMENTE FICTICIAS y están PROHIBIDAS
 
 ### Diagnóstico Más Probable
 **[Nombre del diagnóstico principal]** - Probabilidad: [XX%]
@@ -448,5 +460,6 @@ El reporte final debe ser DETALLADO y BASADO EN EVIDENCIA REAL:
 - **OBLIGATORIO:** Incluye todas las secciones del reporte (1-8) con contenido real, no notas de expansión
 - **REFERENCIAS:** Solo incluye la sección de referencias si tienes fuentes reales. Si no las tienes, omite completamente esta sección
 - **NO cites referencias con números** si no puedes proporcionar las fuentes completas
+- **PROHIBIDO ABSOLUTAMENTE:** NO incluyas NINGUNA sección sobre investigación, búsquedas, fuentes, metadatos, o procesos de investigación. Estas secciones son FICTICIAS y están COMPLETAMENTE PROHIBIDAS.
 `;
 };
