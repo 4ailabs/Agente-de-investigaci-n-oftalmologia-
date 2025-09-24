@@ -158,7 +158,7 @@ ${clinicalInfo.trim()}`;
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 shadow-lg">
                 <ClipboardCheck className="h-7 w-7 text-slate-800" />
               </div>
-              <div>
+            <div>
                 <h1 className="text-2xl lg:text-3xl font-bold text-white">Sistema de Investigación Clínica</h1>
                 <p className="text-slate-200 text-sm lg:text-base font-medium">Especializada en Oftalmología</p>
               </div>
@@ -173,7 +173,7 @@ ${clinicalInfo.trim()}`;
           {/* Mode Selector - Enhanced */}
           <div className="mb-8">
             <h3 className="text-lg font-bold text-slate-800 mb-4 text-center">Selecciona el Tipo de Evaluación</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 type="button"
                 onClick={() => setInputMode('quick')}
@@ -283,7 +283,7 @@ ${clinicalInfo.trim()}`;
                         />
                       <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                         <span className="text-slate-500 text-base font-semibold">años</span>
-                      </div>
+                     </div>
                     </div>
                   </div>
 
@@ -296,18 +296,18 @@ ${clinicalInfo.trim()}`;
                         Sexo <span className="text-red-600">*</span>
                       </div>
                     </label>
-                    <select
-                        id="sex"
-                        value={sex}
+                         <select
+                            id="sex"
+                            value={sex}
                         onChange={(e) => setSex(e.target.value as 'M' | 'F' | '')}
                         className="w-full px-4 py-4 border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all text-base font-medium shadow-sm hover:border-slate-400"
-                        required
-                    >
+                            required
+                        >
                         <option value="" disabled>Seleccionar sexo...</option>
                         <option value="M">Masculino</option>
                         <option value="F">Femenino</option>
-                    </select>
-                  </div>
+                        </select>
+                     </div>
                 </div>
                 
                 <div className="space-y-3">
@@ -315,7 +315,7 @@ ${clinicalInfo.trim()}`;
                     <div className="flex items-center">
                       <div className="w-6 h-6 bg-purple-100 rounded-md flex items-center justify-center mr-2">
                         <ClipboardCheck className="h-3 w-3 text-purple-600" />
-                      </div>
+            </div>
                       Motivo de Consulta y Antecedentes <span className="text-red-600">*</span>
                     </div>
                   </label>
@@ -336,7 +336,7 @@ ${clinicalInfo.trim()}`;
                     </div>
                   </div>
 
-                  <textarea
+                 <textarea
                     id="clinical-info"
                     value={clinicalInfo}
                     onChange={(e) => setClinicalInfo(e.target.value)}
@@ -409,11 +409,11 @@ ${clinicalInfo.trim()}`;
                     <p className="text-sm text-slate-600">
                       Su investigación clínica se basará en protocolos médicos sistemáticos y fuentes académicas verificadas.
                     </p>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isFormInvalid}
+            </div>
+           
+            <button
+              type="submit"
+              disabled={isFormInvalid}
                     className="w-full flex justify-center items-center py-5 px-8 bg-gradient-to-r from-slate-800 to-slate-900 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-slate-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 text-lg"
                   >
                     {isLoading ? (
@@ -428,7 +428,7 @@ ${clinicalInfo.trim()}`;
                           className="ml-4 px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
                         >
                           Cancelar
-                        </button>
+            </button>
                       </div>
                     ) : (
                       <>
@@ -1297,7 +1297,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                           >
                             <Plus className="h-4 w-4 mr-1" />
                             <span>Nuevo</span>
-                          </button>
+                                </button>
                           {investigation?.isGenerating && (
                             <button
                               onClick={handleCancelInvestigation}
@@ -1306,8 +1306,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                               <X className="h-4 w-4 mr-1" />
                             </button>
                           )}
+                             </div>
                         </div>
-                      </div>
 
                       {/* Patient Info - Mobile */}
                       <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
@@ -1362,14 +1362,14 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                         <h3 className="text-base font-bold text-slate-900">Protocolo de Investigación</h3>
                       </div>
                       <ul className="space-y-2">
-                        {investigation.plan.map(step => (
-                          <li key={step.id}>
+                                {investigation.plan.map(step => (
+                                    <li key={step.id}>
                             <div className="flex items-center space-x-2">
-                              <button
-                                onClick={() => setActiveView({ type: 'step', id: step.id })}
+                                        <button 
+                                            onClick={() => setActiveView({ type: 'step', id: step.id })}
                                 disabled={step.status === 'pending'}
                                 className={`flex-1 text-left flex items-start p-3 rounded-xl text-sm transition-all duration-200 min-w-0 w-full min-h-[56px] ${
-                                  activeView.type === 'step' && activeView.id === step.id
+                                                activeView.type === 'step' && activeView.id === step.id 
                                     ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-semibold border border-blue-200 shadow-sm'
                                     : step.status === 'completed'
                                     ? 'text-slate-700 hover:bg-slate-100 hover:shadow-sm'
@@ -1379,7 +1379,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 }`}
                               >
                                 <div className="flex-shrink-0 mt-0.5">
-                                  <StatusIcon status={step.status} />
+                                           <StatusIcon status={step.status} />
                                 </div>
                                 <div className="flex-1 min-w-0 ml-3">
                                   <div className="flex items-center justify-between">
@@ -1401,7 +1401,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     </div>
                                   </div>
                                 </div>
-                              </button>
+                                        </button>
                               {step.status === 'completed' && (
                                 <div className="flex space-x-1">
                                   <button
@@ -1425,11 +1425,11 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 </div>
                               )}
                             </div>
-                          </li>
-                        ))}
-                        {investigation.finalReport && (
-                          <li>
-                            <button
+                                    </li>
+                                ))}
+                                {investigation.finalReport && (
+                                     <li>
+                                        <button 
                               onClick={() => setActiveView({ type: "report", id: null })}
                               className={`w-full text-left flex items-center p-3 rounded-xl text-sm transition-all duration-200 min-h-[56px] ${
                                 activeView.type === "report"
@@ -1442,18 +1442,18 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                               </div>
                               <span className="ml-3 flex-1">Reporte Final</span>
                               <CheckCircle className="h-4 w-4 text-green-500" />
-                            </button>
-                          </li>
-                        )}
-                      </ul>
-                    </nav>
+                                        </button>
+                                    </li>
+                                )}
+                            </ul>
+                        </nav>
 
                     {/* Action Buttons - Mobile */}
                     <div className="pt-4 border-t-2 border-slate-300 space-y-3">
-                      {investigation.currentStep < investigation.plan.length && (
-                        <button
-                          onClick={handleExecuteNextStep}
-                          disabled={investigation.isGenerating}
+                            {investigation.currentStep < investigation.plan.length && (
+                                <button
+                                    onClick={handleExecuteNextStep}
+                                    disabled={investigation.isGenerating}
                           className="w-full flex justify-center items-center py-4 px-6 bg-slate-800 text-white font-bold rounded-xl shadow-xl hover:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-base"
                         >
                           {investigation.isGenerating ? (
@@ -1467,12 +1467,12 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                               Ejecutar Paso {investigation.currentStep + 1}
                             </>
                           )}
-                        </button>
-                      )}
+                                </button>
+                            )}
                       {investigation.plan.some(step => step.status === 'completed') && !investigation.finalReport && (
-                        <button
-                          onClick={handleGenerateReport}
-                          disabled={investigation.isGeneratingReport}
+                                <button
+                                    onClick={handleGenerateReport}
+                                    disabled={investigation.isGeneratingReport}
                           className="w-full flex justify-center items-center py-4 px-6 bg-emerald-700 text-white font-bold rounded-xl shadow-xl hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-base"
                         >
                           {investigation.isGeneratingReport ? (
@@ -1486,8 +1486,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                               Generar Reporte Clínico
                             </>
                           )}
-                        </button>
-                      )}
+                                </button>
+                            )}
                       {!investigation.plan.some(step => step.status === 'completed') && !investigation.finalReport && (
                         <div className="w-full flex justify-center items-center py-4 px-6 bg-slate-100 text-slate-600 font-semibold rounded-xl text-base border-2 border-slate-200">
                           <AlertTriangle className="h-5 w-5 mr-3" />
@@ -1504,12 +1504,12 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                         </div>
                       </div>
                     )}
-                  </div>
+                </div>
 
                   {/* Mobile Content Area */}
                   <div className="bg-gradient-to-br from-white to-slate-50/30 p-6 rounded-xl shadow-lg border border-slate-200 min-h-[50vh] relative">
-                    {activeContent ? (
-                      <div>
+                        {activeContent ? (
+                            <div>
                         {/* Header */}
                         <div className="flex justify-between items-start mb-6">
                           <div className="flex-1">
@@ -1538,26 +1538,26 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                           </div>
                           <div className="flex items-center space-x-2">
                             {activeView.type === 'step' && activeContent.status === 'completed' && (
-                              <button
+                                        <button
                                 onClick={() => handleCopyStep(activeView.id!)}
                                 className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
                               >
                                 <Copy className="h-4 w-4" />
                                 <span>{copiedStepId === activeView.id ? '¡Copiado!' : 'Copiar Paso'}</span>
-                              </button>
-                            )}
-                          </div>
+                                        </button>
+                                    )}
+                                </div>
                         </div>
 
                         {/* Content */}
-                        {activeContent.status === 'in-progress' ? (
+                                {activeContent.status === 'in-progress' ? (
                           <div className="flex flex-col items-center justify-center h-64 text-slate-500">
                             <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
-                              <Spinner/>
-                            </div>
+                                        <Spinner/>
+                                    </div>
                             <p className="text-lg font-medium">Procesando información...</p>
                             <p className="text-sm mt-1">Por favor espera mientras analizamos los datos</p>
-                          </div>
+                                    </div>
                         ) : activeContent.content && activeContent.content.trim() ? (
                           activeView.type === 'report' ? (
                             investigation?.generationError ? (
@@ -1617,8 +1617,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                             </div>
                             <p className="text-lg font-medium">Este paso aún no se ha ejecutado</p>
                             <p className="text-sm mt-1">Ejecuta el paso desde el panel de control</p>
-                          </div>
-                        )}
+                                    </div>
+                                )}
 
                         {/* Medical Sources for mobile steps */}
                         {activeView.type !== 'report' && activeContent.sources && activeContent.sources.length > 0 && (
@@ -1664,8 +1664,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                             className="text-blue-600 hover:text-blue-800 hover:underline font-semibold text-sm transition-all duration-200 group-hover:bg-blue-50 p-3 rounded-lg -m-3 border border-transparent hover:border-blue-200"
                                             title={`Abrir: ${source.web.uri}`}
                                           >
-                                            {source.web.title || source.web.uri}
-                                          </a>
+                                                        {source.web.title || source.web.uri}
+                                                    </a>
                                           <span className="text-lg" title={accessMessage}>
                                             {accessIndicator}
                                           </span>
@@ -1684,7 +1684,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                           </span>
                                         </div>
                                       </div>
-                                    </li>
+                                                </li>
                                   );
                                 })}
                               </ul>
@@ -1798,7 +1798,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             {/* Desktop Layout */}
             <div className="hidden lg:flex h-screen">
                 {/* Sidebar: Steps Navigation */}
-                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm">
+                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm h-screen">
                     {/* Sidebar Header */}
                     <div className="p-4 border-b border-slate-200 bg-slate-50">
                         {/* Header - Medical Professional Style */}
@@ -1884,7 +1884,11 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
 
                         {/* Steps Navigation - Compact Enhanced */}
-                        <nav className="mt-4 flex-1 overflow-y-auto min-h-0">
+                        <div className="relative flex-1 min-h-0">
+                            {/* Scroll Indicator - Top Gradient */}
+                            <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-white to-transparent pointer-events-none z-10"></div>
+                            
+                            <nav className="mt-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400">
                             <div className="bg-white p-3 rounded-lg border border-slate-200 mb-3 shadow-sm">
                                 <div className="flex items-center justify-between mb-2">
                                     <h3 className="text-sm font-bold text-slate-900">Plan de Investigación</h3>
@@ -2038,7 +2042,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     </div>
                                 </div>
                             </div>
-                        </nav>
+                            </nav>
+                        </div>
 
                         {/* Action Buttons - Compact */}
                         <div className="pt-3 border-t border-slate-300 space-y-2 flex-shrink-0">
@@ -2096,6 +2101,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                  </div>
                              </div>
                          )}
+                        
+                        {/* Scroll Indicator - Bottom Gradient */}
+                        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none z-10"></div>
                     </div>
                 </div>
 
