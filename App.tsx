@@ -1201,7 +1201,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
   }, [investigation, activeView]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-200/30 flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-200/30 flex flex-col overflow-hidden">
       {showSplash && (
         <SplashScreen onComplete={() => setShowSplash(false)} />
       )}
@@ -1247,7 +1247,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
           />
         </Suspense>
       )}
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col overflow-hidden">
       {!investigation ? (
         <InitialQueryInput 
           onSubmit={handleStartInvestigation} 
@@ -1796,9 +1796,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             </div>
 
             {/* Desktop Layout */}
-            <div className="hidden lg:flex h-screen">
+            <div className="hidden lg:flex flex-1 h-full">
                 {/* Sidebar: Steps Navigation */}
-                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm h-screen">
+                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm h-full">
                     {/* Sidebar Header */}
                     <div className="p-4 border-b border-slate-200 bg-slate-50">
                         {/* Header - Medical Professional Style */}
@@ -2108,10 +2108,13 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                 </div>
 
                 {/* Main Content Area - Full Width */}
-                <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+                    {/* Scroll Indicator - Top Gradient for Main Content */}
+                    <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-slate-50 to-transparent pointer-events-none z-10"></div>
+                    
                     <div
                       ref={contentRef}
-                      className="flex-1 bg-slate-50 p-8 overflow-y-auto"
+                      className="flex-1 bg-slate-50 p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400"
                     >
                         {activeContent ? (
                             <div>
@@ -2408,10 +2411,14 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                             </div>
                         )}
                     </div>
+                    
+                    {/* Scroll Indicator - Bottom Gradient for Main Content */}
+                    <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none z-10"></div>
                 </div>
             </div>
         </main>
       )}
+      </div>
 
       {/* Step Feedback Modal */}
       {currentStepForFeedback && (
@@ -2476,7 +2483,6 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
         />
       )}
       <Footer />
-    </div>
     </div>
   );
 }
