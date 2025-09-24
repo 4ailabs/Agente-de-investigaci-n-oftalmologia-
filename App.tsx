@@ -150,8 +150,8 @@ ${clinicalInfo.trim()}`;
   const isFormInvalid = isLoading || !clinicalInfo.trim() || age <= 0 || !sex;
 
   return (
-     <main className="min-h-screen bg-slate-50 flex items-center justify-center py-4 lg:py-8 px-4">
-        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+     <main className="bg-slate-50 flex items-center justify-center py-4 lg:py-8 px-4">
+        <div className="w-full max-w-5xl bg-white rounded-2xl border border-slate-200 overflow-hidden">
           {/* Header Section - Enhanced Medical Professional Style */}
           <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-8 py-8 text-center">
             <div className="flex items-center justify-center mb-4">
@@ -179,7 +179,7 @@ ${clinicalInfo.trim()}`;
                 onClick={() => setInputMode('quick')}
                 className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
                   inputMode === 'quick'
-                    ? 'border-slate-800 bg-slate-50 shadow-lg'
+                    ? 'border-slate-800 bg-slate-50'
                     : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
@@ -209,7 +209,7 @@ ${clinicalInfo.trim()}`;
                 onClick={() => setInputMode('structured')}
                 className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
                   inputMode === 'structured'
-                    ? 'border-slate-800 bg-slate-50 shadow-lg'
+                    ? 'border-slate-800 bg-slate-50'
                     : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
@@ -253,7 +253,7 @@ ${clinicalInfo.trim()}`;
           {!showModeSelector && inputMode === 'quick' ? (
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Quick Entry Form - Enhanced */}
-              <div className="bg-gradient-to-br from-slate-50 to-white p-8 rounded-xl border border-slate-200 shadow-lg">
+              <div className="bg-slate-50 p-8 rounded-xl border border-slate-200">
                 <div className="mb-6">
                   <h4 className="text-xl font-bold text-slate-800 mb-2">Datos del Paciente</h4>
                   <p className="text-slate-600 text-sm">Complete la información básica para iniciar la investigación clínica.</p>
@@ -414,7 +414,7 @@ ${clinicalInfo.trim()}`;
             <button
               type="submit"
               disabled={isFormInvalid}
-                    className="w-full flex justify-center items-center py-5 px-8 bg-gradient-to-r from-slate-800 to-slate-900 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-slate-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 text-lg"
+                    className="w-full flex justify-center items-center py-5 px-8 bg-gradient-to-r from-slate-800 to-slate-900 text-white font-bold rounded-2xl focus:outline-none focus:ring-4 focus:ring-slate-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 text-lg"
                   >
                     {isLoading ? (
                       <div className="flex items-center justify-between w-full">
@@ -444,7 +444,7 @@ ${clinicalInfo.trim()}`;
           </form>
           ) : (
             /* Structured Form Mode */
-            <div className="bg-gradient-to-br from-slate-50 to-white p-8 rounded-xl border border-slate-200 shadow-lg">
+            <div className="bg-slate-50 p-8 rounded-xl border border-slate-200">
               <div className="mb-6">
                 <h4 className="text-xl font-bold text-slate-800 mb-2">Evaluación Completa del Paciente</h4>
                 <p className="text-slate-600 text-sm">Formulario estructurado para evaluación médica detallada y sistemática.</p>
@@ -1201,7 +1201,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
   }, [investigation, activeView]);
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-200/30 flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-200/30 flex flex-col overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400">
       {showSplash && (
         <SplashScreen onComplete={() => setShowSplash(false)} />
       )}
@@ -1247,7 +1247,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
           />
         </Suspense>
       )}
-      <div className="flex-1 flex flex-col overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400">
+      <div className="flex-1 flex flex-col">
       {!investigation ? (
         <InitialQueryInput 
           onSubmit={handleStartInvestigation} 
@@ -1271,7 +1271,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
            </div>
          </div>
       ) : (
-          <main className="min-h-screen bg-slate-50">
+          <main className="bg-slate-50">
             {/* Mobile Layout */}
             <div className="lg:hidden">
               <div className="max-w-7xl mx-auto py-2 sm:py-4 px-2 sm:px-4">
