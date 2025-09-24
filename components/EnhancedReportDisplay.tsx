@@ -1,5 +1,6 @@
 // Enhanced Report Display - Muestra reportes con fuentes médicas mejoradas
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Source } from '../types';
 import EnhancedSourcesDisplay from './EnhancedSourcesDisplay';
 import { EnhancedSource } from '../services/enhancedMedicalSourcesService';
@@ -178,7 +179,7 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
       <div className="p-6">
         {activeTab === 'report' && (
           <div className="prose prose-slate max-w-none">
-            {formatContent(content)}
+            <ReactMarkdown>{content || 'No hay reporte final disponible.'}</ReactMarkdown>
           </div>
         )}
 
