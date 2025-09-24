@@ -1798,25 +1798,25 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             {/* Desktop Layout */}
             <div className="hidden lg:flex h-screen">
                 {/* Sidebar: Steps Navigation */}
-                <div className="w-96 bg-white border-r border-slate-200 flex flex-col overflow-hidden shadow-sm">
+                <div className="w-80 bg-white border-r border-slate-200 flex flex-col overflow-hidden shadow-sm">
                     {/* Sidebar Header */}
-                    <div className="p-8 border-b border-slate-200 bg-slate-50">
+                    <div className="p-4 border-b border-slate-200 bg-slate-50">
                         {/* Header - Medical Professional Style */}
-                        <div className="pb-6 border-b-2 border-slate-300">
-                             <div className="flex justify-between items-center mb-4">
+                        <div className="pb-3 border-b-2 border-slate-300">
+                             <div className="flex justify-between items-center mb-3">
                                 <div className="flex items-center">
-                                    <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center mr-4">
-                                        <ClipboardCheck className="h-6 w-6 text-white" />
+                                    <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center mr-3">
+                                        <ClipboardCheck className="h-4 w-4 text-white" />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold text-slate-900">Caso Clínico</h2>
-                                        <p className="text-base text-slate-600 font-medium">Protocolo de Investigación</p>
+                                        <h2 className="text-lg font-bold text-slate-900">Caso Clínico</h2>
+                                        <p className="text-sm text-slate-600 font-medium">Protocolo de Investigación</p>
                                     </div>
                                 </div>
                                 <div className="flex space-x-2">
                                     <button 
                                         onClick={handleNewInvestigation} 
-                                        className="flex items-center px-4 py-2.5 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition-all duration-200 shadow-sm"
+                                        className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-all duration-200 shadow-sm"
                                     >
                                         <Plus className="h-4 w-4 mr-1" />
                                         <span>Nuevo</span>
@@ -1824,7 +1824,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     {investigation?.isGenerating && (
                                         <button 
                                             onClick={handleCancelInvestigation} 
-                                            className="flex items-center px-4 py-2.5 text-sm font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl transition-all duration-200 shadow-sm"
+                                            className="flex items-center px-3 py-2 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-all duration-200 shadow-sm"
                                         >
                                             <X className="h-4 w-4 mr-1" />
                                             <span>Cancelar</span>
@@ -1833,84 +1833,81 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                              </div>
                         </div>
 
-                             {/* Patient Info - Desktop Optimized */}
-                             <div className="mt-6 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-                                 <div className="text-base text-slate-800 space-y-3">
+                             {/* Patient Info - Compact */}
+                             <div className="mt-4 p-3 bg-white rounded-lg border border-slate-200 shadow-sm">
+                                 <div className="text-sm text-slate-800 space-y-2">
                                      {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
                                          if (index === 0) {
                                              // Patient demographics (first line)
                                              return (
-                                                 <div key={index} className="font-bold text-slate-900 text-base border-b border-slate-300 pb-3">
+                                                 <div key={index} className="font-bold text-slate-900 text-sm border-b border-slate-300 pb-2">
                                                      {section.trim()}
                                                  </div>
                                              );
                                          } else {
-                                             // Clinical symptoms (expanded for desktop)
+                                             // Clinical symptoms (truncated for sidebar)
                                              const symptoms = section.replace('Síntomas y Antecedentes Clínicos:', '').trim();
-                                             const truncated = symptoms.length > 150 ? symptoms.substring(0, 150) + '...' : symptoms;
+                                             const truncated = symptoms.length > 80 ? symptoms.substring(0, 80) + '...' : symptoms;
                                              return (
                                                  <div key={index} className="text-slate-700">
-                                                     <div className="text-sm font-semibold text-slate-600 mb-2">Motivo:</div>
-                                                     <div className="text-sm leading-relaxed" title={symptoms}>
+                                                     <div className="text-xs font-semibold text-slate-600 mb-1">Motivo:</div>
+                                                     <div className="text-xs leading-relaxed" title={symptoms}>
                                                          {truncated}
                                                      </div>
                                                  </div>
                                              );
                                          }
                                      }) : (
-                                         <div className="text-sm text-slate-500 font-medium">Cargando información del caso...</div>
+                                         <div className="text-xs text-slate-500 font-medium">Cargando información del caso...</div>
                                      )}
                                  </div>
                              </div>
                         </div>
 
-                        {/* Progress Indicator - Desktop Enhanced */}
-                        <div className="mt-6">
-                            <div className="flex items-center justify-between mb-3">
-                                <span className="text-base font-bold text-slate-800">Progreso de Investigación</span>
-                                <span className="text-sm text-slate-600 font-semibold bg-slate-100 px-3 py-1.5 rounded-full">
-                                    {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length} pasos
+                        {/* Progress Indicator - Compact */}
+                        <div className="mt-4">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-bold text-slate-800">Progreso</span>
+                                <span className="text-xs text-slate-600 font-semibold bg-slate-100 px-2 py-1 rounded-full">
+                                    {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length}
                                 </span>
                             </div>
-                            <div className="w-full bg-slate-200 rounded-full h-3 border border-slate-300 shadow-inner">
+                            <div className="w-full bg-slate-200 rounded-full h-2 border border-slate-300 shadow-inner">
                                 <div
-                                    className="bg-gradient-to-r from-slate-700 to-slate-800 h-3 rounded-full transition-all duration-500 shadow-sm"
+                                    className="bg-gradient-to-r from-slate-700 to-slate-800 h-2 rounded-full transition-all duration-500 shadow-sm"
                                     style={{
                                         width: `${(investigation.plan.filter(step => step.status === 'completed').length / investigation.plan.length) * 100}%`
                                     }}
                                 ></div>
                             </div>
-                            <div className="mt-2 text-xs text-slate-500 text-center">
-                                {Math.round((investigation.plan.filter(step => step.status === 'completed').length / investigation.plan.length) * 100)}% completado
-                            </div>
                         </div>
 
 
-                        {/* Steps Navigation - Premium Enhanced */}
-                        <nav className="mt-8 flex-1 overflow-y-auto min-h-0">
-                            <div className="bg-white p-4 rounded-xl border border-slate-200 mb-4 shadow-sm">
-                                <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-lg font-bold text-slate-900">Plan de Investigación</h3>
-                                    <div className="flex items-center space-x-2 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
-                                        <ClipboardCheck className="h-4 w-4" />
-                                        <span className="font-medium">Protocolo Activo</span>
+                        {/* Steps Navigation - Compact Enhanced */}
+                        <nav className="mt-4 flex-1 overflow-y-auto min-h-0">
+                            <div className="bg-white p-3 rounded-lg border border-slate-200 mb-3 shadow-sm">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="text-sm font-bold text-slate-900">Plan de Investigación</h3>
+                                    <div className="flex items-center space-x-1 text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
+                                        <ClipboardCheck className="h-3 w-3" />
+                                        <span className="font-medium">Activo</span>
                                     </div>
                                 </div>
                                 <p className="text-xs text-slate-600">
-                                    Metodología sistemática basada en evidencia médica
+                                    Metodología sistemática
                                 </p>
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 {investigation.plan.map((step, index) => (
                                     <div key={step.id} className="relative">
                                         {/* Step Number Badge */}
-                                        <div className="absolute -left-2 top-3 z-10">
-                                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 ${
+                                        <div className="absolute -left-1 top-2 z-10">
+                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold border ${
                                                 step.status === 'completed' ? 'bg-green-500 border-green-600 text-white' :
                                                 step.status === 'in-progress' ? 'bg-blue-500 border-blue-600 text-white animate-pulse' :
                                                 'bg-slate-200 border-slate-300 text-slate-600'
                                             }`}>
-                                                {step.status === 'completed' ? <Check className="h-3 w-3" /> : index + 1}
+                                                {step.status === 'completed' ? <Check className="h-2 w-2" /> : index + 1}
                                             </div>
                                         </div>
 
@@ -1918,9 +1915,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         <button
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
                                             disabled={step.status === 'pending'}
-                                            className={`w-full text-left ml-4 p-4 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md border-2 ${
+                                            className={`w-full text-left ml-3 p-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow border ${
                                                 activeView.type === 'step' && activeView.id === step.id
-                                                    ? 'bg-blue-50 text-blue-800 border-blue-200 shadow-md transform scale-[1.02]'
+                                                    ? 'bg-blue-50 text-blue-800 border-blue-200 shadow'
                                                     : step.status === 'completed'
                                                     ? 'text-slate-700 hover:bg-slate-50 bg-white border-slate-200 hover:border-slate-300'
                                                     : step.status === 'in-progress'
@@ -1928,70 +1925,61 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     : 'text-slate-500 bg-slate-50 border-slate-200 disabled:cursor-not-allowed opacity-75'
                                             }`}
                                         >
-                                           <div className="space-y-2">
-                                               <div className="flex items-center justify-between">
-                                                   <h4 className="text-sm font-semibold truncate pr-2">
-                                                       {step.title || `Paso ${step.id}`}
+                                           <div className="space-y-1">
+                                               <div className="flex items-start justify-between">
+                                                   <h4 className="text-xs font-semibold truncate pr-1 leading-tight">
+                                                       {(step.title && step.title.length > 35) ? step.title.substring(0, 35) + '...' : (step.title || `Paso ${step.id}`)}
                                                    </h4>
-                                                   <div className="flex items-center space-x-2">
+                                                   <div className="flex items-center ml-1">
                                                        {step.status === 'completed' && (
-                                                           <div className="flex items-center text-green-600">
-                                                               <Check className="h-4 w-4 mr-1" />
-                                                               <span className="text-xs font-medium">Completo</span>
-                                                           </div>
+                                                           <span className="text-xs font-medium text-green-600">✓</span>
                                                        )}
                                                        {step.status === 'in-progress' && (
-                                                           <div className="flex items-center text-blue-600">
-                                                               <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                                                               <span className="text-xs font-medium">Procesando</span>
-                                                           </div>
+                                                           <Loader2 className="h-3 w-3 text-blue-600 animate-spin" />
                                                        )}
                                                        {step.status === 'pending' && (
-                                                           <div className="flex items-center text-slate-500">
-                                                               <Clock className="h-4 w-4 mr-1" />
-                                                               <span className="text-xs font-medium">Pendiente</span>
-                                                           </div>
+                                                           <Clock className="h-3 w-3 text-slate-500" />
                                                        )}
                                                    </div>
                                                </div>
 
-                                               {/* Step Description/Summary */}
-                                               {step.result && (
-                                                   <div className="text-xs text-slate-600 line-clamp-2">
-                                                       {step.result.substring(0, 80)}...
+                                               {/* Step Description/Summary - Compact */}
+                                               {step.result && step.status === 'completed' && (
+                                                   <div className="text-xs text-slate-600 line-clamp-1">
+                                                       {step.result.substring(0, 50)}...
                                                    </div>
                                                )}
 
                                                {/* Progress Indicator for Active Step */}
                                                {step.status === 'in-progress' && (
-                                                   <div className="w-full bg-blue-200 rounded-full h-1.5 mt-2">
-                                                       <div className="bg-blue-600 h-1.5 rounded-full animate-pulse w-1/3"></div>
+                                                   <div className="w-full bg-blue-200 rounded-full h-1 mt-1">
+                                                       <div className="bg-blue-600 h-1 rounded-full animate-pulse w-1/3"></div>
                                                    </div>
                                                )}
                                            </div>
                                         </button>
                                         {/* Action Buttons for Completed Steps */}
                                         {step.status === 'completed' && (
-                                            <div className="ml-4 mt-2 flex space-x-2">
+                                            <div className="ml-3 mt-1 flex space-x-1">
                                                 <button
                                                     onClick={() => handleCopyStep(step.id)}
-                                                    className="flex items-center space-x-1 px-3 py-1.5 text-xs text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                                                    className="flex items-center space-x-1 px-2 py-1 text-xs text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded transition-colors"
                                                     title="Copiar este paso"
                                                 >
-                                                    <Copy className="h-3 w-3" />
+                                                    <Copy className="h-2 w-2" />
                                                     <span>Copiar</span>
                                                 </button>
                                                 <button
                                                     onClick={() => handleOpenStepFeedback(step.id, step.title)}
-                                                    className={`flex items-center space-x-1 px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                                                    className={`flex items-center space-x-1 px-2 py-1 text-xs rounded transition-colors ${
                                                         step.feedback
                                                             ? 'text-green-700 bg-green-100 hover:bg-green-200'
                                                             : 'text-blue-700 bg-blue-100 hover:bg-blue-200'
                                                     }`}
                                                     title={step.feedback ? "Ver/Editar feedback del especialista" : "Agregar feedback del especialista"}
                                                 >
-                                                    <Edit className="h-3 w-3" />
-                                                    <span>Feedback</span>
+                                                    <Edit className="h-2 w-2" />
+                                                    <span>Feed</span>
                                                 </button>
                                             </div>
                                         )}
@@ -1999,31 +1987,28 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 ))}
                                 {/* Final Report Card */}
                                 {investigation.finalReport && (
-                                    <div className="relative mt-4">
-                                        <div className="absolute -left-2 top-4 z-10">
-                                            <div className="w-6 h-6 bg-emerald-500 border-2 border-emerald-600 rounded-full flex items-center justify-center">
-                                                <FileText className="h-3 w-3 text-white" />
+                                    <div className="relative mt-2">
+                                        <div className="absolute -left-1 top-2 z-10">
+                                            <div className="w-5 h-5 bg-emerald-500 border border-emerald-600 rounded-full flex items-center justify-center">
+                                                <FileText className="h-2 w-2 text-white" />
                                             </div>
                                         </div>
 
                                         <button
                                             onClick={() => setActiveView({ type: "report", id: null })}
-                                            className={`w-full text-left ml-4 p-4 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md border-2 ${
+                                            className={`w-full text-left ml-3 p-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow border ${
                                                 activeView.type === "report"
-                                                ? "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-800 border-emerald-200 shadow-md transform scale-[1.02]"
+                                                ? "bg-emerald-50 text-emerald-800 border-emerald-200 shadow"
                                                 : "text-slate-700 hover:bg-slate-50 bg-white border-slate-200 hover:border-slate-300"
                                             }`}
                                         >
-                                            <div className="space-y-2">
+                                            <div className="space-y-1">
                                                 <div className="flex items-center justify-between">
-                                                    <h4 className="text-sm font-semibold">Reporte Final Clínico</h4>
-                                                    <div className="flex items-center text-emerald-600">
-                                                        <Check className="h-4 w-4 mr-1" />
-                                                        <span className="text-xs font-medium">Completado</span>
-                                                    </div>
+                                                    <h4 className="text-xs font-semibold">Reporte Final</h4>
+                                                    <span className="text-xs font-medium text-emerald-600">✓</span>
                                                 </div>
                                                 <div className="text-xs text-slate-600">
-                                                    Análisis completo basado en evidencia médica
+                                                    Análisis completo
                                                 </div>
                                             </div>
                                         </button>
@@ -2031,37 +2016,37 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 )}
                             </div>
 
-                            {/* Legend - Desktop Enhanced */}
-                            <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                                <div className="text-sm text-slate-700 mb-3 font-semibold">Estados de los Pasos:</div>
-                                <div className="grid grid-cols-2 gap-3 text-sm">
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-3 h-3 bg-green-500 rounded-full flex-shrink-0"></div>
-                                        <span className="font-medium text-slate-700">Completado</span>
+                            {/* Legend - Compact */}
+                            <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <div className="text-xs text-slate-700 mb-2 font-semibold">Estados:</div>
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className="flex items-center space-x-1">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                                        <span className="font-medium text-slate-700">Completo</span>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse flex-shrink-0"></div>
-                                        <span className="font-medium text-slate-700">En progreso</span>
+                                    <div className="flex items-center space-x-1">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse flex-shrink-0"></div>
+                                        <span className="font-medium text-slate-700">Activo</span>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-3 h-3 bg-slate-400 rounded-full flex-shrink-0"></div>
+                                    <div className="flex items-center space-x-1">
+                                        <div className="w-2 h-2 bg-slate-400 rounded-full flex-shrink-0"></div>
                                         <span className="font-medium text-slate-700">Pendiente</span>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-3 h-3 bg-red-500 rounded-full flex-shrink-0"></div>
+                                    <div className="flex items-center space-x-1">
+                                        <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
                                         <span className="font-medium text-slate-700">Error</span>
                                     </div>
                                 </div>
                             </div>
                         </nav>
 
-                        {/* Action Buttons - Desktop Enhanced */}
-                        <div className="pt-6 border-t-2 border-slate-300 space-y-4 flex-shrink-0">
+                        {/* Action Buttons - Compact */}
+                        <div className="pt-3 border-t border-slate-300 space-y-2 flex-shrink-0">
                             {investigation.currentStep < investigation.plan.length && (
                                 <button
                                     onClick={handleExecuteNextStep}
                                     disabled={investigation.isGenerating}
-                                    className="w-full flex justify-center items-center py-4 px-6 bg-slate-800 text-white font-bold rounded-xl shadow-xl hover:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-base"
+                                    className="w-full flex justify-center items-center py-3 px-4 bg-slate-800 text-white font-bold rounded-lg shadow-lg hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-sm"
                                 >
                                     {investigation.isGenerating ? (
                                         <>
@@ -2080,7 +2065,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 <button
                                     onClick={handleGenerateReport}
                                     disabled={investigation.isGeneratingReport}
-                                    className="w-full flex justify-center items-center py-4 px-6 bg-emerald-700 text-white font-bold rounded-xl shadow-xl hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-base"
+                                    className="w-full flex justify-center items-center py-3 px-4 bg-emerald-700 text-white font-bold rounded-lg shadow-lg hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-sm"
                                 >
                                     {investigation.isGeneratingReport ? (
                                         <>
@@ -2096,9 +2081,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 </button>
                             )}
                             {!investigation.plan.some(step => step.status === 'completed') && !investigation.finalReport && (
-                                <div className="w-full flex justify-center items-center py-4 px-6 bg-slate-100 text-slate-600 font-semibold rounded-xl text-base border-2 border-slate-200">
-                                    <AlertTriangle className="h-5 w-5 mr-3" />
-                                    Complete al menos un paso del protocolo para generar el reporte
+                                <div className="w-full flex justify-center items-center py-3 px-4 bg-slate-100 text-slate-600 font-semibold rounded-lg text-sm border border-slate-200">
+                                    <AlertTriangle className="h-4 w-4 mr-2" />
+                                    <span className="text-xs">Complete un paso para generar reporte</span>
                         </div>
                             )}
                         </div>
