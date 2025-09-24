@@ -298,6 +298,8 @@ El reporte DEBE seguir esta estructura médica especializada:
 
 ## 1. SÍNTESIS CLÍNICA EJECUTIVA
 
+**CRÍTICO:** NO incluyas secciones sobre "PROCESO DE INVESTIGACIÓN REALIZADO", "ESTRATEGIA DE BÚSQUEDA", "FUENTES ANALIZADAS", "METADATOS DE INVESTIGACIÓN" o cualquier información sobre búsquedas simuladas. Estas secciones son ficticias y no deben aparecer en el reporte.
+
 ### Diagnóstico Más Probable
 **[Nombre del diagnóstico principal]** - Probabilidad: [XX%]
 - **Justificación clínica:** Análisis detallado del por qué este diagnóstico es el más probable
@@ -409,17 +411,26 @@ BUSCA ÚNICAMENTE en fuentes médicas acreditadas relacionadas con oftalmología
 - Si necesitas usar tablas, mantenlas simples (máximo 3 columnas)
 
 **REQUERIMIENTOS DE PROFUNDIDAD Y DETALLE:**
-El reporte final debe ser EXTREMADAMENTE DETALLADO y EXHAUSTIVO:
-- Mínimo 3000-4000 palabras de contenido médico especializado
-- Análisis crítico profundo de TODA la evidencia consultada
+El reporte final debe ser DETALLADO y BASADO EN EVIDENCIA REAL:
+- Análisis clínico basado en el conocimiento médico disponible
 - Razonamiento clínico explícito paso a paso en cada sección
-- **Referencias específicas a estudios y guías INCLUYENDO enlaces y DOI cuando sea posible**
-- **Cita las fuentes en el texto usando formato [1], [2], etc. y lista completa al final**
+- **SOLO incluye referencias REALES de las fuentes que se encontraron durante la investigación**
+- **NO inventes ni simules búsquedas, fuentes o metadatos que no existen**
+- **NO menciones números específicos de búsquedas o fuentes a menos que sean reales**
+- **NO incluyas secciones sobre "proceso de búsqueda" o "metadatos de investigación"**
 - Evaluación crítica de limitaciones y incertidumbres
 - Recomendaciones específicas y accionables
 
-**NIVEL DE ANÁLISIS:** Debe ser equivalente a un reporte de consulta de especialista en centro médico académico de tercer nivel.
+**NIVEL DE ANÁLISIS:** Debe ser equivalente a un reporte de consulta de especialista, pero basado únicamente en información real disponible.
 
-**IMPORTANTE:** Aplica razonamiento clínico en cada sección, explicitando el proceso de toma de decisiones médicas basado en la evidencia encontrada. Cada conclusión debe estar respaldada por evidencia específica y análisis crítico detallado.
+**IMPORTANTE:** 
+- Sé HONESTO sobre las limitaciones del análisis
+- NO simules procesos de investigación que no se realizaron
+- NO inventes fuentes, búsquedas o metadatos
+- NO incluyas secciones sobre "proceso de búsqueda", "estrategia de investigación", "metadatos" o "fuentes analizadas"
+- NO menciones números específicos de búsquedas (ej: "35 búsquedas", "38 fuentes evaluadas")
+- NO inventes criterios de selección de fuentes o herramientas de evaluación de calidad
+- Basa tus conclusiones únicamente en el conocimiento médico disponible y las fuentes reales encontradas
+- Si no hay fuentes reales disponibles, simplemente omite las referencias en lugar de inventarlas
 `;
 };
