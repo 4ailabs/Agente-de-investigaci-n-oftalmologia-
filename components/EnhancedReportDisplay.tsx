@@ -1,7 +1,7 @@
 // Enhanced Report Display - Muestra reportes con fuentes médicas mejoradas
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Copy, FileText, ExternalLink, Database, Search } from 'lucide-react';
+import { Copy, FileText, ExternalLink, Database, Search, ChevronDown, Download } from 'lucide-react';
 import { Source } from '../types';
 import EnhancedSourcesDisplay from './EnhancedSourcesDisplay';
 import { EnhancedSource } from '../services/enhancedMedicalSourcesService';
@@ -236,35 +236,120 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
               )}
             </div>
 
-            {enhancedSources && qualityMetrics && sourcesBreakdown ? (
-              <EnhancedSourcesDisplay
-                sources={enhancedSources}
-                qualityMetrics={qualityMetrics}
-                sourcesBreakdown={sourcesBreakdown}
-              />
-            ) : sources && sources.length > 0 ? (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">Fuentes Consultadas</h3>
-                {sources.map((source, index) => (
-                  <div key={index} className="border border-slate-200 rounded-lg p-4">
-                    <h4 className="font-medium text-slate-800 mb-2">{source.web?.title || 'Sin título'}</h4>
-                    <a
-                      href={source.web?.uri}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 text-sm"
-                    >
-                      {source.web?.uri}
-                    </a>
-                  </div>
-                ))}
+            {/* Sección de fuentes similar a Gemini Deep Search */}
+            <div className="mt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-slate-800 flex items-center">
+                  <FileText className="w-5 h-5 mr-2" />
+                  Fuentes usadas en el informe
+                  <ChevronDown className="w-4 h-4 ml-2 text-slate-400" />
+                </h3>
+                <button className="flex items-center px-3 py-1 text-sm text-slate-600 hover:text-slate-800 border border-slate-300 rounded-md hover:bg-slate-50">
+                  <Download className="w-4 h-4 mr-1" />
+                  Exportar a Hojas de cálculo
+                </button>
               </div>
-            ) : (
-              <div className="text-center py-8 text-slate-500">
-                <FileText className="mx-auto h-12 w-12 text-slate-400" />
-                <p className="mt-2">No hay fuentes disponibles</p>
-              </div>
-            )}
+
+              {enhancedSources && enhancedSources.length > 0 ? (
+                <div className="space-y-2">
+                  {enhancedSources.slice(0, 10).map((source, index) => (
+                    <div key={source.id} className="flex items-start p-3 hover:bg-slate-50 rounded-lg transition-colors">
+                      <div className="flex-shrink-0 mr-3 mt-1">
+                        {source.sourceType === 'pubmed' ? (
+                          <div className="w-6 h-6 bg-blue-100 rounded flex items-center justify-center">
+                            <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                        ) : source.sourceType === 'google' ? (
+                          <div className="w-6 h-6 bg-red-100 rounded flex items-center justify-center">
+                            <span className="text-red-600 font-bold text-xs">G</span>
+                          </div>
+                        ) : (
+                          <div className="w-6 h-6 bg-slate-100 rounded flex items-center justify-center">
+                            <svg className="w-4 h-4 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <a
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block hover:underline"
+                        >
+                          <div className="text-sm font-medium text-slate-900 truncate">
+                            {source.title}
+                          </div>
+                          <div className="text-xs text-slate-500 mt-1 truncate">
+                            {new URL(source.url).hostname}
+                          </div>
+                        </a>
+                        {source.abstract && (
+                          <div className="text-xs text-slate-600 mt-1 line-clamp-2">
+                            {source.abstract.substring(0, 150)}...
+                          </div>
+                        )}
+                        <div className="flex items-center mt-2 text-xs text-slate-500">
+                          {source.journal && (
+                            <span className="mr-3">{source.journal}</span>
+                          )}
+                          {source.publicationDate && (
+                            <span className="mr-3">{new Date(source.publicationDate).getFullYear()}</span>
+                          )}
+                          {source.isOpenAccess && (
+                            <span className="text-green-600 font-medium">Acceso abierto</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {enhancedSources.length > 10 && (
+                    <div className="text-center py-2">
+                      <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                        Ver {enhancedSources.length - 10} fuentes adicionales
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : sources && sources.length > 0 ? (
+                <div className="space-y-2">
+                  {sources.slice(0, 10).map((source, index) => (
+                    <div key={index} className="flex items-start p-3 hover:bg-slate-50 rounded-lg transition-colors">
+                      <div className="flex-shrink-0 mr-3 mt-1">
+                        <div className="w-6 h-6 bg-slate-100 rounded flex items-center justify-center">
+                          <svg className="w-4 h-4 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <a
+                          href={source.web?.uri}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block hover:underline"
+                        >
+                          <div className="text-sm font-medium text-slate-900 truncate">
+                            {source.web?.title || 'Sin título'}
+                          </div>
+                          <div className="text-xs text-slate-500 mt-1 truncate">
+                            {source.web?.uri ? new URL(source.web.uri).hostname : 'URL no disponible'}
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-slate-500">
+                  <FileText className="mx-auto h-12 w-12 text-slate-400" />
+                  <p className="mt-2">No hay fuentes disponibles</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
