@@ -139,6 +139,11 @@ export interface GenerationResult {
         confidence: 'high' | 'medium' | 'low';
     };
     disclaimers?: string;
+    error?: {
+        type: 'retryable' | 'permanent';
+        message: string;
+        originalError: string;
+    };
 }
 
 // Sistema de manejo de caché inteligente
@@ -306,6 +311,36 @@ const filterRelevantSources = (sources: { web: { uri: string; title: string; } }
   return relevantSources.slice(0, 8);
 };
 
+// Función de reintento con backoff exponencial
+const retryWithBackoff = async <T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> => {
+  let lastError: Error;
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+      
+      // Si es el último intento, lanzar el error
+      if (attempt === maxRetries) {
+        throw lastError;
+      }
+      
+      // Calcular delay con backoff exponencial
+      const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+      console.warn(`Intento ${attempt + 1} falló, reintentando en ${delay.toFixed(0)}ms...`, error);
+      
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw lastError!;
+};
+
 export const generateContent = async (prompt: string, useSearch: boolean = false, context?: string): Promise<GenerationResult> => {
   try {
     const genAI = getAI();
@@ -363,7 +398,11 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
         }] })
     });
     
-    const response = await model.generateContent(prompt);
+    // Envolver la llamada a la API con sistema de reintentos
+    const response = await retryWithBackoff(async () => {
+      console.log(`🔄 Enviando solicitud a ${modelSelection.model}...`);
+      return await model.generateContent(prompt);
+    }, 3, 2000); // 3 reintentos con delay base de 2 segundos
     
     // Debug response structure
     console.log('Full response structure:', JSON.stringify(response, null, 2));
@@ -486,10 +525,45 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
 
   } catch (error) {
     console.error("Error al generar contenido:", error);
-    const errorMessage = error instanceof Error ? error.message : "Ocurrió un error desconocido.";
+    
+    // Manejo específico de errores de la API de Google
+    let errorMessage = "Ocurrió un error desconocido.";
+    let shouldRetry = false;
+    
+    if (error instanceof Error) {
+      const errorStr = error.message.toLowerCase();
+      
+      if (errorStr.includes('load failed') || errorStr.includes('fetch')) {
+        errorMessage = "Error de conectividad con Google Gemini. Por favor, verifica tu conexión a internet e intenta nuevamente.";
+        shouldRetry = true;
+      } else if (errorStr.includes('quota') || errorStr.includes('rate limit')) {
+        errorMessage = "Límite de solicitudes excedido. Por favor, espera unos minutos antes de intentar nuevamente.";
+        shouldRetry = true;
+      } else if (errorStr.includes('timeout')) {
+        errorMessage = "La solicitud tardó demasiado tiempo. Por favor, intenta nuevamente.";
+        shouldRetry = true;
+      } else if (errorStr.includes('api key') || errorStr.includes('authentication')) {
+        errorMessage = "Error de autenticación con Google Gemini. Por favor, verifica la configuración de la API.";
+        shouldRetry = false;
+      } else {
+        errorMessage = `Error de la API: ${error.message}`;
+        shouldRetry = true;
+      }
+    }
+    
+    // Si es un error recuperable y no hemos agotado los reintentos, sugerir reintento
+    if (shouldRetry) {
+      errorMessage += "\n\n💡 Sugerencia: Intenta nuevamente en unos segundos. El sistema reintentará automáticamente.";
+    }
+    
     return {
         text: `Ocurrió un error: ${errorMessage}`,
         sources: null,
+        error: {
+          type: shouldRetry ? 'retryable' : 'permanent',
+          message: errorMessage,
+          originalError: error instanceof Error ? error.message : String(error)
+        }
     };
   }
 };

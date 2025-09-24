@@ -11,6 +11,7 @@ import { localStorageService, StoredInvestigation } from './services/localStorag
 import { PDFService } from './services/pdfService';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ErrorDisplay from './components/ErrorDisplay';
 import Spinner, { MobileLoadingCard } from './components/Spinner';
 import useSwipeGesture from './hooks/useSwipeGesture';
 import { AudioRecorder } from './components/AudioRecorder';
@@ -673,7 +674,22 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     
     const prompt = createFinalReportPrompt(enhancedQuery, completedSteps);
     
-    const { text: reportText, sources: reportSources } = await generateContent(prompt, true, enhancedQuery);
+    const { text: reportText, sources: reportSources, error: generationError } = await generateContent(prompt, true, enhancedQuery);
+
+    // Verificar si hubo error en la generación
+    if (generationError) {
+      console.error('Error en generación de reporte:', generationError);
+      setInvestigation(prev => {
+        if (!prev) return null;
+        return {
+          ...prev, 
+          error: generationError.message, 
+          isGeneratingReport: false,
+          generationError: generationError
+        };
+      });
+      return;
+    }
 
     // Validate and enhance report sources
     const { validatedSources, disclaimers } = await MedicalValidationService.validateAndEnhanceSources(reportSources);
@@ -1510,15 +1526,23 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     </div>
                                 ) : activeContent.content && activeContent.content.trim() ? (
                                     activeView.type === 'report' ? (
-                                        <Suspense fallback={<div className="flex items-center justify-center h-32"><Spinner /></div>}>
-                                            <EnhancedReportDisplay 
-                                                content={activeContent.content}
-                                                sources={activeContent.sources}
-                                                onCopy={handleCopyReport}
-                                                isCopied={isCopied}
-                                                investigationSteps={investigation?.plan || []}
+                                        investigation?.generationError ? (
+                                            <ErrorDisplay 
+                                                error={investigation.generationError}
+                                                onRetry={handleGenerateReport}
+                                                showDetails={true}
                                             />
-                                        </Suspense>
+                                        ) : (
+                                            <Suspense fallback={<div className="flex items-center justify-center h-32"><Spinner /></div>}>
+                                                <EnhancedReportDisplay 
+                                                    content={activeContent.content}
+                                                    sources={activeContent.sources}
+                                                    onCopy={handleCopyReport}
+                                                    isCopied={isCopied}
+                                                    investigationSteps={investigation?.plan || []}
+                                                />
+                                            </Suspense>
+                                        )
                                     ) : (
                                         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                                             <div className="prose prose-slate max-w-none text-slate-800 leading-relaxed prose-headings:text-slate-900 prose-headings:font-bold">

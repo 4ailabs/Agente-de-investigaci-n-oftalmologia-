@@ -40,4 +40,9 @@ export interface InvestigationState {
   finalReport: string | null;
   finalReportSources: Source[] | null;
   isGeneratingReport: boolean;
+  generationError?: {
+    type: 'retryable' | 'permanent';
+    message: string;
+    originalError: string;
+  };
 }
