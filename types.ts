@@ -25,11 +25,11 @@ export interface ResearchStep {
   prompt: string;
   sources: Source[] | null;
   feedback?: StepFeedback;
-  imageAnalysis?: MedicalImageAnalysis[];
+  imageAnalysis?: any[];
 }
 
-// Re-export medical image types
-export * from './medicalImageTypes';
+// Re-export medical image types (commented out until file exists)
+// export * from './medicalImageTypes';
 
 export interface InvestigationState {
   originalQuery: string;
@@ -44,5 +44,19 @@ export interface InvestigationState {
     type: 'retryable' | 'permanent';
     message: string;
     originalError: string;
+  };
+  enhancedSources?: any[];
+  qualityMetrics?: {
+    averageQuality: number;
+    highQualityCount: number;
+    openAccessCount: number;
+    recentPublications: number;
+  };
+  sourcesBreakdown?: {
+    pubmed: number;
+    google: number;
+    cochrane: number;
+    clinical_trials: number;
+    other: number;
   };
 }

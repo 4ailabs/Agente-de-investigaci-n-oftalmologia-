@@ -1,779 +1,257 @@
-import React, { useState, useRef, useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-
-interface StepFeedback {
-  stepId: number;
-  observations: string;
-  additionalData: string;
-  clinicalFindings: string;
-  recommendations: string;
-  confidence: 'low' | 'medium' | 'high';
-  timestamp: string;
-}
-
-interface ResearchStep {
-  id: number;
-  title: string;
-  status: string;
-  result: string | null;
-  prompt: string;
-  sources: any[] | null;
-  feedback?: StepFeedback;
-}
+// Enhanced Report Display - Muestra reportes con fuentes médicas mejoradas
+import React, { useState } from 'react';
+import { Source } from '../types';
+import EnhancedSourcesDisplay from './EnhancedSourcesDisplay';
+import { EnhancedSource } from '../services/enhancedMedicalSourcesService';
 
 interface EnhancedReportDisplayProps {
   content: string;
-  sources?: any[];
-  onCopy?: () => void;
-  isCopied?: boolean;
-  investigationSteps?: ResearchStep[];
+  sources: Source[] | null;
+  onCopy: () => void;
+  isCopied: boolean;
+  investigationSteps: any[];
+  enhancedSources?: EnhancedSource[];
+  qualityMetrics?: {
+    averageQuality: number;
+    highQualityCount: number;
+    openAccessCount: number;
+    recentPublications: number;
+  };
+  sourcesBreakdown?: {
+    pubmed: number;
+    google: number;
+    cochrane: number;
+    clinical_trials: number;
+    other: number;
+  };
 }
-
-interface ReportSection {
-  id: string;
-  title: string;
-  level: number;
-  content: string;
-  subsections: ReportSection[];
-}
-
 
 const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
   content,
-  sources = [],
+  sources,
   onCopy,
-  isCopied = false,
-  investigationSteps = []
+  isCopied,
+  investigationSteps,
+  enhancedSources,
+  qualityMetrics,
+  sourcesBreakdown
 }) => {
-  const [activeSection, setActiveSection] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showTableOfContents, setShowTableOfContents] = useState(false);
-  const [viewMode, setViewMode] = useState<'full' | 'summary' | 'print'>('full');
-  const contentRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState<'report' | 'sources' | 'steps'>('report');
 
-  // Extract specialist feedback from investigation steps
-  const getSpecialistFeedback = () => {
-    return investigationSteps
-      .filter(step => step.feedback)
-      .map(step => ({
-        stepId: step.id,
-        stepTitle: step.title,
-        feedback: step.feedback!
-      }));
-  };
-
-  // Extract sections from markdown content
-  const extractSections = (content: string) => {
-    const sections: Array<{id: string; title: string; level: number}> = [];
-    const lines = content.split('\n');
+  const formatContent = (text: string) => {
+    // Dividir el contenido en secciones basadas en headers
+    const sections = text.split(/(?=^#{1,3}\s)/m).filter(section => section.trim());
     
-    lines.forEach((line, index) => {
-      const match = line.match(/^(#{1,6})\s+(.+)$/);
-      if (match) {
-        const level = match[1].length;
-        const title = match[2];
-        const id = title.toLowerCase()
-          .replace(/[^\w\s-]/g, '')
-          .replace(/\s+/g, '-');
-        sections.push({ id, title, level });
-      }
-    });
-    
-    return sections;
-  };
-
-  const sections = extractSections(content);
-
-  // Highlight search terms in content
-  const highlightSearchTerms = (content: string, searchTerm: string): string => {
-    if (!searchTerm.trim()) return content;
-    const regex = new RegExp(`(${searchTerm.trim()})`, 'gi');
-    return content.replace(regex, '**$1**');
-  };
-
-
-  // Generate executive summary from content
-  const generateExecutiveSummary = (content: string) => {
-    const lines = content.split('\n').filter(line => line.trim());
-    const summaryPoints: string[] = [];
-    
-    // Extract key diagnostic points
-    lines.forEach(line => {
-      if (line.includes('**Diagnóstico') || line.includes('**Diagnosis')) {
-        summaryPoints.push(line.replace(/\*\*/g, '').trim());
-      } else if (line.includes('- **') && (line.includes('Probabilidad') || line.includes('Probability'))) {
-        summaryPoints.push(line.replace(/\*\*/g, '').replace(/- /, '• ').trim());
-      } else if (line.includes('Red Flag') || line.includes('Urgente') || line.includes('Emergent')) {
-        summaryPoints.push(`🚨 ${line.replace(/\*\*/g, '').trim()}`);
-      }
-    });
-    
-    return summaryPoints.slice(0, 6); // Top 6 most important points
-  };
-
-  // Extract clinical recommendations
-  const extractClinicalRecommendations = (content: string) => {
-    const lines = content.split('\n').filter(line => line.trim());
-    const recommendations: string[] = [];
-    
-    lines.forEach(line => {
-      if (line.includes('Se recomienda') || line.includes('Recommend') || 
-          line.includes('Debe realizar') || line.includes('Should perform')) {
-        recommendations.push(line.replace(/\*\*/g, '').replace(/- /, '').trim());
-      }
-    });
-    
-    return recommendations;
-  };
-
-  // Generate summary from content
-  const generateSummary = (content: string) => {
-    const lines = content.split('\n').filter(line => line.trim());
-    const summaryLines: string[] = [];
-    
-    // Extract key points - look for lines with strong emphasis or bullet points
-    lines.forEach(line => {
-      if (line.includes('**') || line.startsWith('- ') || line.startsWith('* ')) {
-        const cleaned = line.replace(/\*\*/g, '').replace(/^[-*]\s*/, '');
-        if (cleaned.length > 20 && cleaned.length < 200) {
-          summaryLines.push(cleaned);
-        }
-      }
-    });
-    
-    return summaryLines.slice(0, 5); // Top 5 key points
-  };
-
-  const summary = generateSummary(content);
-
-  // Scroll to section
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setActiveSection(sectionId);
-    }
-    setShowTableOfContents(false);
-  };
-
-  // Highlight search terms
-  const highlightSearchTerm = (text: string) => {
-    if (!searchTerm) return text;
-    
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>');
-  };
-
-  // Custom markdown components with search highlighting
-  const markdownComponents = {
-    h1: ({children, ...props}: any) => {
-      const id = String(children).toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
-      return (
-        <h1 
-          id={id} 
-          className="text-2xl lg:text-3xl font-bold mb-6 text-slate-900 border-b-2 border-blue-100 pb-3"
-          {...props}
-        >
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+    return sections.map((section, index) => {
+      const lines = section.split('\n');
+      const headerLine = lines[0];
+      const content = lines.slice(1).join('\n').trim();
+      
+      // Detectar nivel de header
+      const headerMatch = headerLine.match(/^(#{1,3})\s(.+)$/);
+      if (headerMatch) {
+        const level = headerMatch[1].length;
+        const title = headerMatch[2];
+        
+        const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
+        const className = level === 1 
+          ? 'text-2xl font-bold text-slate-800 mb-6 mt-8 first:mt-0'
+          : level === 2
+          ? 'text-xl font-semibold text-slate-700 mb-4 mt-6'
+          : 'text-lg font-medium text-slate-600 mb-3 mt-4';
+        
+        return (
+          <div key={index} className="mb-6">
+            <HeaderTag className={className}>{title}</HeaderTag>
+            <div className="prose prose-slate max-w-none">
+              {content.split('\n').map((line, lineIndex) => {
+                if (line.trim() === '') return <br key={lineIndex} />;
+                
+                // Detectar listas
+                if (line.match(/^\s*[-*+]\s/)) {
+                  return (
+                    <div key={lineIndex} className="flex items-start mb-2">
+                      <span className="text-blue-500 mr-2 mt-1">•</span>
+                      <span className="text-slate-700">{line.replace(/^\s*[-*+]\s/, '')}</span>
+                    </div>
+                  );
+                }
+                
+                // Detectar listas numeradas
+                if (line.match(/^\s*\d+\.\s/)) {
+                  return (
+                    <div key={lineIndex} className="flex items-start mb-2">
+                      <span className="text-blue-500 mr-2 mt-1 font-medium">
+                        {line.match(/^\s*(\d+)\./)?.[1]}.
+                      </span>
+                      <span className="text-slate-700">{line.replace(/^\s*\d+\.\s/, '')}</span>
+                    </div>
+                  );
+                }
+                
+                return (
+                  <p key={lineIndex} className="text-slate-700 mb-3 leading-relaxed">
+                    {line}
+                  </p>
+                );
+              })}
             </div>
-            {children}
           </div>
-        </h1>
-      );
-    },
-    h2: ({children, ...props}: any) => {
-      const id = String(children).toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
+        );
+      }
+      
+      // Si no es un header, mostrar como párrafo normal
       return (
-        <h2 
-          id={id} 
-          className="text-xl lg:text-2xl font-semibold mb-4 text-slate-800 mt-8"
-          {...props}
-        >
-          <div className="flex items-center">
-            <div className="w-6 h-6 bg-indigo-500 rounded-md flex items-center justify-center mr-2">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            {children}
-          </div>
-        </h2>
+        <p key={index} className="text-slate-700 mb-4 leading-relaxed">
+          {section}
+        </p>
       );
-    },
-    h3: ({children, ...props}: any) => {
-      const id = String(children).toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
-      return (
-        <h3 
-          id={id} 
-          className="text-lg lg:text-xl font-medium mb-3 text-slate-700 mt-6"
-          {...props}
-        >
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-green-500 rounded-sm mr-2"></div>
-            {children}
-          </div>
-        </h3>
-      );
-    },
-    p: ({children}: any) => (
-      <p className="text-sm lg:text-base mb-4 leading-7 text-slate-700">
-        {children}
-      </p>
-    ),
-    ul: ({children}: any) => (
-      <ul className="text-sm lg:text-base mb-4 pl-6 space-y-2">
-        {children}
-      </ul>
-    ),
-    li: ({children}: any) => (
-      <li className="flex items-start">
-        <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-        <span>{children}</span>
-      </li>
-    ),
-    strong: ({children}: any) => (
-      <strong className="font-semibold text-slate-900 bg-slate-100 px-1 rounded">
-        {children}
-      </strong>
-    ),
-    a: ({href, children}: any) => (
-      <a 
-        href={href} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors duration-200"
-      >
-        {children}
-      </a>
-    ),
-    // Enhanced table components for medical data
-    table: ({children}: any) => (
-      <div className="my-6 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 rounded-t-lg border-b border-blue-200">
-          <h4 className="text-sm lg:text-base font-semibold text-blue-900 flex items-center">
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2a2 2 0 002-2z" />
-            </svg>
-            Análisis Clínico
-          </h4>
-        </div>
-        <div className="overflow-x-auto bg-white border border-gray-200 rounded-b-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            {children}
-          </table>
-        </div>
-      </div>
-    ),
-    thead: ({children}: any) => (
-      <thead className="bg-gray-50">
-        {children}
-      </thead>
-    ),
-    tbody: ({children}: any) => (
-      <tbody className="bg-white divide-y divide-gray-200">
-        {children}
-      </tbody>
-    ),
-    tr: ({children}: any) => (
-      <tr className="hover:bg-gray-50 transition-colors duration-150">
-        {children}
-      </tr>
-    ),
-    th: ({children, ...props}: any) => (
-      <th 
-        className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 last:border-r-0"
-        {...props}
-      >
-        <div className="flex items-center space-x-1">
-          <span>{children}</span>
-        </div>
-      </th>
-    ),
-    td: ({children, ...props}: any) => (
-      <td 
-        className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 border-r border-gray-100 last:border-r-0 max-w-xs"
-        {...props}
-      >
-        <div className="break-words">
-          {children}
-        </div>
-      </td>
-    )
+    });
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header with controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">Reporte Clínico</h2>
-          </div>
-          
-          {sections.length > 3 && (
+    <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+      {/* Header con tabs */}
+      <div className="border-b border-slate-200">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-slate-800">Reporte de Investigación Clínica</h2>
             <button
-              onClick={() => setShowTableOfContents(!showTableOfContents)}
-              className="px-3 py-2 text-xs sm:text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+              onClick={onCopy}
+              className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white transition-colors ${
+                isCopied 
+                  ? 'bg-green-600 hover:bg-green-700' 
+                  : 'bg-blue-600 hover:bg-blue-700'
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
             >
-              <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
-              Índice
+              {isCopied ? 'Copiado' : 'Copiar Reporte'}
             </button>
-          )}
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-          {/* View Mode Selector */}
-          <div className="flex items-center bg-slate-100 rounded-lg p-1">
+        {/* Tabs */}
+        <div className="px-6">
+          <nav className="flex space-x-8">
             <button
-              onClick={() => setViewMode('full')}
-              className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-md transition-colors ${
-                viewMode === 'full' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
+              onClick={() => setActiveTab('report')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'report'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
               }`}
             >
-              Completo
+              Reporte
             </button>
             <button
-              onClick={() => setViewMode('summary')}
-              className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-md transition-colors ${
-                viewMode === 'summary' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
+              onClick={() => setActiveTab('sources')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'sources'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
               }`}
             >
-              Resumen
+              Fuentes Médicas
+              {enhancedSources && (
+                <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                  {enhancedSources.length}
+                </span>
+              )}
             </button>
             <button
-              onClick={() => setViewMode('print')}
-              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
-                viewMode === 'print' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
+              onClick={() => setActiveTab('steps')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'steps'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
               }`}
             >
-              Impresión
+              Proceso de Investigación
             </button>
-          </div>
-
-          {/* Search and Copy - Responsive Layout */}
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 flex-1">
-            {/* Search */}
-            <div className="relative flex-1">
-              <input
-                type="text"
-                placeholder="Buscar en el reporte..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 sm:px-4 py-2 pl-8 sm:pl-10 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-slate-400 absolute left-2.5 sm:left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-
-            {/* Copy button */}
-            {onCopy && (
-              <button
-                onClick={onCopy}
-                className="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm whitespace-nowrap"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                <span className="hidden sm:inline">{isCopied ? '¡Copiado!' : 'Copiar Reporte'}</span>
-                <span className="sm:hidden">{isCopied ? '¡Copiado!' : 'Copiar'}</span>
-              </button>
-            )}
-          </div>
+          </nav>
         </div>
       </div>
 
-
-      {/* Executive Summary for Summary View */}
-      {viewMode === 'summary' && (() => {
-        const executiveSummary = generateExecutiveSummary(content);
-        const clinicalRecommendations = extractClinicalRecommendations(content);
-        
-        return (
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200 mb-6">
-            <h3 className="text-base font-semibold text-amber-900 mb-4 flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Resumen Clínico Ejecutivo
-            </h3>
-            
-            {executiveSummary.length > 0 && (
-              <div className="mb-6">
-                <h4 className="font-semibold text-amber-800 mb-3">Hallazgos Principales:</h4>
-                <div className="space-y-2">
-                  {executiveSummary.map((point, index) => (
-                    <div key={index} className="flex items-start">
-                      <span className="w-6 h-6 bg-amber-600 text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3 mt-0.5">
-                        {index + 1}
-                      </span>
-                      <p className="text-sm text-amber-800 leading-relaxed">{point}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {clinicalRecommendations.length > 0 && (
-              <div>
-                <h4 className="font-semibold text-amber-800 mb-3">Recomendaciones Clínicas:</h4>
-                <div className="space-y-2">
-                  {clinicalRecommendations.map((rec, index) => (
-                    <div key={index} className="flex items-start">
-                      <svg className="w-4 h-4 text-amber-600 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <p className="text-sm text-amber-800 leading-relaxed">{rec}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+      {/* Contenido de las tabs */}
+      <div className="p-6">
+        {activeTab === 'report' && (
+          <div className="prose prose-slate max-w-none">
+            {formatContent(content)}
           </div>
-        );
-      })()}
+        )}
 
-      {/* Table of Contents */}
-      {showTableOfContents && sections.length > 0 && (
-        <div className="bg-blue-50 p-6 rounded-xl border border-blue-200 mb-6">
-          <h3 className="text-base font-semibold text-blue-900 mb-4 flex items-center">
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            Índice de Contenidos
-          </h3>
-          <div className="space-y-2">
-            {sections.map((section, index) => (
-              <button
-                key={index}
-                onClick={() => scrollToSection(section.id)}
-                className={`block w-full text-left px-3 py-2 rounded-lg transition-colors text-sm
-                  ${section.level === 1 ? 'font-semibold text-blue-800 bg-blue-100' : 
-                    section.level === 2 ? 'font-medium text-blue-700 ml-4 hover:bg-blue-100' : 
-                    'text-blue-600 ml-8 hover:bg-blue-100'}`}
-              >
-                {section.title}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Executive Summary */}
-      {summary.length > 0 && (
-        <div className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 p-6 rounded-xl border border-slate-200 mb-6 shadow-sm">
-          <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            Resumen Ejecutivo
-          </h3>
-          <div className="space-y-4">
-            {summary.map((point, index) => (
-              <div key={index} className="flex items-start group">
-                <div className="flex-shrink-0 mr-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-lg flex items-center justify-center text-sm font-bold shadow-md group-hover:shadow-lg transition-all duration-200">
-                    {index + 1}
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm lg:text-base text-slate-700 leading-relaxed font-medium">{point}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Main Content - Professional Medical Report Design */}
-      {viewMode !== 'summary' && (
-        <div className={`bg-white rounded-2xl border border-slate-200/60 shadow-lg ${
-          viewMode === 'print' ? 'p-8 print:shadow-none print:border-none' : 'p-8 lg:p-10'
-        }`}>
-          {/* Professional Header */}
-          <div className="border-b border-slate-200 pb-6 mb-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-md">
-                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Reporte Clínico Especializado</h2>
-                  <p className="text-slate-600 text-sm">Análisis oftalmológico detallado</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-sm text-slate-500">Generado por</div>
-                <div className="text-sm font-semibold text-slate-700">Agente de Investigación Clínica</div>
-                <div className="text-xs text-slate-500">4ailabs</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Specialist Feedback Section */}
-          {getSpecialistFeedback().length > 0 && (
-            <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-bold text-slate-900">Feedback del Especialista</h3>
-                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
-                  {getSpecialistFeedback().length} paso{getSpecialistFeedback().length !== 1 ? 's' : ''}
-                </span>
-              </div>
-              
+        {activeTab === 'sources' && (
+          <div>
+            {enhancedSources && qualityMetrics && sourcesBreakdown ? (
+              <EnhancedSourcesDisplay
+                sources={enhancedSources}
+                qualityMetrics={qualityMetrics}
+                sourcesBreakdown={sourcesBreakdown}
+              />
+            ) : sources && sources.length > 0 ? (
               <div className="space-y-4">
-                {getSpecialistFeedback().map(({ stepId, stepTitle, feedback }) => (
-                  <div key={stepId} className="bg-white rounded-lg p-4 border border-blue-100">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold text-slate-800">Paso {stepId}: {stepTitle}</h4>
-                      <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          feedback.confidence === 'high' 
-                            ? 'bg-green-100 text-green-800' 
-                            : feedback.confidence === 'medium'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          Confianza: {feedback.confidence === 'high' ? 'Alta' : feedback.confidence === 'medium' ? 'Media' : 'Baja'}
-                        </span>
-                        <span className="text-xs text-slate-500">
-                          {new Date(feedback.timestamp).toLocaleDateString('es-ES', { 
-                            year: 'numeric', 
-                            month: 'short', 
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      {feedback.observations && (
-                        <div>
-                          <h5 className="font-medium text-slate-700 mb-1">Observaciones:</h5>
-                          <p className="text-slate-600">{feedback.observations}</p>
-                        </div>
-                      )}
-                      {feedback.additionalData && (
-                        <div>
-                          <h5 className="font-medium text-slate-700 mb-1">Datos Adicionales:</h5>
-                          <p className="text-slate-600">{feedback.additionalData}</p>
-                        </div>
-                      )}
-                      {feedback.clinicalFindings && (
-                        <div>
-                          <h5 className="font-medium text-slate-700 mb-1">Hallazgos Clínicos:</h5>
-                          <p className="text-slate-600">{feedback.clinicalFindings}</p>
-                        </div>
-                      )}
-                      {feedback.recommendations && (
-                        <div>
-                          <h5 className="font-medium text-slate-700 mb-1">Recomendaciones:</h5>
-                          <p className="text-slate-600">{feedback.recommendations}</p>
-                        </div>
-                      )}
-                    </div>
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">Fuentes Consultadas</h3>
+                {sources.map((source, index) => (
+                  <div key={index} className="border border-slate-200 rounded-lg p-4">
+                    <h4 className="font-medium text-slate-800 mb-2">{source.web?.title || 'Sin título'}</h4>
+                    <a
+                      href={source.web?.uri}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm"
+                    >
+                      {source.web?.uri}
+                    </a>
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-
-          {/* Report Content with Enhanced Typography */}
-          <div 
-            ref={contentRef}
-            className={`prose prose-slate max-w-none text-slate-800 leading-relaxed ${
-              viewMode === 'print' ? 'print:text-black print:text-sm' : ''
-            }`}
-            style={{
-              fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
-            }}
-          >
-            <ReactMarkdown 
-              remarkPlugins={[remarkGfm]}
-              components={markdownComponents}
-            >
-              {searchTerm ? highlightSearchTerms(content, searchTerm) : content}
-            </ReactMarkdown>
-          </div>
-
-          {/* Professional Footer */}
-          <div className="mt-12 pt-6 border-t border-slate-200">
-            <div className="flex items-center justify-between text-xs text-slate-500">
-              <div className="flex items-center space-x-4">
-                <span>Confidencial - Uso médico exclusivo</span>
-                <span>•</span>
-                <span>Generado automáticamente</span>
-              </div>
-              <div className="text-right">
-                <div>{new Date().toLocaleDateString('es-ES', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Print-specific styles */}
-      {viewMode === 'print' && (
-        <style>{`
-          @media print {
-            .no-print { display: none !important; }
-            .print\\:text-black { color: black !important; }
-            .print\\:text-sm { font-size: 0.875rem !important; }
-            .print\\:shadow-none { box-shadow: none !important; }
-            .print\\:border-none { border: none !important; }
-          }
-        `}</style>
-      )}
-
-      {/* Enhanced Sources Section - Professional Design */}
-      {sources && sources.length > 0 && (
-        <div className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 p-8 rounded-2xl border border-slate-200/60 shadow-lg">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl flex items-center justify-center shadow-md">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            ) : (
+              <div className="text-center py-8 text-slate-500">
+                <svg className="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
+                <p className="mt-2">No hay fuentes disponibles</p>
               </div>
-              <div>
-                <h4 className="text-xl font-bold text-slate-900">Referencias Médicas</h4>
-                <p className="text-slate-600 text-sm">Fuentes consultadas y validadas</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="px-4 py-2 bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-lg border border-indigo-200">
-                {sources.length} fuente{sources.length !== 1 ? 's' : ''} consultada{sources.length !== 1 ? 's' : ''}
-              </div>
-            </div>
+            )}
           </div>
+        )}
 
-          <div className="grid gap-4">
-            {sources.map((source, index) => {
-              // Determine access type for display - matching original implementation
-              const isOpenAccess = source.web.uri.includes('pubmed.ncbi.nlm.nih.gov') || 
-                                 source.web.uri.includes('cochrane.org') ||
-                                 source.web.uri.includes('clinicaltrials.gov') ||
-                                 source.web.uri.includes('aao.org') ||
-                                 source.web.uri.includes('esrs.org') ||
-                                 source.web.uri.includes('arvo.org');
-              
-              const isSubscription = source.web.uri.includes('uptodate.com') ||
-                                    source.web.uri.includes('medscape.com') ||
-                                    source.web.uri.includes('thelancet.com') ||
-                                    source.web.uri.includes('jama.ama-assn.org') ||
-                                    source.web.uri.includes('nejm.org');
-
-              const accessIndicator = isOpenAccess ? '[LIBRE]' : isSubscription ? '[SUSCRIPCION]' : '[LIMITADO]';
-              const accessMessage = isOpenAccess ? 'Acceso abierto' : 
-                                  isSubscription ? 'Requiere suscripción' : 'Acceso limitado';
-              
-              return (
-                <div key={index} className="bg-white p-4 rounded-lg border border-indigo-200 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <span className="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-semibold">
-                          {index + 1}
-                        </span>
-                        <div className="flex items-center space-x-2 flex-1">
-                          <a 
-                            href={source.web.uri} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="text-indigo-700 hover:text-indigo-900 font-semibold text-sm hover:underline transition-colors"
-                            title={`Abrir: ${source.web.uri}`}
-                          >
-                            {source.web.title || source.web.uri}
-                          </a>
-                          <span className="text-lg" title={accessMessage}>
-                            {accessIndicator}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-slate-500 bg-slate-100 px-3 py-2 rounded-md">
-                        <div className="flex items-center">
-                          <svg className="h-3 w-3 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                          <span className="truncate font-mono">{source.web.uri}</span>
-                        </div>
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          isOpenAccess ? 'bg-green-100 text-green-800' :
-                          isSubscription ? 'bg-red-100 text-red-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {accessMessage}
-                        </span>
-                      </div>
+        {activeTab === 'steps' && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-slate-800 mb-4">Proceso de Investigación</h3>
+            {investigationSteps.map((step, index) => (
+              <div key={index} className="border border-slate-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
+                      {index + 1}
                     </div>
                   </div>
+                  <div className="ml-4 flex-1">
+                    <h4 className="font-medium text-slate-800 mb-2">{step.title || `Paso ${index + 1}`}</h4>
+                    {step.description && (
+                      <p className="text-slate-600 text-sm mb-2">{step.description}</p>
+                    )}
+                    {step.status && (
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        step.status === 'completed' 
+                          ? 'bg-green-100 text-green-800'
+                          : step.status === 'in_progress'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {step.status === 'completed' ? 'Completado' : 
+                         step.status === 'in_progress' ? 'En progreso' : 'Pendiente'}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Medical Disclaimers - Professional Design */}
-      <div className="bg-gradient-to-br from-amber-50 via-orange-50/30 to-red-50/20 border border-amber-200/60 rounded-2xl p-6 shadow-sm">
-        <div className="flex items-start space-x-4">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-md">
-              <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            </div>
-          </div>
-          <div className="flex-1">
-            <h4 className="text-lg font-bold text-amber-900 mb-4">Avisos Médicos Importantes</h4>
-            <div className="space-y-3 text-sm text-amber-800">
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0"></div>
-                <p><strong>Herramienta de Investigación:</strong> Este análisis es generado por IA y está diseñado como herramienta de investigación médica, no como diagnóstico definitivo.</p>
               </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0"></div>
-                <p><strong>Supervisión Profesional Requerida:</strong> Todas las recomendaciones deben ser validadas por un médico calificado.</p>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0"></div>
-                <p><strong>No Sustituye el Juicio Clínico:</strong> Este reporte complementa, pero no reemplaza, la evaluación clínica profesional.</p>
-              </div>
-            </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

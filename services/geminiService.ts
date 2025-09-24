@@ -144,10 +144,27 @@ export interface GenerationResult {
         message: string;
         originalError: string;
     };
+    // Nuevos campos para fuentes médicas mejoradas
+    enhancedSources?: any[];
+    qualityMetrics?: {
+        averageQuality: number;
+        highQualityCount: number;
+        openAccessCount: number;
+        recentPublications: number;
+    };
+    sourcesBreakdown?: {
+        pubmed: number;
+        google: number;
+        cochrane: number;
+        clinical_trials: number;
+        other: number;
+    };
 }
 
 // Importar el nuevo sistema de caché avanzado
 import { advancedCache, MedicalCacheUtils } from './advancedCacheService';
+// Importar el servicio de fuentes médicas mejorado
+import { enhancedMedicalSources, EnhancedSource } from './enhancedMedicalSourcesService';
 
 // Sistema de manejo de caché inteligente optimizado
 const getCachedResult = (query: string, medicalKeywords: string[], model: string): SearchCache | null => {
@@ -398,14 +415,14 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     const model = genAI.getGenerativeModel({
         model: modelSelection.model,
         generationConfig,
-        ...(useSearch && { tools: [{
-            googleSearchRetrieval: {
-                dynamicRetrievalConfig: {
-                    mode: "MODE_DYNAMIC",
-                    dynamicThreshold: 0.7
-                }
-            }
-        }] })
+        ...(useSearch && {       tools: [{
+        googleSearchRetrieval: {
+          dynamicRetrievalConfig: {
+            mode: "MODE_DYNAMIC" as any,
+            dynamicThreshold: 0.7
+          }
+        }
+      }] as any })
     });
     
     // Envolver la llamada a la API con sistema de reintentos
@@ -416,14 +433,14 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     
     // Debug response structure
     console.log('Full response structure:', JSON.stringify(response, null, 2));
-    console.log('Response candidates:', response.candidates?.length || 0);
+    console.log('Response candidates:', (response as any).candidates?.length || 0);
     
     // Get text content - handle both possible response formats
-    const responseText = (response as any).text || (response as any).response?.text() || response.candidates?.[0]?.content?.parts?.[0]?.text;
+    const responseText = (response as any).text || (response as any).response?.text() || (response as any).candidates?.[0]?.content?.parts?.[0]?.text;
     console.log('📝 Response text preview:', responseText?.substring(0, 200) + '...');
     
     // Debug grounding metadata - check different possible locations for Gemini 1.5
-    let groundingMetadata = response.candidates?.[0]?.groundingMetadata || 
+    let groundingMetadata = (response as any).candidates?.[0]?.groundingMetadata || 
                           (response as any).response?.candidates?.[0]?.groundingMetadata ||
                           (response as any).groundingMetadata;
     
@@ -575,5 +592,123 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
           originalError: error instanceof Error ? error.message : String(error)
         }
     };
+  }
+};
+
+// Nueva función que usa fuentes médicas mejoradas
+export const generateContentWithEnhancedSources = async (
+  prompt: string, 
+  context?: string
+): Promise<GenerationResult> => {
+  try {
+    console.log('🔍 Using enhanced medical sources for:', prompt.substring(0, 100));
+    
+    // Buscar en fuentes médicas mejoradas
+    const medicalSearchResult = await enhancedMedicalSources.searchMedicalSources({
+      query: prompt,
+      maxResults: 20,
+      includeAbstract: true,
+      prioritizeRecent: true,
+      requireOpenAccess: false
+    });
+
+    console.log(`📚 Found ${medicalSearchResult.sources.length} enhanced medical sources`);
+    console.log(`📊 Quality metrics:`, medicalSearchResult.qualityMetrics);
+
+    // Convertir fuentes mejoradas al formato esperado
+    const convertedSources = medicalSearchResult.sources.map((source: EnhancedSource) => ({
+      web: {
+        uri: source.url,
+        title: source.title
+      }
+    }));
+
+    // Usar el modelo de Gemini para generar contenido con las fuentes mejoradas
+    const genAI = getAI();
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-1.5-pro',
+      generationConfig: {
+        temperature: 0.1,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 8192,
+      },
+      tools: [{
+        googleSearchRetrieval: {
+          dynamicRetrievalConfig: {
+            mode: "MODE_DYNAMIC" as any,
+            dynamicThreshold: 0.7
+          }
+        }
+      }]
+    });
+
+    // Crear prompt mejorado con información de las fuentes
+    const enhancedPrompt = `${prompt}
+
+### FUENTES MÉDICAS ESPECIALIZADAS ENCONTRADAS ###
+${medicalSearchResult.sources.map((source, index) => `
+${index + 1}. ${source.title}
+   - Revista: ${source.journal || 'N/A'}
+   - Tipo: ${source.sourceType}
+   - Calidad: ${source.qualityScore}/100
+   - Autoridad: ${source.authorityScore}/100
+   - Acceso abierto: ${source.isOpenAccess ? 'Sí' : 'No'}
+   - DOI: ${source.doi || 'N/A'}
+   - URL: ${source.url}
+   ${source.abstract ? `- Resumen: ${source.abstract.substring(0, 200)}...` : ''}
+`).join('\n')}
+
+### MÉTRICAS DE CALIDAD ###
+- Fuentes de alta calidad: ${medicalSearchResult.qualityMetrics.highQualityCount}
+- Acceso abierto: ${medicalSearchResult.qualityMetrics.openAccessCount}
+- Publicaciones recientes: ${medicalSearchResult.qualityMetrics.recentPublications}
+- Calidad promedio: ${medicalSearchResult.qualityMetrics.averageQuality}/100
+
+Utiliza estas fuentes especializadas para proporcionar una respuesta médica precisa y basada en evidencia.`;
+
+    // Generar contenido con las fuentes mejoradas
+    const response = await retryWithBackoff(async () => {
+      console.log(`🔄 Generating content with enhanced sources...`);
+      return await model.generateContent(enhancedPrompt);
+    }, 3, 2000);
+
+    const content = response.response.text();
+    
+    // Validar y mejorar fuentes con validación médica
+    const { validatedSources, quality, contradictions } = await (MedicalValidationService as any).validateAndEnhanceSources(convertedSources);
+
+    const result: GenerationResult = {
+      text: content,
+      sources: validatedSources,
+      quality: {
+        overallQuality: (quality as any).overallQuality || 'medium',
+        highQualityCount: (quality as any).highQualityCount || 0,
+        mediumQualityCount: (quality as any).mediumQualityCount || 0,
+        lowQualityCount: (quality as any).lowQualityCount || 0,
+        recommendations: (quality as any).recommendations || []
+      },
+      contradictions: {
+        hasConflicts: contradictions.hasConflicts,
+        conflicts: contradictions.conflicts,
+        resolution: contradictions.resolution,
+        confidence: contradictions.confidence
+      },
+      disclaimers: "Este reporte es generado por IA y debe ser revisado por un profesional médico calificado.",
+      // Agregar datos de fuentes mejoradas
+      enhancedSources: medicalSearchResult.sources,
+      qualityMetrics: medicalSearchResult.qualityMetrics,
+      sourcesBreakdown: medicalSearchResult.sourcesBreakdown
+    };
+
+    console.log(`✅ Enhanced content generated with ${validatedSources.length} validated sources`);
+    return result;
+
+  } catch (error) {
+    console.error('❌ Enhanced medical sources search failed:', error);
+    
+    // Fallback al método original
+    console.log('🔄 Falling back to standard search...');
+    return generateContent(prompt, true, context);
   }
 };

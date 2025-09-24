@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, Suspense, lazy, useRef } from 'react';
 import { InvestigationState, ResearchStep, Source, StepFeedback } from './types';
 import { createResearchPlanPrompt, createExecuteStepPrompt, createFinalReportPrompt } from './constants';
-import { generateContent } from './services/geminiService';
+import { generateContent, generateContentWithEnhancedSources } from './services/geminiService';
 import { MedicalContextEngine, MedicalContext } from './contextEngineering';
 import { MedicalValidationService, DisclaimerGenerator } from './medicalValidation';
 import { EnhancedMedicalReasoning, ClinicalReasoning, ReasoningIntegration } from './enhancedReasoning';
@@ -674,7 +674,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
     
     const prompt = createFinalReportPrompt(enhancedQuery, completedSteps);
     
-    const { text: reportText, sources: reportSources, error: generationError } = await generateContent(prompt, true, enhancedQuery);
+    const { text: reportText, sources: reportSources, error: generationError, enhancedSources, qualityMetrics, sourcesBreakdown } = await generateContentWithEnhancedSources(prompt, enhancedQuery);
 
     // Verificar si hubo error en la generación
     if (generationError) {
@@ -682,8 +682,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       setInvestigation(prev => {
         if (!prev) return null;
         return {
-          ...prev, 
-          error: generationError.message, 
+          ...prev,
+          error: generationError.message,
           isGeneratingReport: false,
           generationError: generationError
         };
@@ -701,7 +701,26 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
         }
         
         // Store the report without adding disclaimers (they are shown in the UI component)
-        const finalInvestigation = {...prev, finalReport: reportText, finalReportSources: validatedSources, isGeneratingReport: false };
+        const finalInvestigation = {
+          ...prev, 
+          finalReport: reportText, 
+          finalReportSources: validatedSources, 
+          isGeneratingReport: false,
+          enhancedSources: enhancedSources || [],
+          qualityMetrics: qualityMetrics || {
+            averageQuality: 0,
+            highQualityCount: 0,
+            openAccessCount: 0,
+            recentPublications: 0
+          },
+          sourcesBreakdown: sourcesBreakdown || {
+            pubmed: 0,
+            google: 0,
+            cochrane: 0,
+            clinical_trials: 0,
+            other: 0
+          }
+        };
 
         // Auto-save final report
         if (currentInvestigationId) {
@@ -1540,6 +1559,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     onCopy={handleCopyReport}
                                                     isCopied={isCopied}
                                                     investigationSteps={investigation?.plan || []}
+                                                    enhancedSources={investigation?.enhancedSources}
+                                                    qualityMetrics={investigation?.qualityMetrics}
+                                                    sourcesBreakdown={investigation?.sourcesBreakdown}
                                                 />
                                             </Suspense>
                                         )
