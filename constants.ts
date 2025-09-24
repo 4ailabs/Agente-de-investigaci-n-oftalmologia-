@@ -232,8 +232,8 @@ export const createFinalReportPrompt = (
 **Hallazgos:**
 ${step.result}
 
-**Títulos de las Fuentes Usadas en este Paso:**
-${step.sources?.map(s => `- ${s.web.title}`).join('\n') || 'Ninguna'}`;
+**Fuentes Usadas en este Paso:**
+${step.sources?.map((s, idx) => `[${idx + 1}] ${s.web.title} - ${s.web.uri}`).join('\n') || 'Ninguna'}`;
 
       // Agregar feedback del especialista si existe
       if (step.feedback) {
@@ -379,7 +379,14 @@ El reporte DEBE seguir esta estructura médica especializada:
 - **Recomendaciones para Profundización:** Investigación adicional sugerida
 
 ## 8. REFERENCIAS MÉDICAS CONSOLIDADAS
-**IMPORTANTE:** NO incluyas las referencias en el texto del reporte. Las fuentes se mostrarán automáticamente en la sección de fuentes de la interfaz. Enfócate únicamente en el contenido clínico del reporte.
+**IMPORTANTE:** Incluye una sección de referencias al final del reporte con las fuentes más relevantes utilizadas. Formato cada referencia con número y enlace cuando sea posible.
+
+**Formato de referencias:**
+1. [Apellido, A. (Año). Título del artículo. Nombre de la revista, Volumen(Número), páginas. DOI: 10.xxxx/xxxxx]
+2. [Apellido, A. (Año). Título del artículo. Nombre de la revista, Volumen(Número), páginas. URL: https://...]
+3. [Apellido, A. (Año). Título del artículo. Nombre de la revista, Volumen(Número), páginas. PMID: xxxxxxxx]
+
+**Incluye al menos 5-10 referencias de alta calidad** que respalden los hallazgos principales del reporte.
 
 **BÚSQUEDA DIRIGIDA PARA REPORTE:**
 Utiliza la búsqueda para encontrar evidencia ESPECÍFICA para:
@@ -401,7 +408,8 @@ El reporte final debe ser EXTREMADAMENTE DETALLADO y EXHAUSTIVO:
 - Mínimo 3000-4000 palabras de contenido médico especializado
 - Análisis crítico profundo de TODA la evidencia consultada
 - Razonamiento clínico explícito paso a paso en cada sección
-- Referencias específicas a estudios y guías (sin URLs, solo descripción)
+- **Referencias específicas a estudios y guías INCLUYENDO enlaces y DOI cuando sea posible**
+- **Cita las fuentes en el texto usando formato [1], [2], etc. y lista completa al final**
 - Evaluación crítica de limitaciones y incertidumbres
 - Recomendaciones específicas y accionables
 

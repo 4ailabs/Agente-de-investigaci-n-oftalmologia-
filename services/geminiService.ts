@@ -648,15 +648,18 @@ export const generateContentWithEnhancedSources = async (
 
 ### FUENTES MÉDICAS ESPECIALIZADAS ENCONTRADAS ###
 ${medicalSearchResult.sources.map((source, index) => `
-${index + 1}. ${source.title}
+[${index + 1}] ${source.title}
+   - Autores: ${source.authors?.join(', ') || 'No especificados'}
    - Revista: ${source.journal || 'N/A'}
+   - Año: ${source.publicationDate ? new Date(source.publicationDate).getFullYear() : 'N/A'}
    - Tipo: ${source.sourceType}
    - Calidad: ${source.qualityScore}/100
    - Autoridad: ${source.authorityScore}/100
    - Acceso abierto: ${source.isOpenAccess ? 'Sí' : 'No'}
    - DOI: ${source.doi || 'N/A'}
    - URL: ${source.url}
-   ${source.abstract ? `- Resumen: ${source.abstract.substring(0, 200)}...` : ''}
+   - PMID: ${source.id.replace('pubmed_', '') || 'N/A'}
+   ${source.abstract ? `- Resumen: ${source.abstract.substring(0, 300)}...` : ''}
 `).join('\n')}
 
 ### MÉTRICAS DE CALIDAD ###
@@ -665,7 +668,13 @@ ${index + 1}. ${source.title}
 - Publicaciones recientes: ${medicalSearchResult.qualityMetrics.recentPublications}
 - Calidad promedio: ${medicalSearchResult.qualityMetrics.averageQuality}/100
 
-Utiliza estas fuentes especializadas para proporcionar una respuesta médica precisa y basada en evidencia.`;
+### INSTRUCCIONES PARA REFERENCIAS ###
+- Cita las fuentes en el texto usando formato [1], [2], [3], etc.
+- Incluye una sección de referencias al final con formato académico completo
+- Para cada referencia, incluye: autores, año, título, revista, DOI/URL cuando esté disponible
+- Prioriza las fuentes de mayor calidad y relevancia para el tema
+
+Utiliza estas fuentes especializadas para proporcionar una respuesta médica precisa y basada en evidencia con referencias completas.`;
 
     // Generar contenido con las fuentes mejoradas
     const response = await retryWithBackoff(async () => {
