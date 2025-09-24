@@ -1162,41 +1162,42 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
            </div>
          </div>
       ) : (
-          <main className="max-w-7xl mx-auto py-2 sm:py-4 lg:py-8 px-2 sm:px-4 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-8 relative">
-                {/* Left Column: Control Panel - Medical Professional Style */}
-                <div className="lg:col-span-4 order-2 lg:order-1">
-                    <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-lg lg:rounded-xl shadow-lg border-2 border-slate-200 lg:sticky lg:top-28 z-20">
+          <main className="min-h-screen bg-slate-50">
+            <div className="flex h-screen">
+                {/* Sidebar: Steps Navigation */}
+                <div className="w-80 bg-white border-r border-slate-200 flex flex-col">
+                    {/* Sidebar Header */}
+                    <div className="p-6 border-b border-slate-200 bg-slate-50">
                         {/* Header - Medical Professional Style */}
-                        <div className="pb-4 sm:pb-5 lg:pb-6 border-b-2 border-slate-300">
-                             <div className="flex justify-between items-center mb-3 lg:mb-4">
+                        <div className="pb-4 border-b-2 border-slate-300">
+                             <div className="flex justify-between items-center mb-3">
                                 <div className="flex items-center">
-                                    <div className="w-8 h-8 lg:w-10 lg:h-10 bg-slate-800 rounded-lg flex items-center justify-center mr-3 lg:mr-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 lg:h-6 lg:w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center mr-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                         </svg>
                                     </div>
                                     <div>
-                                        <h2 className="text-lg lg:text-xl font-bold text-slate-900">Caso Clínico Activo</h2>
-                                        <p className="text-xs lg:text-sm text-slate-600 font-medium">Protocolo de Investigación</p>
+                                        <h2 className="text-lg font-bold text-slate-900">Caso Clínico</h2>
+                                        <p className="text-sm text-slate-600 font-medium">Protocolo de Investigación</p>
                                     </div>
                                 </div>
                                 <div className="flex space-x-2">
                                     <button 
                                         onClick={handleNewInvestigation} 
-                                        className="flex items-center px-4 lg:px-5 py-2.5 lg:py-3 text-sm lg:text-base font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+                                        className="flex items-center px-3 py-2 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-all duration-200"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                                         </svg>
-                                        <span>Nuevo Caso</span>
-                                </button>
+                                        <span>Nuevo</span>
+                                    </button>
                                     {investigation?.isGenerating && (
                                         <button 
                                             onClick={handleCancelInvestigation} 
-                                            className="flex items-center px-4 lg:px-5 py-2.5 lg:py-3 text-sm lg:text-base font-semibold text-red-700 bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+                                            className="flex items-center px-3 py-2 text-sm font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-all duration-200"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                             <span>Cancelar</span>
@@ -1204,47 +1205,49 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     )}
                              </div>
                              </div>
-                             <div className="bg-slate-50 p-3 lg:p-4 rounded-lg border border-slate-200">
-                                 <div className="text-sm lg:text-base text-slate-800 space-y-2">
+                             
+                             {/* Patient Info - Compact */}
+                             <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                 <div className="text-sm text-slate-800 space-y-2">
                                      {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
                                          if (index === 0) {
                                              // Patient demographics (first line)
                                              return (
-                                                 <div key={index} className="font-bold text-slate-900 text-sm lg:text-base border-b border-slate-300 pb-2">
+                                                 <div key={index} className="font-bold text-slate-900 text-sm border-b border-slate-300 pb-2">
                                                      {section.trim()}
                                                  </div>
                                              );
                                          } else {
                                              // Clinical symptoms (truncated)
                                              const symptoms = section.replace('Síntomas y Antecedentes Clínicos:', '').trim();
-                                             const truncated = symptoms.length > 120 ? symptoms.substring(0, 120) + '...' : symptoms;
+                                             const truncated = symptoms.length > 80 ? symptoms.substring(0, 80) + '...' : symptoms;
                                              return (
                                                  <div key={index} className="text-slate-700">
-                                                     <div className="text-sm font-semibold text-slate-600 mb-2">Motivo de Consulta:</div>
-                                                     <div className="text-sm leading-relaxed" title={symptoms}>
+                                                     <div className="text-xs font-semibold text-slate-600 mb-1">Motivo:</div>
+                                                     <div className="text-xs leading-relaxed" title={symptoms}>
                                                          {truncated}
                                                      </div>
                                                  </div>
                                              );
                                          }
                                      }) : (
-                                         <div className="text-sm text-slate-500 font-medium">Cargando información del caso...</div>
+                                         <div className="text-xs text-slate-500 font-medium">Cargando información del caso...</div>
                                      )}
                                  </div>
                              </div>
                         </div>
 
-                        {/* Progress Indicator - Medical Style */}
-                        <div className="my-5 lg:my-6">
-                            <div className="flex items-center justify-between mb-3">
-                                <span className="text-sm lg:text-base font-bold text-slate-800">Estado del Protocolo</span>
-                                <span className="text-sm lg:text-base text-slate-600 font-semibold bg-slate-100 px-3 py-1 rounded-full">
-                                    {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length} Completados
+                        {/* Progress Indicator - Compact */}
+                        <div className="mt-4">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-bold text-slate-800">Progreso</span>
+                                <span className="text-xs text-slate-600 font-semibold bg-slate-100 px-2 py-1 rounded-full">
+                                    {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length}
                                 </span>
                             </div>
-                            <div className="w-full bg-slate-200 rounded-full h-2 lg:h-3 border border-slate-300">
+                            <div className="w-full bg-slate-200 rounded-full h-2 border border-slate-300">
                                 <div 
-                                    className="bg-gradient-to-r from-slate-700 to-slate-800 h-2 lg:h-3 rounded-full transition-all duration-500 shadow-sm"
+                                    className="bg-gradient-to-r from-slate-700 to-slate-800 h-2 rounded-full transition-all duration-500"
                                     style={{ 
                                         width: `${(investigation.plan.filter(step => step.status === 'completed').length / investigation.plan.length) * 100}%` 
                                     }}
@@ -1253,58 +1256,54 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                         </div>
 
 
-                        {/* Navigation - Medical Protocol Style */}
-                        <nav className="mb-5 lg:mb-6">
-                            <div className="flex items-center justify-between mb-3 lg:mb-4">
-                                <h3 className="text-base lg:text-lg font-bold text-slate-900">Protocolo de Investigación</h3>
-                                <div className="hidden lg:flex items-center space-x-2 text-xs lg:text-sm text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
+                        {/* Steps Navigation - Compact */}
+                        <nav className="mt-6 flex-1 overflow-y-auto">
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-sm font-bold text-slate-900">Pasos de Investigación</h3>
+                                <div className="flex items-center space-x-1 text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span className="font-medium">Seleccionar paso</span>
+                                    <span className="font-medium">Seleccionar</span>
                                 </div>
                             </div>
-                            <ul className="space-y-1 lg:space-y-2">
+                            <ul className="space-y-1">
                                 {investigation.plan.map(step => (
                                     <li key={step.id}>
-                                        <div className="flex items-center space-x-1 lg:space-x-2">
                                         <button 
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
-                                                disabled={step.status === 'pending'}
-                                                className={`flex-1 text-left flex items-start p-2 lg:p-3 rounded-lg lg:rounded-xl text-sm transition-all duration-200 min-w-0 w-full min-h-[48px] lg:min-h-[56px] ${
+                                            disabled={step.status === 'pending'}
+                                            className={`w-full text-left flex items-center p-2 rounded-lg text-sm transition-all duration-200 ${
                                                 activeView.type === 'step' && activeView.id === step.id 
-                                                    ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-semibold border border-blue-200 shadow-sm' 
+                                                    ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200' 
                                                     : step.status === 'completed'
-                                                    ? 'text-slate-700 hover:bg-slate-100 hover:shadow-sm'
+                                                    ? 'text-slate-700 hover:bg-slate-100'
                                                     : step.status === 'in-progress'
                                                     ? 'text-slate-500 hover:bg-slate-50 cursor-wait'
                                                     : 'text-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed'
                                             }`}
                                         >
-                                           <div className="flex-shrink-0 mt-0.5 lg:mt-0">
-                                           <StatusIcon status={step.status} />
+                                           <div className="flex-shrink-0 mr-2">
+                                               <StatusIcon status={step.status} />
                                            </div>
-                                           <div className="flex-1 min-w-0 ml-2 lg:ml-3">
+                                           <div className="flex-1 min-w-0">
                                                <div className="flex items-center justify-between">
-                                                   <span className="text-left break-words leading-tight pr-2">
-                                                       <span className="hidden lg:inline text-sm lg:text-base font-medium">{step.title || 'Paso sin título'}</span>
-                                                        <span className="lg:hidden text-sm lg:text-base font-medium">
-                                                            {step.title && step.title.length > 60 ? step.title.substring(0, 60) + "..." : (step.title || "Paso sin título")}
-                                                        </span>
+                                                   <span className="text-xs font-medium truncate">
+                                                       {step.title && step.title.length > 40 ? step.title.substring(0, 40) + "..." : (step.title || "Paso sin título")}
                                                    </span>
-                                                   <div className="flex items-center space-x-1 flex-shrink-0">
+                                                   <div className="flex-shrink-0 ml-2">
                                                        {step.status === 'completed' && (
-                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-4 lg:w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                                            </svg>
                                                        )}
                                                        {step.status === 'in-progress' && (
-                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-4 lg:w-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                                            </svg>
                                                        )}
                                                        {step.status === 'pending' && (
-                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-4 lg:w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                            </svg>
                                                        )}
@@ -1338,7 +1337,6 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     </button>
                                                 </div>
                                             )}
-                                        </div>
                                     </li>
                                 ))}
                                 {investigation.finalReport && (
@@ -1456,52 +1454,27 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                     </div>
                 </div>
 
-                {/* Right Column: Content Display */}
-                <div className="lg:col-span-8 relative z-0 order-1 lg:order-2">
+                {/* Main Content Area - Full Width */}
+                <div className="flex-1 flex flex-col overflow-hidden">
                     <div 
                       ref={contentRef}
-                      className="bg-gradient-to-br from-white to-slate-50/30 p-3 lg:p-8 rounded-xl lg:rounded-2xl shadow-lg lg:shadow-xl border border-slate-200 min-h-[50vh] lg:min-h-[70vh] relative"
+                      className="flex-1 bg-white p-6 lg:p-8 overflow-y-auto"
                     >
-                        {/* Mobile Swipe Indicators - only show on mobile */}
-                        <div className="block lg:hidden absolute top-1/2 left-2 transform -translate-y-1/2 text-slate-300 z-10">
-                          {investigation && activeView.type === 'step' && activeView.id && activeView.id > 1 && (
-                            <div className="flex items-center animate-pulse">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                              </svg>
-                              <span className="text-xs lg:text-sm ml-1">Anterior</span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="block lg:hidden absolute top-1/2 right-2 transform -translate-y-1/2 text-slate-300 z-10">
-                          {investigation && (
-                            (activeView.type === 'step' && activeView.id && activeView.id < investigation.plan.length && investigation.plan.find(s => s.id === activeView.id + 1)?.status !== 'pending') ||
-                            (activeView.type === 'step' && activeView.id === investigation.plan.length && investigation.finalReport)
-                          ) && (
-                            <div className="flex items-center animate-pulse">
-                              <span className="text-xs lg:text-sm mr-1">Siguiente</span>
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
                         {activeContent ? (
                             <div>
                                 {/* Header */}
-                                <div className="flex justify-between items-start mb-4 lg:mb-6">
+                                <div className="flex justify-between items-start mb-6">
                                     <div className="flex-1">
-                                        <div className="flex items-center mb-2">
+                                        <div className="flex items-center mb-3">
                                             {activeView.type === 'step' ? (
-                                                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                                     </svg>
                                                 </div>
                                             ) : (
-                                                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-4">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                     </svg>
                                                 </div>
@@ -1876,10 +1849,10 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
           onShowImageUploader={handleOpenImageUploader}
         />
       )}
-      </div>
       <Footer />
     </div>
+    </div>
   );
-};
+}
 
 export default App;
