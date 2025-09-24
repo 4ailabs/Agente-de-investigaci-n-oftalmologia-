@@ -1384,8 +1384,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 <div className="flex-1 min-w-0 ml-3">
                                   <div className="flex items-center justify-between">
                                     <span className="text-left break-words leading-tight pr-2">
-                                      <span className="text-base font-medium">
-                                        {step.title && step.title.length > 60 ? step.title.substring(0, 60) + "..." : (step.title || "Paso sin título")}
+                                      <span className="text-sm font-medium">
+                                        {step.title || "Paso sin título"}
                                       </span>
                                     </span>
                                     <div className="flex items-center space-x-1 flex-shrink-0">
@@ -1798,7 +1798,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             {/* Desktop Layout */}
             <div className="hidden lg:flex h-screen">
                 {/* Sidebar: Steps Navigation */}
-                <div className="w-80 bg-white border-r border-slate-200 flex flex-col overflow-hidden shadow-sm">
+                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm">
                     {/* Sidebar Header */}
                     <div className="p-4 border-b border-slate-200 bg-slate-50">
                         {/* Header - Medical Professional Style */}
@@ -1927,8 +1927,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         >
                                            <div className="space-y-1">
                                                <div className="flex items-start justify-between">
-                                                   <h4 className="text-xs font-semibold truncate pr-1 leading-tight">
-                                                       {(step.title && step.title.length > 35) ? step.title.substring(0, 35) + '...' : (step.title || `Paso ${step.id}`)}
+                                                   <h4 className="text-xs font-semibold pr-1 leading-tight break-words">
+                                                       {step.title || `Paso ${step.id}`}
                                                    </h4>
                                                    <div className="flex items-center ml-1">
                                                        {step.status === 'completed' && (
@@ -1945,8 +1945,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
                                                {/* Step Description/Summary - Compact */}
                                                {step.result && step.status === 'completed' && (
-                                                   <div className="text-xs text-slate-600 line-clamp-1">
-                                                       {step.result.substring(0, 50)}...
+                                                   <div className="text-xs text-slate-600 line-clamp-2">
+                                                       {step.result}
                                                    </div>
                                                )}
 
