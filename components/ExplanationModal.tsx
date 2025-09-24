@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { X, AlertTriangle } from 'lucide-react';
 
 const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,9 +54,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               className="flex items-center justify-center w-8 h-8 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors"
               aria-label="Cerrar"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <X className="h-5 w-5" />
             </button>
           </div>
           
@@ -89,9 +88,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             className="flex items-center justify-center w-10 h-10 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors"
             aria-label="Cerrar"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X className="h-6 w-6" />
           </button>
         </div>
         
@@ -108,9 +105,7 @@ const MobileContent: React.FC = () => (
   <div className="prose prose-sm max-w-none text-slate-800 space-y-4">
     <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
       <div className="flex items-start space-x-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-        </svg>
+        <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-sm font-semibold text-amber-800 mb-1">⚠️ Aviso Médico</p>
           <p className="text-xs text-amber-700">Este análisis es generado por IA y no reemplaza el juicio clínico profesional.</p>
@@ -184,9 +179,7 @@ const DesktopContent: React.FC = () => (
     <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 my-6">
       <div className="flex items-start space-x-3">
         <div className="flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-          </svg>
+          <AlertTriangle className="h-6 w-6 text-amber-600" />
         </div>
         <div className="flex-1">
           <h4 className="text-sm font-semibold text-amber-800 mb-2">Avisos Médicos Importantes</h4>

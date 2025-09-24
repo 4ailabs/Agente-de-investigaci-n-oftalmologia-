@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
+import { Mic, AlertTriangle } from 'lucide-react';
 
 interface AudioRecorderProps {
   onTranscriptionComplete: (transcription: string, medicalInfo?: any) => void;
@@ -35,9 +36,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
       <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-slate-800 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-            </svg>
+            <Mic className="h-5 w-5 mr-2 text-blue-600" />
             Transcripción de Voz
           </h3>
         </div>
@@ -52,9 +51,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                 : 'bg-blue-600 hover:bg-blue-700 text-white'
             }`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-            </svg>
+            <Mic className="h-6 w-6" />
             <span className="text-lg">{isTranscribing ? 'Detener Transcripción' : 'Iniciar Transcripción'}</span>
           </button>
         </div>
@@ -97,9 +94,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         {error && (
           <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <AlertTriangle className="h-4 w-4 text-red-600 mr-2" />
               <span className="text-sm text-red-700">{error}</span>
             </div>
           </div>

@@ -26,6 +26,35 @@ import ImageAnalysisResults from './components/ImageAnalysisResults';
 import ImageAnalysisAnnouncement from './components/ImageAnalysisAnnouncement';
 import ErrorBoundary from './components/ErrorBoundary';
 import { MedicalImageAnalysis } from './types/medicalImageTypes';
+import { 
+  Mic, 
+  Camera, 
+  Zap, 
+  CheckCircle, 
+  Loader2, 
+  XCircle, 
+  Circle, 
+  X, 
+  ClipboardCheck, 
+  Plus, 
+  Minus, 
+  Info, 
+  Check, 
+  Clock, 
+  Copy, 
+  Edit, 
+  FileText, 
+  Download, 
+  Upload, 
+  Trash2, 
+  Eye,
+  AlertTriangle,
+  RefreshCw,
+  ArrowUp,
+  ArrowDown,
+  ChevronRight,
+  RotateCcw
+} from 'lucide-react';
 
 // Lazy load heavy components
 const ExplanationModal = lazy(() => import('./components/ExplanationModal'));
@@ -253,9 +282,7 @@ ${clinicalInfo.trim()}`;
                         onClick={() => setShowAudioRecorder(!showAudioRecorder)}                             
                         className="flex-1 flex items-center justify-center space-x-3 px-6 py-3 text-base sm:text-base font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 rounded-lg transition-colors duration-200 min-h-[48px] sm:min-h-[44px]"                                                   
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>         
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />                               
-                        </svg>
+                        <Mic className="h-5 w-5" />
                         <span>{showAudioRecorder ? 'Ocultar Grabación' : 'Grabar Audio'}</span>                  
                       </button>
                       
@@ -264,10 +291,7 @@ ${clinicalInfo.trim()}`;
                         onClick={() => setShowDocumentCapture(!showDocumentCapture)}                             
                         className="flex-1 flex items-center justify-center space-x-3 px-6 py-3 text-base sm:text-base font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 rounded-lg transition-colors duration-200 min-h-[48px] sm:min-h-[44px]"                                                   
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>         
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+                        <Camera className="h-5 w-5" />
                         <span>{showDocumentCapture ? 'Ocultar Cámara' : 'Capturar Expediente'}</span>                  
                       </button>
                     </div>
@@ -321,9 +345,7 @@ ${clinicalInfo.trim()}`;
                     </div>
                   ) : (
                     <>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
+                      <Zap className="h-5 w-5 mr-2" />
                       Iniciar Protocolo de Investigación
                     </>
                   )}
@@ -349,13 +371,13 @@ ${clinicalInfo.trim()}`;
 const StatusIcon: React.FC<{ status: ResearchStep['status'] }> = ({ status }) => {
     switch (status) {
         case 'completed':
-            return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>;
+            return <CheckCircle className="h-5 w-5 text-green-500" />;
         case 'in-progress':
-            return <svg className="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>;
+            return <Loader2 className="animate-spin h-5 w-5 text-blue-500" />;
         case 'error':
-             return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" /></svg>;
+             return <XCircle className="h-5 w-5 text-red-500" />;
         default:
-            return <div className="h-5 w-5 flex items-center justify-center"><div className="h-2.5 w-2.5 rounded-full border-2 border-slate-400"></div></div>;
+            return <Circle className="h-5 w-5 text-slate-400" />;
     }
 };
 
@@ -1148,9 +1170,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                onClick={handleCancelInvestigation}
                className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors duration-200"
              >
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-               </svg>
+               <X className="h-4 w-4 mr-2" />
                Cancelar Investigación
              </button>
            </div>
@@ -1167,9 +1187,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                              <div className="flex justify-between items-center mb-3">
                                 <div className="flex items-center">
                                     <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                                        </svg>
+                                        <ClipboardCheck className="h-5 w-5 text-white" />
                                     </div>
                                     <div>
                                         <h2 className="text-lg font-bold text-slate-900">Caso Clínico</h2>
@@ -1181,25 +1199,21 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         onClick={handleNewInvestigation} 
                                         className="flex items-center px-3 py-2 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-all duration-200"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                                        </svg>
+                                        <Plus className="h-4 w-4 mr-1" />
                                         <span>Nuevo</span>
-                                    </button>
+                                </button>
                                     {investigation?.isGenerating && (
                                         <button 
                                             onClick={handleCancelInvestigation} 
                                             className="flex items-center px-3 py-2 text-sm font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-all duration-200"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
+                                            <X className="h-4 w-4 mr-1" />
                                             <span>Cancelar</span>
                                         </button>
                                     )}
                              </div>
-                             </div>
-                             
+                        </div>
+
                              {/* Patient Info - Compact */}
                              <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
                                  <div className="text-sm text-slate-800 space-y-2">
@@ -1255,9 +1269,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="text-sm font-bold text-slate-900">Pasos de Investigación</h3>
                                 <div className="flex items-center space-x-1 text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                                    <Info className="h-3 w-3" />
                                     <span className="font-medium">Seleccionar</span>
                                 </div>
                             </div>
@@ -1278,7 +1290,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                             }`}
                                         >
                                            <div className="flex-shrink-0 mr-2">
-                                               <StatusIcon status={step.status} />
+                                           <StatusIcon status={step.status} />
                                            </div>
                                            <div className="flex-1 min-w-0">
                                                <div className="flex items-center justify-between">
@@ -1287,19 +1299,13 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                    </span>
                                                    <div className="flex-shrink-0 ml-2">
                                                        {step.status === 'completed' && (
-                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                                           </svg>
+                                                           <Check className="h-3 w-3 text-green-500" />
                                                        )}
                                                        {step.status === 'in-progress' && (
-                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                               <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                                           </svg>
+                                                           <Loader2 className="h-3 w-3 text-blue-500 animate-spin" />
                                                        )}
                                                        {step.status === 'pending' && (
-                                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                               <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                           </svg>
+                                                           <Clock className="h-3 w-3 text-slate-400" />
                                                        )}
                                                    </div>
                                                </div>
@@ -1312,9 +1318,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                         className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                                                         title="Copiar este paso"
                                                     >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                        </svg>
+                                                        <Copy className="h-4 w-4" />
                                                     </button>
                                                     <button
                                                         onClick={() => handleOpenStepFeedback(step.id, step.title)}
@@ -1325,9 +1329,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                         }`}
                                                         title={step.feedback ? "Ver/Editar feedback del especialista" : "Agregar feedback del especialista"}
                                                     >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                        </svg>
+                                                        <Edit className="h-4 w-4" />
                                                     </button>
                                                 </div>
                                             )}
@@ -1344,14 +1346,10 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                             }`}
                                         >
                                            <div className="w-4 h-4 lg:w-5 lg:h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                               <svg xmlns="http://www.w3.org/2000/svg" className="h-2.5 w-2.5 lg:h-3 lg:w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                               </svg>
+                                               <FileText className="h-2.5 w-2.5 lg:h-3 lg:w-3 text-white" />
                                            </div>
                                            <span className="ml-2 lg:ml-3 flex-1">Reporte Final</span>
-                                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 lg:h-4 lg:w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                           </svg>
+                                           <Check className="h-3 w-3 lg:h-4 lg:w-4 text-green-500" />
                                         </button>
                                     </li>
                                 )}
@@ -1396,9 +1394,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         </>
                                     ) : (
                                         <>
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                            </svg>
+                                            <Zap className="h-5 w-5 mr-3" />
                                             Ejecutar Paso {investigation.currentStep + 1}
                                         </>
                                     )}
@@ -1417,9 +1413,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         </>
                                     ) : (
                                         <>
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
+                                            <FileText className="h-5 w-5 mr-3" />
                                             Generar Reporte Clínico
                                         </>
                                     )}
@@ -1427,9 +1421,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                             )}
                             {!investigation.plan.some(step => step.status === 'completed') && !investigation.finalReport && (
                                 <div className="w-full flex justify-center items-center py-3 lg:py-4 px-4 lg:px-6 bg-slate-100 text-slate-600 font-semibold rounded-lg lg:rounded-xl text-base border-2 border-slate-200">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                    </svg>
+                                    <AlertTriangle className="h-5 w-5 mr-3" />
                                     Complete al menos un paso del protocolo para generar el reporte
                         </div>
                             )}
@@ -1438,9 +1430,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                          {investigation.error && (
                              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                                  <div className="flex items-start">
-                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500 mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                     </svg>
+                                     <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5 mr-2 flex-shrink-0" />
                                      <p className="text-red-700 text-xs">{investigation.error}</p>
                                  </div>
                              </div>
@@ -1462,15 +1452,11 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         <div className="flex items-center mb-3">
                                             {activeView.type === 'step' ? (
                                                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                                                    </svg>
+                                                    <ClipboardCheck className="h-7 w-7 text-blue-600" />
                                                 </div>
                                             ) : (
                                                 <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                    </svg>
+                                                    <FileText className="h-7 w-7 text-green-600" />
                                                 </div>
                                             )}
                                             <div>
@@ -1492,9 +1478,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                 onClick={() => handleCopyStep(activeView.id!)}
                                                 className="flex items-center space-x-2 px-4 py-2 text-sm lg:text-base font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                            </svg>
+                                            <Copy className="h-4 w-4" />
                                                 <span>{copiedStepId === activeView.id ? '¡Copiado!' : 'Copiar Paso'}</span>
                                         </button>
                                     )}
@@ -1567,9 +1551,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 ) : (
                                     <div className="text-center text-slate-500 py-16">
                                         <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                                            </svg>
+                                            <FileText className="h-8 w-8 text-slate-400" />
                                         </div>
                                         <p className="text-lg font-medium">Este paso aún no se ha ejecutado</p>
                                         <p className="text-sm mt-1">Ejecuta el paso desde el panel de control</p>
@@ -1581,9 +1563,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     <div className="mt-8">
                                         <div className="flex items-center mb-4">
                                             <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                </svg>
+                                                <FileText className="h-5 w-5 text-indigo-600" />
                                             </div>
                                             <h4 className="text-base font-semibold text-slate-800">Fuentes Consultadas</h4>
                                             <span className="ml-2 px-2 py-1 bg-indigo-100 text-indigo-600 text-xs font-medium rounded-full">
@@ -1633,9 +1613,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                             </div>
                                                             <div className="mt-2 flex items-center justify-between text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
                                                                 <div className="flex items-center">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                                                    </svg>
+                                                                    <ArrowUp className="h-3 w-3 mr-2 flex-shrink-0" />
                                                                     <span className="truncate font-mono">{source.web.uri}</span>
                                                                 </div>
                                                                 <span className={`px-2 py-1 rounded text-xs font-medium ${
@@ -1669,9 +1647,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                 }}
                                                 className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm lg:text-base font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
                                             >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                                                </svg>
+                                                <ArrowDown className="h-4 w-4 mr-2" />
                                                 Paso Anterior
                                             </button>
                                         )}
@@ -1716,21 +1692,15 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     const nextStep = investigation.plan.find(step => step.id === activeView.id! + 1);
                                                     if (nextStep && nextStep.status === 'completed') {
                                                         return (
-                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                                                            </svg>
+                                                            <ChevronRight className="h-4 w-4 ml-2" />
                                                         );
                                                     } else if (nextStep && nextStep.status === 'pending') {
                                                         return (
-                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                                            </svg>
+                                                            <Zap className="h-4 w-4 ml-2" />
                                                         );
                                                     }
                                                     return (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                                                        </svg>
+                                                        <ChevronRight className="h-4 w-4 ml-2" />
                                                     );
                                                 })()}
                                             </button>
@@ -1744,9 +1714,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
                                                 >
                                                     Ver Reporte Final
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                    </svg>
+                                                    <FileText className="h-4 w-4 ml-2" />
                                                 </button>
                                                 
                                                 <button
@@ -1754,9 +1722,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     disabled={investigation?.isGeneratingReport}
                                                     className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004 12.582m-2.579 2.579a8.001 8.001 0 0112.579-2.579m-1.549-9.001L17.5 9h4.5" />
-                                                    </svg>
+                                                    <RotateCcw className="h-4 w-4 mr-2" />
                                                     {investigation?.isGeneratingReport ? 'Regenerando...' : 'Regenerar Reporte'}
                                                 </button>
                                             </div>
@@ -1767,9 +1733,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-slate-500 py-16">
                                 <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                                    </svg>
+                                    <FileText className="h-8 w-8 text-slate-400" />
                                 </div>
                                 <p className="text-lg font-medium">Selecciona un paso para ver los detalles</p>
                                 <p className="text-sm mt-1">Usa el panel de navegación para explorar la investigación</p>
