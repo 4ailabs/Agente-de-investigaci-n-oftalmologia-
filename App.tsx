@@ -128,14 +128,8 @@ ${clinicalInfo.trim()}`;
         <div className="bg-white p-4 lg:p-8 rounded-xl lg:rounded-2xl shadow-xl border-2 border-slate-200">
           {/* Header Section - Medical Professional Style */}
           <div className="text-center mb-6 lg:mb-8">
-            <div className="inline-flex items-center justify-center w-12 h-12 lg:w-20 lg:h-20 bg-slate-800 rounded-xl lg:rounded-2xl mb-4 lg:mb-6 shadow-xl">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 lg:h-10 lg:w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            </div>
-            <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">Sistema de Investigación Clínica</h2>
-            <p className="text-base lg:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-medium">
+            <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-4">Sistema de Investigación Clínica</h2>
+            <p className="text-sm lg:text-base text-slate-700 max-w-3xl mx-auto leading-relaxed font-medium">
               Plataforma especializada en oftalmología para análisis clínico basado en evidencia médica y protocolos de investigación sistemática.
             </p>
           </div>
