@@ -1888,7 +1888,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                             {/* Scroll Indicator - Top Gradient */}
                             <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-white to-transparent pointer-events-none z-10"></div>
                             
-                            <nav className="mt-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400">
+                            <nav className="mt-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400 pl-2">
                             <div className="bg-white p-3 rounded-lg border border-slate-200 mb-3 shadow-sm">
                                 <div className="flex items-center justify-between mb-2">
                                     <h3 className="text-sm font-bold text-slate-900">Plan de Investigación</h3>
