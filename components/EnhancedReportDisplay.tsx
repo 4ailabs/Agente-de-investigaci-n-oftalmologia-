@@ -1,7 +1,7 @@
 // Enhanced Report Display - Muestra reportes con fuentes médicas mejoradas
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Copy, FileText, ExternalLink, Database } from 'lucide-react';
+import { Copy, FileText, ExternalLink, Database, Search } from 'lucide-react';
 import { Source } from '../types';
 import EnhancedSourcesDisplay from './EnhancedSourcesDisplay';
 import { EnhancedSource } from '../services/enhancedMedicalSourcesService';
@@ -184,6 +184,58 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
 
         {activeTab === 'sources' && (
           <div>
+            {/* Información de búsqueda */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center">
+                <Search className="w-5 h-5 mr-2" />
+                Información de Búsqueda
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium text-blue-700">Bases de datos consultadas:</span>
+                  <ul className="mt-1 text-blue-600">
+                    <li>• PubMed (National Library of Medicine)</li>
+                    <li>• Google Scholar</li>
+                    <li>• Fuentes médicas especializadas</li>
+                  </ul>
+                </div>
+                <div>
+                  <span className="font-medium text-blue-700">Criterios de búsqueda:</span>
+                  <ul className="mt-1 text-blue-600">
+                    <li>• Artículos de los últimos 5 años</li>
+                    <li>• Revistas de alto impacto</li>
+                    <li>• Guías de práctica clínica</li>
+                    <li>• Meta-análisis y revisiones sistemáticas</li>
+                  </ul>
+                </div>
+              </div>
+              
+              {/* Estadísticas de fuentes encontradas */}
+              {enhancedSources && qualityMetrics && sourcesBreakdown && (
+                <div className="mt-4 pt-4 border-t border-blue-200">
+                  <h4 className="font-medium text-blue-700 mb-2">Resultados de la búsqueda:</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">{enhancedSources.length}</div>
+                      <div className="text-blue-500">Fuentes encontradas</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">{qualityMetrics.highQualityCount}</div>
+                      <div className="text-blue-500">Alta calidad</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">{qualityMetrics.openAccessCount}</div>
+                      <div className="text-blue-500">Acceso abierto</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-600">{qualityMetrics.recentPublications}</div>
+                      <div className="text-blue-500">Recientes</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {enhancedSources && qualityMetrics && sourcesBreakdown ? (
               <EnhancedSourcesDisplay
                 sources={enhancedSources}
