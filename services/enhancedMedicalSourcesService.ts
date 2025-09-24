@@ -3,6 +3,7 @@
 
 import { pubmedAPI, PubMedSearchResult, PubMedSearchParams } from './pubmedAPIService';
 import { generateContent } from './geminiService';
+import { multiSourceSearch, MultiSourceSearchParams, UnifiedSource } from './multiSourceSearchService';
 
 export interface EnhancedSource {
   id: string;
@@ -69,16 +70,126 @@ export class EnhancedMedicalSourcesService {
   }
 
   /**
-   * Búsqueda integrada en múltiples fuentes médicas
+   * Búsqueda integrada en múltiples fuentes médicas (ACTUALIZADA)
    */
   async searchMedicalSources(params: MedicalSearchParams): Promise<EnhancedSearchResult> {
-    console.log(`Enhanced medical search: "${params.query}"`);
-    
+    console.log(`🔍 Enhanced medical search (Multi-Source): "${params.query}"`);
+
+    const startTime = Date.now();
+
+    try {
+      // Usar el nuevo servicio multi-source
+      const multiParams: MultiSourceSearchParams = {
+        query: params.query,
+        maxResultsPerSource: Math.ceil((params.maxResults || 25) / 4), // Distribuir entre fuentes
+        maxTotalResults: params.maxResults || 25,
+        includeAbstracts: params.includeAbstract !== false,
+        onlyOpenAccess: params.requireOpenAccess,
+        onlyRecent: params.prioritizeRecent,
+        enableDeduplication: true,
+        sortBy: 'relevance',
+        prioritizeSources: ['pubmed', 'europepmc', 'semantic_scholar', 'crossref', 'google']
+      };
+
+      const multiResult = await multiSourceSearch.searchAllSources(multiParams);
+
+      // Convertir a formato EnhancedSearchResult
+      const enhancedSources = multiResult.sources.map(source => this.convertUnifiedToEnhanced(source));
+      const sortedSources = this.rankAndFilterSources(enhancedSources, params);
+      
+      // Usar métricas del multi-source search
+      const qualityMetrics = {
+        averageQuality: multiResult.qualityMetrics.averageQuality,
+        highQualityCount: multiResult.qualityMetrics.highQualityCount,
+        openAccessCount: multiResult.qualityMetrics.openAccessCount,
+        recentPublications: multiResult.qualityMetrics.recentPublications
+      };
+
+      // Convertir breakdown de fuentes
+      const sourcesBreakdown = {
+        pubmed: multiResult.sourceBreakdown.pubmed,
+        google: multiResult.sourceBreakdown.google,
+        cochrane: 0, // Se incluye en otros
+        clinical_trials: 0, // Se incluye en otros
+        other: multiResult.sourceBreakdown.europepmc +
+               multiResult.sourceBreakdown.crossref +
+               multiResult.sourceBreakdown.semantic_scholar
+      };
+
+      const result: EnhancedSearchResult = {
+        sources: sortedSources.slice(0, params.maxResults || 25),
+        totalCount: multiResult.totalFound,
+        searchQuery: params.query,
+        searchTime: multiResult.searchTime,
+        sourcesBreakdown,
+        qualityMetrics
+      };
+
+      console.log(`✅ Enhanced multi-source search completed: ${result.sources.length} sources, ${multiResult.duplicatesRemoved} duplicates removed`);
+      return result;
+
+    } catch (error) {
+      console.error('❌ Enhanced medical search failed:', error);
+
+      // Fallback al método original si falla multi-source
+      console.log('🔄 Falling back to original method...');
+      return this.searchMedicalSourcesLegacy(params);
+    }
+  }
+
+  /**
+   * Convertir UnifiedSource a EnhancedSource
+   */
+  private convertUnifiedToEnhanced(source: UnifiedSource): EnhancedSource {
+    return {
+      id: source.id,
+      title: source.title,
+      url: source.url,
+      abstract: source.abstract,
+      authors: source.authors,
+      journal: source.journal,
+      publicationDate: source.publicationDate,
+      doi: source.doi,
+      sourceType: this.mapSourceType(source.type),
+      qualityScore: source.qualityScore,
+      relevanceScore: source.relevanceScore,
+      authorityScore: source.authorityScore,
+      isOpenAccess: source.isOpenAccess,
+      meshTerms: source.meshTerms || [],
+      keywords: source.keywords
+    };
+  }
+
+  /**
+   * Mapear tipos de fuente al formato EnhancedSource
+   */
+  private mapSourceType(sourceType: string): 'pubmed' | 'google' | 'cochrane' | 'clinical_trials' | 'other' {
+    switch (sourceType) {
+      case 'pubmed':
+      case 'europepmc':
+        return 'pubmed';
+      case 'crossref':
+        return 'other';
+      case 'semantic_scholar':
+        return 'other';
+      case 'google':
+        return 'google';
+      default:
+        return 'other';
+    }
+  }
+
+  /**
+   * Método legacy para compatibilidad (RESPALDO)
+   */
+  private async searchMedicalSourcesLegacy(params: MedicalSearchParams): Promise<EnhancedSearchResult> {
+    console.log(`🔄 Using legacy enhanced medical search: "${params.query}"`);
+
     const startTime = Date.now();
     const maxResults = params.maxResults || 25;
-    
+
     try {
-      // Ejecutar búsquedas en paralelo
+      // Ejecutar búsquedas en paralelo (método original)
       const [pubmedResults, googleResults] = await Promise.allSettled([
         this.searchPubMed(params, Math.ceil(maxResults * 0.6)), // 60% PubMed
         this.searchGoogle(params, Math.ceil(maxResults * 0.4))   // 40% Google
@@ -86,21 +197,21 @@ export class EnhancedMedicalSourcesService {
 
       // Procesar resultados
       const allSources: EnhancedSource[] = [];
-      
+
       if (pubmedResults.status === 'fulfilled') {
         allSources.push(...this.convertPubMedToEnhancedSources(pubmedResults.value));
       }
-      
+
       if (googleResults.status === 'fulfilled') {
         allSources.push(...this.convertGoogleToEnhancedSources(googleResults.value));
       }
 
       // Ordenar y filtrar por calidad
       const sortedSources = this.rankAndFilterSources(allSources, params);
-      
+
       // Calcular métricas de calidad
       const qualityMetrics = this.calculateQualityMetrics(sortedSources);
-      
+
       // Contar fuentes por tipo
       const sourcesBreakdown = this.calculateSourcesBreakdown(sortedSources);
 
@@ -113,12 +224,12 @@ export class EnhancedMedicalSourcesService {
         qualityMetrics
       };
 
-      console.log(`Enhanced search completed: ${result.sources.length} sources in ${result.searchTime}ms`);
+      console.log(`✅ Legacy enhanced search completed: ${result.sources.length} sources in ${result.searchTime}ms`);
       return result;
 
     } catch (error) {
-      console.error('Enhanced medical search failed:', error);
-      throw new Error(`Medical sources search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('❌ Legacy enhanced medical search failed:', error);
+      throw new Error(`Legacy medical sources search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
