@@ -1771,15 +1771,28 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
                                         {/* Final Report Button */}
                                         {activeView.id && activeView.id === investigation.plan.length && investigation.finalReport && (
-                                            <button
-                                                onClick={() => setActiveView({ type: 'report', id: null })}
-                                                className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
-                                            >
-                                                Ver Reporte Final
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                </svg>
-                                            </button>
+                                            <div className="flex flex-col sm:flex-row gap-3">
+                                                <button
+                                                    onClick={() => setActiveView({ type: 'report', id: null })}
+                                                    className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                                                >
+                                                    Ver Reporte Final
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </button>
+                                                
+                                                <button
+                                                    onClick={handleGenerateReport}
+                                                    disabled={investigation?.isGeneratingReport}
+                                                    className="flex-1 sm:flex-none flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004 12.582m-2.579 2.579a8.001 8.001 0 0112.579-2.579m-1.549-9.001L17.5 9h4.5" />
+                                                    </svg>
+                                                    {investigation?.isGeneratingReport ? 'Regenerando...' : 'Regenerar Reporte'}
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
                                 )}
