@@ -46,15 +46,15 @@ const EnhancedSourcesDisplay: React.FC<EnhancedSourcesDisplayProps> = ({
   const getSourceTypeIcon = (sourceType: string) => {
     switch (sourceType) {
       case 'pubmed':
-        return '📚';
+        return 'P';
       case 'cochrane':
-        return '🔬';
+        return 'C';
       case 'clinical_trials':
-        return '🏥';
+        return 'T';
       case 'google':
-        return '🔍';
+        return 'G';
       default:
-        return '📄';
+        return 'S';
     }
   };
 

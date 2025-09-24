@@ -72,7 +72,7 @@ export class EnhancedMedicalSourcesService {
    * Búsqueda integrada en múltiples fuentes médicas
    */
   async searchMedicalSources(params: MedicalSearchParams): Promise<EnhancedSearchResult> {
-    console.log(`🔍 Enhanced medical search: "${params.query}"`);
+    console.log(`Enhanced medical search: "${params.query}"`);
     
     const startTime = Date.now();
     const maxResults = params.maxResults || 25;
@@ -113,11 +113,11 @@ export class EnhancedMedicalSourcesService {
         qualityMetrics
       };
 
-      console.log(`✅ Enhanced search completed: ${result.sources.length} sources in ${result.searchTime}ms`);
+      console.log(`Enhanced search completed: ${result.sources.length} sources in ${result.searchTime}ms`);
       return result;
 
     } catch (error) {
-      console.error('❌ Enhanced medical search failed:', error);
+      console.error('Enhanced medical search failed:', error);
       throw new Error(`Medical sources search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }

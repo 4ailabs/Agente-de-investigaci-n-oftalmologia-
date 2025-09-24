@@ -427,7 +427,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     
     // Envolver la llamada a la API con sistema de reintentos
     const response = await retryWithBackoff(async () => {
-      console.log(`🔄 Enviando solicitud a ${modelSelection.model}...`);
+      console.log(`Enviando solicitud a ${modelSelection.model}...`);
       return await model.generateContent(prompt);
     }, 3, 2000); // 3 reintentos con delay base de 2 segundos
     
@@ -444,7 +444,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
                           (response as any).response?.candidates?.[0]?.groundingMetadata ||
                           (response as any).groundingMetadata;
     
-    console.log('🔗 Grounding metadata:', JSON.stringify(groundingMetadata, null, 2));
+    console.log('Grounding metadata:', JSON.stringify(groundingMetadata, null, 2));
     
     // For Gemini 1.5 with GoogleSearchRetrieval, look for different structure
     const groundingChunks = groundingMetadata?.groundingChunks || 
@@ -477,8 +477,8 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
 
     console.log(`🌐 Valid web sources extracted: ${sources?.length || 0}`);
     if (sources) {
-      console.log('🔗 Source URLs:', sources.map((s: any) => s.web.uri));
-      console.log('🔗 Source details:', sources.map((s: any) => ({
+      console.log('Source URLs:', sources.map((s: any) => s.web.uri));
+      console.log('Source details:', sources.map((s: any) => ({
         title: s.web.title,
         uri: s.web.uri
       })));
@@ -580,7 +580,7 @@ export const generateContent = async (prompt: string, useSearch: boolean = false
     
     // Si es un error recuperable y no hemos agotado los reintentos, sugerir reintento
     if (shouldRetry) {
-      errorMessage += "\n\n💡 Sugerencia: Intenta nuevamente en unos segundos. El sistema reintentará automáticamente.";
+      errorMessage += "\n\nSugerencia: Intenta nuevamente en unos segundos. El sistema reintentará automáticamente.";
     }
     
     return {
@@ -601,7 +601,7 @@ export const generateContentWithEnhancedSources = async (
   context?: string
 ): Promise<GenerationResult> => {
   try {
-    console.log('🔍 Using enhanced medical sources for:', prompt.substring(0, 100));
+    console.log('Using enhanced medical sources for:', prompt.substring(0, 100));
     
     // Buscar en fuentes médicas mejoradas
     const medicalSearchResult = await enhancedMedicalSources.searchMedicalSources({
@@ -612,8 +612,8 @@ export const generateContentWithEnhancedSources = async (
       requireOpenAccess: false
     });
 
-    console.log(`📚 Found ${medicalSearchResult.sources.length} enhanced medical sources`);
-    console.log(`📊 Quality metrics:`, medicalSearchResult.qualityMetrics);
+    console.log(`Found ${medicalSearchResult.sources.length} enhanced medical sources`);
+    console.log(`Quality metrics:`, medicalSearchResult.qualityMetrics);
 
     // Convertir fuentes mejoradas al formato esperado
     const convertedSources = medicalSearchResult.sources.map((source: EnhancedSource) => ({
@@ -693,7 +693,7 @@ Utiliza estas fuentes especializadas para proporcionar una respuesta médica pre
 
     // Generar contenido con las fuentes mejoradas
     const response = await retryWithBackoff(async () => {
-      console.log(`🔄 Generating content with enhanced sources...`);
+      console.log(`Generating content with enhanced sources...`);
       return await model.generateContent(enhancedPrompt);
     }, 3, 2000);
 
@@ -725,14 +725,14 @@ Utiliza estas fuentes especializadas para proporcionar una respuesta médica pre
       sourcesBreakdown: medicalSearchResult.sourcesBreakdown
     };
 
-    console.log(`✅ Enhanced content generated with ${validatedSources.length} validated sources`);
+    console.log(`Enhanced content generated with ${validatedSources.length} validated sources`);
     return result;
 
   } catch (error) {
-    console.error('❌ Enhanced medical sources search failed:', error);
+    console.error('Enhanced medical sources search failed:', error);
     
     // Fallback al método original
-    console.log('🔄 Falling back to standard search...');
+    console.log('Falling back to standard search...');
     return generateContent(prompt, true, context);
   }
 };

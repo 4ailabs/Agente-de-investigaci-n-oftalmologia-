@@ -59,13 +59,13 @@ export class PubMedAPIService {
     if (this.cache.has(cacheKey)) {
       const cached = this.cache.get(cacheKey)!;
       if (Date.now() - cached.timestamp < this.CACHE_TTL) {
-        console.log('📚 Using cached PubMed results');
+        console.log('Using cached PubMed results');
         return cached.data;
       }
     }
 
     try {
-      console.log(`🔍 Searching PubMed: "${params.query}"`);
+      console.log(`Searching PubMed: "${params.query}"`);
       
       // Paso 1: Buscar IDs de artículos
       const searchIds = await this.searchArticleIds(params);
@@ -97,11 +97,11 @@ export class PubMedAPIService {
         timestamp: Date.now()
       });
 
-      console.log(`✅ Found ${articles.length} PubMed articles`);
+      console.log(`Found ${articles.length} PubMed articles`);
       return result;
 
     } catch (error) {
-      console.error('❌ PubMed API Error:', error);
+      console.error('PubMed API Error:', error);
       throw new Error(`PubMed search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -134,7 +134,7 @@ export class PubMedAPIService {
 
       const data = await response.json();
       const ids = data.esearchresult?.idlist || [];
-      console.log(`📚 Found ${ids.length} PubMed articles`);
+      console.log(`Found ${ids.length} PubMed articles`);
       return ids;
     } catch (error) {
       console.error('PubMed search error:', error);
