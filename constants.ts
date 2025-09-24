@@ -168,12 +168,15 @@ Debes proporcionar un análisis EXHAUSTIVO y DETALLADO siguiendo esta estructura
 - Gaps de información identificados que requieren investigación adicional
 - **Integración del Feedback del Especialista:** Si hay feedback del especialista disponible, explica cómo se utilizó para dirigir la investigación y cómo la evidencia encontrada valida, refuta o complementa las observaciones del especialista
 
-**LONGITUD REQUERIDA:** Tu respuesta debe ser EXTENSA y DETALLADA (mínimo 1500 palabras), proporcionando análisis profundo y razonamiento clínico exhaustivo.
+**LONGITUD REQUERIDA:** Tu respuesta debe ser EXTENSA y DETALLADA, proporcionando análisis profundo y razonamiento clínico exhaustivo. No incluyas mensajes sobre límites de palabras o finalización automática.
 
 **IMPORTANTE:** 
 - NO incluyas referencias o fuentes en el texto de tu respuesta
 - NO escribas "Fuentes:" seguido de texto
 - NO incluyas citas o referencias bibliográficas en el contenido
+- NO incluyas mensajes como "Se ha alcanzado la longitud requerida" o "Se ha proporcionado un análisis exhaustivo"
+- NO incluyas mensajes de finalización automática o límites de palabras
+- Enfócate únicamente en el contenido médico relevante
 - Las fuentes se manejan automáticamente por el sistema en la sección "Fuentes Consultadas"
 - Enfócate únicamente en el contenido clínico y el razonamiento médico
 - El sistema se encarga de mostrar las fuentes de forma separada y clickeable
