@@ -384,16 +384,17 @@ El reporte DEBE seguir esta estructura médica especializada:
 - **Recomendaciones para Profundización:** Investigación adicional sugerida
 
 ## 8. REFERENCIAS MÉDICAS CONSOLIDADAS
-**IMPORTANTE:** Incluye una sección de referencias al final del reporte con las fuentes más relevantes utilizadas. Formato cada referencia con número y enlace cuando sea posible.
+**IMPORTANTE:** Solo incluye esta sección si tienes fuentes reales disponibles. Si no tienes fuentes reales, omite completamente esta sección.
 
-**Formato de referencias:**
-1. [Apellido, A. (Año). Título del artículo. Nombre de la revista, Volumen(Número), páginas. DOI: 10.xxxx/xxxxx]
-2. [Apellido, A. (Año). Título del artículo. Nombre de la revista, Volumen(Número), páginas. URL: https://...]
-3. [Apellido, A. (Año). Título del artículo. Nombre de la revista, Volumen(Número), páginas. PMID: xxxxxxxx]
+**Si tienes fuentes reales, incluye:**
+- Referencias con formato académico completo
+- Enlaces y DOI cuando esté disponible
+- Solo fuentes que realmente se consultaron
 
-**Incluye al menos 5-10 referencias de alta calidad** que respalden los hallazgos principales del reporte.
-
-**CRÍTICO:** NO uses ejemplos de referencias. Debes incluir las referencias REALES de las fuentes que encontraste durante la investigación. Si no tienes acceso a las fuentes completas, incluye al menos el título, autores y revista de las fuentes que consultaste.
+**CRÍTICO:** 
+- NO cites referencias con números [1, 2, 3] si no tienes las fuentes reales
+- NO incluyas esta sección si no hay fuentes reales disponibles
+- NO inventes referencias o menciones fuentes que no existen
 
 **BÚSQUEDA DIRIGIDA PARA REPORTE:**
 Utiliza la búsqueda para encontrar evidencia ESPECÍFICA para:
@@ -420,6 +421,8 @@ El reporte final debe ser DETALLADO y BASADO EN EVIDENCIA REAL:
 - **NO incluyas secciones sobre "proceso de búsqueda" o "metadatos de investigación"**
 - **COMPLETA TODAS LAS SECCIONES del reporte sin dejar notas de expansión**
 - **NO incluyas texto entre paréntesis con notas internas o requerimientos**
+- **NO cites referencias con números [1, 2, 3] si no tienes las fuentes reales**
+- **Si no hay fuentes reales, NO incluyas la sección de referencias**
 - Evaluación crítica de limitaciones y incertidumbres
 - Recomendaciones específicas y accionables
 
@@ -440,5 +443,7 @@ El reporte final debe ser DETALLADO y BASADO EN EVIDENCIA REAL:
 - Escribe el reporte completo sin dejar secciones incompletas o con notas de expansión
 - **CRÍTICO:** El reporte debe estar COMPLETO y TERMINADO, no debe contener texto como "(Esta sección debe expandirse...)" o "(Se requiere referencia específica...)"
 - **OBLIGATORIO:** Incluye todas las secciones del reporte (1-8) con contenido real, no notas de expansión
+- **REFERENCIAS:** Solo incluye la sección de referencias si tienes fuentes reales. Si no las tienes, omite completamente esta sección
+- **NO cites referencias con números** si no puedes proporcionar las fuentes completas
 `;
 };
