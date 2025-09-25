@@ -32,10 +32,10 @@ const Header: React.FC<{
                 {/* Title - Medical Professional Style */}
                 <div className="flex flex-col">
                     <h1 className="text-xs lg:text-lg font-bold text-slate-900 leading-tight">
-                        Sistema de Investigación Clínica
+                        Agente Oftalmología
                     </h1>
                     <p className="text-xs text-slate-600 font-medium">
-                        Oftalmología • Medicina Basada en Evidencia
+                        Investigación Clínica
                     </p>
                 </div>
             </div>
