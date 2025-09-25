@@ -107,53 +107,49 @@ const MobileContent: React.FC = () => (
       <div className="flex items-start space-x-2">
         <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
         <div>
-          <p className="text-sm font-semibold text-amber-800 mb-1">⚠️ Aviso Médico</p>
+          <p className="text-sm font-semibold text-amber-800 mb-1">Aviso Médico</p>
           <p className="text-xs text-amber-700">Este análisis es generado por IA y no reemplaza el juicio clínico profesional.</p>
         </div>
       </div>
     </div>
 
     <div className="space-y-3">
-      <h3 className="font-semibold text-base">¿Cómo Funciona?</h3>
-      <p className="text-sm">Esta herramienta especializada en oftalmología sigue un proceso de investigación médica estructurado en tres fases:</p>
+      <h3 className="font-semibold text-base">Modos de Investigación</h3>
+      <p className="text-sm">La app ofrece 4 modos de investigación especializados:</p>
       
       <div className="space-y-3">
-        <div className="flex items-start space-x-3">
-          <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</div>
-          <div>
-            <h4 className="font-medium text-sm">Planificación</h4>
-            <p className="text-xs text-slate-600">Analiza tus síntomas y crea un plan de investigación paso a paso</p>
-          </div>
+        <div className="bg-blue-50 p-3 rounded-lg">
+          <h4 className="font-medium text-sm text-blue-800">🤖 Deep Research (3-5 min)</h4>
+          <p className="text-xs text-blue-700">35+ búsquedas automáticas en PubMed, Crossref, Google Scholar. Ideal para urgencias y casos complejos.</p>
         </div>
         
-        <div className="flex items-start space-x-3">
-          <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</div>
-          <div>
-            <h4 className="font-medium text-sm">Investigación</h4>
-            <p className="text-xs text-slate-600">Busca evidencia médica actualizada de fuentes científicas confiables</p>
-          </div>
+        <div className="bg-purple-50 p-3 rounded-lg">
+          <h4 className="font-medium text-sm text-purple-800">⚡ Híbrido (5-8 min)</h4>
+          <p className="text-xs text-purple-700">Combina Deep Research + transparencia del proceso. Perfecto para enseñanza y documentación.</p>
         </div>
         
-        <div className="flex items-start space-x-3">
-          <div className="w-6 h-6 bg-purple-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</div>
-          <div>
-            <h4 className="font-medium text-sm">Síntesis</h4>
-            <p className="text-xs text-slate-600">Genera un reporte final con diagnósticos diferenciales y recomendaciones</p>
-          </div>
+        <div className="bg-green-50 p-3 rounded-lg">
+          <h4 className="font-medium text-sm text-green-800">🎯 Manual (10-20 min)</h4>
+          <p className="text-xs text-green-700">Control total paso a paso. Ideal para casos simples conocidos y aprendizaje activo.</p>
+        </div>
+        
+        <div className="bg-orange-50 p-3 rounded-lg">
+          <h4 className="font-medium text-sm text-orange-800">🔮 Automático (Variable)</h4>
+          <p className="text-xs text-orange-700">El sistema selecciona automáticamente el mejor modo según la complejidad del caso.</p>
         </div>
       </div>
     </div>
 
     <div className="space-y-3">
-      <h3 className="font-semibold text-base">Navegación Móvil</h3>
-      <div className="bg-blue-50 p-3 rounded-lg">
-        <p className="text-xs text-blue-800 mb-2"><strong>Consejo:</strong> Puedes deslizar hacia izquierda/derecha en el área de contenido para navegar entre pasos completados.</p>
-        <div className="flex items-center justify-center space-x-4 text-xs text-blue-600">
-          <span>← Paso anterior</span>
-          <span>•</span>
-          <span>Paso siguiente →</span>
-        </div>
-      </div>
+      <h3 className="font-semibold text-base">Funcionalidades Principales</h3>
+      <ul className="text-xs space-y-1 pl-4">
+        <li>• <strong>Análisis de imágenes médicas:</strong> OCT, fundus, angiografía</li>
+        <li>• <strong>Búsqueda multi-fuente:</strong> PubMed, Europe PMC, Crossref, Semantic Scholar</li>
+        <li>• <strong>25+ referencias reales:</strong> Formato Vancouver automático</li>
+        <li>• <strong>Análisis bayesiano:</strong> Probabilidades diagnósticas</li>
+        <li>• <strong>Historial de investigaciones:</strong> Acceso rápido a casos anteriores</li>
+        <li>• <strong>Interfaz responsive:</strong> Optimizada para móvil y desktop</li>
+      </ul>
     </div>
 
     <div className="space-y-3">
@@ -164,7 +160,20 @@ const MobileContent: React.FC = () => (
         <li>• Guías clínicas oficiales (AAO, ESCRS)</li>
         <li>• Revistas médicas revisadas por pares</li>
         <li>• Bases de datos especializadas</li>
+        <li>• Estudios de los últimos 5 años</li>
       </ul>
+    </div>
+
+    <div className="space-y-3">
+      <h3 className="font-semibold text-base">Navegación</h3>
+      <div className="bg-blue-50 p-3 rounded-lg">
+        <p className="text-xs text-blue-800 mb-2"><strong>Consejo:</strong> Usa el sidebar para navegar entre pasos de investigación completados.</p>
+        <div className="flex items-center justify-center space-x-4 text-xs text-blue-600">
+          <span>← Paso anterior</span>
+          <span>•</span>
+          <span>Paso siguiente →</span>
+        </div>
+      </div>
     </div>
   </div>
 );
@@ -173,7 +182,7 @@ const MobileContent: React.FC = () => (
 const DesktopContent: React.FC = () => (
   <div className="prose max-w-none text-slate-800">
     <p>
-      Este agente de IA no es un simple chatbot. Es una herramienta diseñada para emular el proceso de investigación de un experto clínico, siguiendo un protocolo estructurado y transparente para garantizar la calidad y fiabilidad de la información.
+      Este agente de IA especializado en oftalmología no es un simple chatbot. Es una herramienta diseñada para emular el proceso de investigación de un experto clínico, siguiendo un protocolo estructurado y transparente para garantizar la calidad y fiabilidad de la información médica.
     </p>
 
     <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 my-6">
@@ -192,26 +201,53 @@ const DesktopContent: React.FC = () => (
       </div>
     </div>
 
-    <h3 className="font-semibold text-slate-800 mt-6">El Proceso de Investigación en Tres Fases</h3>
-    <ol>
-      <li><strong>Fase 1: Planificación.</strong> El agente analiza tu consulta y crea un plan de investigación paso a paso estructurado.</li>
-      <li><strong>Fase 2: Ejecución.</strong> Ejecuta cada paso buscando en fuentes médicas confiables y construyendo contexto acumulativo.</li>
-      <li><strong>Fase 3: Síntesis.</strong> Consolida toda la información en un reporte final con diagnósticos diferenciales y recomendaciones.</li>
-    </ol>
+    <h3 className="font-semibold text-slate-800 mt-6">Modos de Investigación Disponibles</h3>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <h4 className="font-semibold text-blue-800 mb-2">🤖 Deep Research (3-5 min)</h4>
+        <p className="text-sm text-blue-700">35+ búsquedas automáticas en PubMed, Crossref, Google Scholar. Ideal para urgencias oftalmológicas y casos complejos.</p>
+      </div>
+      <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+        <h4 className="font-semibold text-purple-800 mb-2">⚡ Híbrido (5-8 min)</h4>
+        <p className="text-sm text-purple-700">Combina Deep Research + transparencia del proceso. Perfecto para enseñanza y documentación clínica.</p>
+      </div>
+      <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+        <h4 className="font-semibold text-green-800 mb-2">🎯 Manual (10-20 min)</h4>
+        <p className="text-sm text-green-700">Control total paso a paso. Ideal para casos simples conocidos y aprendizaje activo.</p>
+      </div>
+      <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+        <h4 className="font-semibold text-orange-800 mb-2">🔮 Automático (Variable)</h4>
+        <p className="text-sm text-orange-700">El sistema selecciona automáticamente el mejor modo según la complejidad del caso.</p>
+      </div>
+    </div>
+
+    <h3 className="font-semibold text-slate-800 mt-6">Funcionalidades Principales</h3>
+    <ul className="space-y-2">
+      <li><strong>Análisis de Imágenes Médicas:</strong> OCT, fundus, angiografía fluoresceínica, tomografía de coherencia óptica</li>
+      <li><strong>Búsqueda Multi-Fuente:</strong> PubMed, Europe PMC, Crossref, Semantic Scholar, Google Scholar</li>
+      <li><strong>25+ Referencias Reales:</strong> Formato Vancouver automático con PMID y DOI</li>
+      <li><strong>Análisis Bayesiano:</strong> Probabilidades diagnósticas y diagnósticos diferenciales</li>
+      <li><strong>Historial de Investigaciones:</strong> Acceso rápido a casos anteriores y reportes</li>
+      <li><strong>Interfaz Responsive:</strong> Optimizada para móvil, tablet y desktop</li>
+      <li><strong>Sidebar de Navegación:</strong> Acceso rápido a pasos de investigación completados</li>
+    </ul>
 
     <h3 className="font-semibold text-slate-800 mt-6">Garantías de Calidad Médica</h3>
-    <ul>
-      <li><strong>Validación Automática de Fuentes:</strong> Sistema de scoring de autoridad médica (0-100 puntos).</li>
-      <li><strong>Detección de Contradicciones:</strong> Análisis automático que prioriza evidencia de mayor calidad.</li>
-      <li><strong>Filtrado Inteligente:</strong> Eliminación automática de fuentes no confiables.</li>
+    <ul className="space-y-2">
+      <li><strong>Validación Automática de Fuentes:</strong> Sistema de scoring de autoridad médica (0-100 puntos)</li>
+      <li><strong>Detección de Contradicciones:</strong> Análisis automático que prioriza evidencia de mayor calidad</li>
+      <li><strong>Filtrado Inteligente:</strong> Eliminación automática de fuentes no confiables</li>
+      <li><strong>Referencias Específicas:</strong> Todas las referencias son específicas del tema médico investigado</li>
+      <li><strong>Actualización Continua:</strong> Prioriza evidencia de los últimos 5 años</li>
     </ul>
 
     <h3 className="font-semibold text-slate-800 mt-6">Protocolo de Fuentes Médicas</h3>
-    <ol>
+    <ol className="space-y-1">
       <li><strong>Revisiones Sistemáticas y Metaanálisis</strong> (Cochrane Library, PubMed)</li>
       <li><strong>Ensayos Clínicos Registrados</strong> (ClinicalTrials.gov)</li>
-      <li><strong>Guías de Práctica Clínica</strong> (AAO, ESCRS)</li>
-      <li><strong>Revistas Médicas Revisadas por Pares</strong></li>
+      <li><strong>Guías de Práctica Clínica</strong> (AAO, ESCRS, AAN)</li>
+      <li><strong>Revistas Médicas Revisadas por Pares</strong> (Nature, Science, NEJM, JAMA)</li>
+      <li><strong>Bases de Datos Especializadas</strong> (Europe PMC, Crossref, Semantic Scholar)</li>
     </ol>
   </div>
 );
