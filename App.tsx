@@ -150,7 +150,9 @@ ${clinicalInfo.trim()}`;
   const isFormInvalid = isLoading || !clinicalInfo.trim() || age <= 0 || !sex;
 
   return (
-     <main className="bg-slate-50 flex items-center justify-center py-4 lg:py-8 px-4">
+    <div className="min-h-screen bg-slate-50">
+      {/* Desktop Layout */}
+      <div className="hidden lg:flex items-center justify-center py-4 lg:py-8 px-4">
         <div className="w-full max-w-5xl bg-white rounded-2xl border border-slate-200 overflow-hidden">
           {/* Header Section - Enhanced Medical Professional Style */}
           <div className="bg-gradient-to-r from-slate-600 to-slate-700 px-8 py-8 text-center">
@@ -158,7 +160,7 @@ ${clinicalInfo.trim()}`;
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 shadow-lg">
                 <ClipboardCheck className="h-7 w-7 text-slate-800" />
               </div>
-            <div>
+              <div>
                 <h1 className="text-2xl lg:text-3xl font-bold text-white">Sistema de Investigación Clínica</h1>
                 <p className="text-slate-200 text-sm lg:text-base font-medium">Especializada en Oftalmología</p>
               </div>
@@ -459,7 +461,275 @@ ${clinicalInfo.trim()}`;
           )}
           </div>
         </div>
-    </main>
+      </div>
+
+      {/* Mobile Layout - Optimized without nested cards */}
+      <div className="lg:hidden">
+        {/* Mobile Header - Compact */}
+        <div className="bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-6 text-center">
+          <div className="flex items-center justify-center mb-3">
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3 shadow-lg">
+              <ClipboardCheck className="h-6 w-6 text-slate-800" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">Investigación Clínica</h1>
+              <p className="text-slate-200 text-sm font-medium">Oftalmología</p>
+            </div>
+          </div>
+          <p className="text-slate-200 text-sm leading-relaxed">
+            Análisis basado en evidencia médica
+          </p>
+        </div>
+
+        {/* Mobile Content - Direct, no nested cards */}
+        <div className="px-4 py-6 space-y-6">
+          {/* Mode Selector - Mobile */}
+          <div className="">
+            <h3 className="text-lg font-bold text-slate-800 mb-4 text-center">Selecciona el Tipo de Evaluación</h3>
+            <div className="grid grid-cols-1 gap-3">
+              <button
+                type="button"
+                onClick={() => setInputMode('quick')}
+                className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${inputMode === 'quick' ? 'border-slate-800 bg-white shadow-md' : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'}`}
+              >
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                    <Zap className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <h4 className="text-base font-bold text-slate-900">Consulta Rápida</h4>
+                </div>
+                <p className="text-slate-600 text-sm">
+                  Ingreso rápido para casos urgentes (~2 min)
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setInputMode('structured')}
+                className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${inputMode === 'structured' ? 'border-slate-800 bg-white shadow-md' : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'}`}
+              >
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                    <ClipboardCheck className="h-5 w-5 text-green-600" />
+                  </div>
+                  <h4 className="text-base font-bold text-slate-900">Evaluación Completa</h4>
+                </div>
+                <p className="text-slate-600 text-sm">
+                  Formulario completo y detallado (~5-7 min)
+                </p>
+              </button>
+            </div>
+          </div>
+
+          {/* Research Mode Selector - Mobile */}
+          {showModeSelector && (
+            <ResearchModeSelector
+              onModeSelect={handleModeSelection}
+              patientData={{
+                age: age || undefined,
+                sex: sex || undefined,
+                clinicalInfo: clinicalInfo || undefined
+              }}
+              isLoading={isLoading}
+            />
+          )}
+
+          {/* Quick Form - Mobile (Direct, no container card) */}
+          {!showModeSelector && inputMode === 'quick' && (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Patient Data Header */}
+              <div className="mb-4">
+                <h4 className="text-lg font-bold text-slate-800 mb-1">Datos del Paciente</h4>
+                <p className="text-slate-600 text-sm">Complete la información para iniciar la investigación.</p>
+              </div>
+
+              {/* Age and Sex - Mobile */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="age-mobile" className="block text-sm font-bold text-slate-800">
+                    <div className="flex items-center">
+                      <div className="w-5 h-5 bg-blue-100 rounded-md flex items-center justify-center mr-2">
+                        <Clock className="h-3 w-3 text-blue-600" />
+                      </div>
+                      Edad <span className="text-red-600">*</span>
+                    </div>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      id="age-mobile"
+                      value={age || ''}
+                      onChange={(e) => setAge(parseInt(e.target.value) || 0)}
+                      className="w-full px-3 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all text-sm font-medium shadow-sm hover:border-slate-400 bg-white"
+                      placeholder="65"
+                      min="1"
+                      max="120"
+                      required
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <span className="text-slate-500 text-sm font-medium">años</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="sex-mobile" className="block text-sm font-bold text-slate-800">
+                    <div className="flex items-center">
+                      <div className="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center mr-2">
+                        <Circle className="h-3 w-3 text-green-600" />
+                      </div>
+                      Sexo <span className="text-red-600">*</span>
+                    </div>
+                  </label>
+                  <select
+                    id="sex-mobile"
+                    value={sex}
+                    onChange={(e) => setSex(e.target.value as 'M' | 'F' | '')}
+                    className="w-full px-3 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all text-sm font-medium shadow-sm hover:border-slate-400 bg-white"
+                    required
+                  >
+                    <option value="" disabled>Seleccionar...</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Clinical Info - Mobile */}
+              <div className="space-y-3">
+                <label htmlFor="clinical-info-mobile" className="block text-sm font-bold text-slate-800">
+                  <div className="flex items-center">
+                    <div className="w-5 h-5 bg-purple-100 rounded-md flex items-center justify-center mr-2">
+                      <ClipboardCheck className="h-3 w-3 text-purple-600" />
+                    </div>
+                    Motivo de Consulta y Antecedentes <span className="text-red-600">*</span>
+                  </div>
+                </label>
+
+                {/* Info Box - Mobile */}
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 mb-3">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="w-4 h-4 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h5 className="text-sm font-semibold text-blue-800">Información Requerida</h5>
+                      <p className="text-xs text-blue-700 mt-1">
+                        Incluya síntomas, tiempo de evolución, antecedentes, medicamentos y alergias.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <textarea
+                  id="clinical-info-mobile"
+                  value={clinicalInfo}
+                  onChange={(e) => setClinicalInfo(e.target.value)}
+                  rows={6}
+                  className="w-full px-3 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all text-sm resize-none font-medium shadow-sm hover:border-slate-400 bg-white"
+                  placeholder="Ejemplo: Paciente presenta disminución de agudeza visual bilateral de 3 semanas de evolución...&#10;&#10;Antecedentes: Diabetes mellitus tipo 2, hipertensión arterial.&#10;&#10;Medicamentos: Metformina 850mg BID, Enalapril 10mg QD"
+                  required
+                />
+
+                {/* Capture Tools - Mobile */}
+                <div className="mt-4">
+                  <h5 className="text-sm font-semibold text-slate-700 mb-2">Herramientas Adicionales</h5>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAudioRecorder(!showAudioRecorder)}
+                      className={`flex items-center justify-center space-x-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 border-2 ${showAudioRecorder ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}
+                    >
+                      <Mic className="h-4 w-4" />
+                      <span>Audio</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowDocumentCapture(!showDocumentCapture)}
+                      className={`flex items-center justify-center space-x-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 border-2 ${showDocumentCapture ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}
+                    >
+                      <Camera className="h-4 w-4" />
+                      <span>Cámara</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Audio Recorder - Mobile */}
+                {showAudioRecorder && (
+                  <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <AudioRecorder
+                      onTranscriptionComplete={handleAudioTranscription}
+                      onError={handleAudioError}
+                    />
+                  </div>
+                )}
+
+                {/* Document Capture - Mobile */}
+                {showDocumentCapture && (
+                  <div className="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                    <DocumentCapture
+                      onDataExtracted={handleDocumentDataExtracted}
+                      onError={handleDocumentError}
+                      isLoading={isLoading}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Submit Section - Mobile */}
+              <div className="pt-6 border-t border-slate-200">
+                <div className="text-center mb-4">
+                  <h5 className="text-base font-bold text-slate-800 mb-1">¿Listo para Iniciar?</h5>
+                  <p className="text-sm text-slate-600">
+                    Se creará un protocolo de investigación personalizado
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isFormInvalid}
+                  className="w-full flex justify-center items-center py-4 px-6 bg-slate-800 text-white font-bold rounded-xl shadow-lg hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500/50 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-base"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="animate-spin h-5 w-5 mr-3" />
+                      Creando Protocolo...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="h-5 w-5 mr-3" />
+                      Iniciar Investigación Clínica
+                    </>
+                  )}
+                </button>
+
+                {isFormInvalid && (
+                  <div className="mt-3 flex items-center justify-center text-sm text-slate-500">
+                    <AlertTriangle className="h-4 w-4 mr-1" />
+                    Complete todos los campos requeridos
+                  </div>
+                )}
+              </div>
+            </form>
+          )}
+
+          {/* Enhanced Form - Mobile */}
+          {!showModeSelector && inputMode === 'structured' && (
+            <div className="">
+              <EnhancedDataForm
+                onSubmit={onSubmitEnhanced}
+                onCancel={() => setInputMode('quick')}
+                initialData={extractedData || undefined}
+                isLoading={isLoading}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
