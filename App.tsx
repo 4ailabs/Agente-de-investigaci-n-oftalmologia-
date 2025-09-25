@@ -1449,6 +1449,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             content: investigation.finalReport,
             sources: investigation.finalReportSources,
             status: investigation.isGeneratingReport ? 'in-progress' : 'completed',
+            feedback: null
         };
     }
     const step = investigation.plan.find(s => s.id === activeView.id);
@@ -1457,7 +1458,8 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
         title: `Paso ${step.id}: ${step.title}`,
         content: step.result,
         sources: step.sources,
-        status: step.status
+        status: step.status,
+        feedback: step.feedback
     };
   }, [investigation, activeView]);
 
