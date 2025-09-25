@@ -36,9 +36,9 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         onClick={handleClose}
       >
         <div 
-          className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transform transition-transform duration-300 ${
-            isOpen ? 'translate-y-0' : 'translate-y-full'
-          } max-h-[95vh] min-h-[70vh] flex flex-col`}
+          className={`fixed top-1/2 left-4 right-4 bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ${
+            isOpen ? 'translate-y-[-50%] scale-100 opacity-100' : 'translate-y-[-50%] scale-95 opacity-0'
+          } max-h-[90vh] flex flex-col`}
           onClick={e => e.stopPropagation()}
         >
           {/* Handle bar */}
@@ -59,7 +59,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div>
           
           {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto px-6 py-6 scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-200" style={{ maxHeight: 'calc(95vh - 120px)' }}>
+          <div className="flex-1 overflow-y-auto px-6 py-6 scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-200">
             <MobileContent />
           </div>
         </div>
