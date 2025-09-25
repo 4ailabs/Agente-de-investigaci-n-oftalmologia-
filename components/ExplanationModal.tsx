@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, AlertTriangle } from 'lucide-react';
+import { X, AlertTriangle, Bot, Zap, Target, Sparkles } from 'lucide-react';
 
 const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,7 +59,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div>
           
           {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto px-4 py-4">
+          <div className="flex-1 overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100">
             <MobileContent />
           </div>
         </div>
@@ -92,7 +92,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </button>
         </div>
         
-        <div className="overflow-y-auto p-6">
+        <div className="overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100">
           <DesktopContent />
         </div>
       </div>
@@ -119,22 +119,34 @@ const MobileContent: React.FC = () => (
       
       <div className="space-y-3">
         <div className="bg-blue-50 p-3 rounded-lg">
-          <h4 className="font-medium text-sm text-blue-800">🤖 Deep Research (3-5 min)</h4>
+          <h4 className="font-medium text-sm text-blue-800 flex items-center">
+            <Bot className="h-3 w-3 mr-1" />
+            Deep Research (3-5 min)
+          </h4>
           <p className="text-xs text-blue-700">35+ búsquedas automáticas en PubMed, Crossref, Google Scholar. Ideal para urgencias y casos complejos.</p>
         </div>
         
         <div className="bg-purple-50 p-3 rounded-lg">
-          <h4 className="font-medium text-sm text-purple-800">⚡ Híbrido (5-8 min)</h4>
+          <h4 className="font-medium text-sm text-purple-800 flex items-center">
+            <Zap className="h-3 w-3 mr-1" />
+            Híbrido (5-8 min)
+          </h4>
           <p className="text-xs text-purple-700">Combina Deep Research + transparencia del proceso. Perfecto para enseñanza y documentación.</p>
         </div>
         
         <div className="bg-green-50 p-3 rounded-lg">
-          <h4 className="font-medium text-sm text-green-800">🎯 Manual (10-20 min)</h4>
+          <h4 className="font-medium text-sm text-green-800 flex items-center">
+            <Target className="h-3 w-3 mr-1" />
+            Manual (10-20 min)
+          </h4>
           <p className="text-xs text-green-700">Control total paso a paso. Ideal para casos simples conocidos y aprendizaje activo.</p>
         </div>
         
         <div className="bg-orange-50 p-3 rounded-lg">
-          <h4 className="font-medium text-sm text-orange-800">🔮 Automático (Variable)</h4>
+          <h4 className="font-medium text-sm text-orange-800 flex items-center">
+            <Sparkles className="h-3 w-3 mr-1" />
+            Automático (Variable)
+          </h4>
           <p className="text-xs text-orange-700">El sistema selecciona automáticamente el mejor modo según la complejidad del caso.</p>
         </div>
       </div>
@@ -204,19 +216,31 @@ const DesktopContent: React.FC = () => (
     <h3 className="font-semibold text-slate-800 mt-6">Modos de Investigación Disponibles</h3>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
       <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h4 className="font-semibold text-blue-800 mb-2">🤖 Deep Research (3-5 min)</h4>
+        <h4 className="font-semibold text-blue-800 mb-2 flex items-center">
+          <Bot className="h-4 w-4 mr-2" />
+          Deep Research (3-5 min)
+        </h4>
         <p className="text-sm text-blue-700">35+ búsquedas automáticas en PubMed, Crossref, Google Scholar. Ideal para urgencias oftalmológicas y casos complejos.</p>
       </div>
       <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-        <h4 className="font-semibold text-purple-800 mb-2">⚡ Híbrido (5-8 min)</h4>
+        <h4 className="font-semibold text-purple-800 mb-2 flex items-center">
+          <Zap className="h-4 w-4 mr-2" />
+          Híbrido (5-8 min)
+        </h4>
         <p className="text-sm text-purple-700">Combina Deep Research + transparencia del proceso. Perfecto para enseñanza y documentación clínica.</p>
       </div>
       <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-        <h4 className="font-semibold text-green-800 mb-2">🎯 Manual (10-20 min)</h4>
+        <h4 className="font-semibold text-green-800 mb-2 flex items-center">
+          <Target className="h-4 w-4 mr-2" />
+          Manual (10-20 min)
+        </h4>
         <p className="text-sm text-green-700">Control total paso a paso. Ideal para casos simples conocidos y aprendizaje activo.</p>
       </div>
       <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-        <h4 className="font-semibold text-orange-800 mb-2">🔮 Automático (Variable)</h4>
+        <h4 className="font-semibold text-orange-800 mb-2 flex items-center">
+          <Sparkles className="h-4 w-4 mr-2" />
+          Automático (Variable)
+        </h4>
         <p className="text-sm text-orange-700">El sistema selecciona automáticamente el mejor modo según la complejidad del caso.</p>
       </div>
     </div>
