@@ -9,7 +9,12 @@ import {
   AlertTriangle,
   Building2,
   GraduationCap,
-  ChevronRight
+  ChevronRight,
+  FileText,
+  Bot,
+  Zap,
+  Target,
+  Sparkles
 } from 'lucide-react';
 
 interface ResearchModeSelectorProps {
@@ -269,31 +274,46 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
           <div className="mt-4">
             {/* Examples section */}
             <div className="mb-6 p-4 bg-slate-50 rounded-lg border">
-              <h5 className="text-sm font-bold text-slate-800 mb-3">📝 Ejemplos Clínicos Específicos</h5>
+              <h5 className="text-sm font-bold text-slate-800 mb-3 flex items-center">
+                <FileText className="h-4 w-4 mr-2 text-blue-600" />
+                Ejemplos Clínicos Específicos
+              </h5>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
                 <div className="space-y-2">
-                  <div className="font-medium text-blue-700">🤖 Deep Research (3-5 min):</div>
+                  <div className="font-medium text-blue-700 flex items-center">
+                    <Bot className="h-3 w-3 mr-1" />
+                    Deep Research (3-5 min):
+                  </div>
                   <div className="text-slate-600 pl-2">• "Pérdida visual súbita + uso de poppers"</div>
                   <div className="text-slate-600 pl-2">• "Uveítis + artritis reumatoide activa"</div>
                   <div className="text-slate-600 pl-2">• "Manifestaciones oculares de Behçet"</div>
                   <div className="text-slate-600 pl-2">• "Neuropatía óptica bilateral en joven"</div>
                 </div>
                 <div className="space-y-2">
-                  <div className="font-medium text-purple-700">⚡ Híbrido (5-8 min):</div>
+                  <div className="font-medium text-purple-700 flex items-center">
+                    <Zap className="h-3 w-3 mr-1" />
+                    Híbrido (5-8 min):
+                  </div>
                   <div className="text-slate-600 pl-2">• "Retinopatía diabética + nuevos síntomas"</div>
                   <div className="text-slate-600 pl-2">• "Glaucoma juvenil familiar"</div>
                   <div className="text-slate-600 pl-2">• "Casos de enseñanza para residentes"</div>
                   <div className="text-slate-600 pl-2">• "Degeneración macular atípica"</div>
                 </div>
                 <div className="space-y-2">
-                  <div className="font-medium text-green-700">🎯 Manual (10-20 min):</div>
+                  <div className="font-medium text-green-700 flex items-center">
+                    <Target className="h-3 w-3 mr-1" />
+                    Manual (10-20 min):
+                  </div>
                   <div className="text-slate-600 pl-2">• "Conjuntivitis alérgica estacional"</div>
                   <div className="text-slate-600 pl-2">• "Orzuelo recurrente"</div>
                   <div className="text-slate-600 pl-2">• "Ametropía simple"</div>
                   <div className="text-slate-600 pl-2">• "Síndrome de ojo seco típico"</div>
                 </div>
                 <div className="space-y-2">
-                  <div className="font-medium text-orange-700">🔮 Auto (Variable):</div>
+                  <div className="font-medium text-orange-700 flex items-center">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Auto (Variable):
+                  </div>
                   <div className="text-slate-600 pl-2">• Cuando no sabes la complejidad</div>
                   <div className="text-slate-600 pl-2">• Casos nuevos o atípicos</div>
                   <div className="text-slate-600 pl-2">• Workflow clínico rutinario</div>
