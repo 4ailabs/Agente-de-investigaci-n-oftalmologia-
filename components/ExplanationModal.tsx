@@ -38,7 +38,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div 
           className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transform transition-transform duration-300 ${
             isOpen ? 'translate-y-0' : 'translate-y-full'
-          } max-h-[90vh] flex flex-col`}
+          } h-[95vh] flex flex-col`}
           onClick={e => e.stopPropagation()}
         >
           {/* Handle bar */}
@@ -59,7 +59,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div>
           
           {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto px-6 py-6 scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-200">
+          <div className="flex-1 overflow-y-auto px-6 py-6 scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-200 min-h-0">
             <MobileContent />
           </div>
         </div>
@@ -76,7 +76,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       onClick={handleClose}
     >
       <div 
-        className={`bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden mx-4 transform transition-all duration-300 ${
+        className={`bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[95vh] overflow-hidden mx-4 transform transition-all duration-300 ${
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
         onClick={e => e.stopPropagation()}
@@ -92,7 +92,7 @@ const ExplanationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </button>
         </div>
         
-        <div className="overflow-y-auto p-8 scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-200">
+        <div className="overflow-y-auto p-8 scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-200 flex-1 min-h-0">
           <DesktopContent />
         </div>
       </div>
