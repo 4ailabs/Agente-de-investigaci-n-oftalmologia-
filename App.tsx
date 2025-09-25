@@ -50,7 +50,11 @@ import {
   ArrowUp,
   ArrowDown,
   ChevronRight,
-  RotateCcw
+  RotateCcw,
+  User,
+  TrendingUp,
+  Globe,
+  ChevronLeft
 } from 'lucide-react';
 
 // Lazy load heavy components
