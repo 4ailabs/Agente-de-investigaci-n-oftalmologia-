@@ -259,6 +259,20 @@ export class ResearchOrchestrator {
       finalReport: result.content, // Deep Research result IS the final report
       finalReportSources: result.sources,
       isGeneratingReport: false,
+      enhancedSources: result.enhancedSources || [],
+      qualityMetrics: result.qualityMetrics || {
+        averageQuality: 0,
+        highQualityCount: 0,
+        openAccessCount: 0,
+        recentPublications: 0
+      },
+      sourcesBreakdown: result.sourcesBreakdown || {
+        pubmed: 0,
+        google: 0,
+        cochrane: 0,
+        clinical_trials: 0,
+        other: 0
+      },
       researchMetadata: {
         mode: 'deep_research',
         provider: result.metadata.provider,

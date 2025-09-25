@@ -1901,7 +1901,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     Metodología sistemática
                                 </p>
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                                 {investigation.plan.map((step, index) => (
                                     <div key={step.id} className="relative">
                                         {/* Step Number Badge */}
@@ -1919,7 +1919,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         <button
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
                                             disabled={step.status === 'pending'}
-                                            className={`w-full text-left ml-2 p-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow border ${
+                                            className={`w-full text-left ml-2 p-1.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow border ${
                                                 activeView.type === 'step' && activeView.id === step.id
                                                     ? 'bg-blue-50 text-blue-800 border-blue-200 shadow'
                                                     : step.status === 'completed'
@@ -1931,7 +1931,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         >
                                            <div className="space-y-0.5">
                                                <div className="flex items-start justify-between">
-                                                   <h4 className="text-xs font-medium pr-1 leading-tight break-words">
+                                                   <h4 className="text-xs font-medium pr-1 leading-tight break-words text-xs">
                                                        {step.title || `Paso ${step.id}`}
                                                    </h4>
                                                    <div className="flex items-center ml-1">
@@ -1949,7 +1949,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
                                                {/* Step Description/Summary - Compact */}
                                                {step.result && step.status === 'completed' && (
-                                                   <div className="text-xs text-slate-500 line-clamp-2 leading-tight">
+                                                   <div className="text-xs text-slate-500 line-clamp-1 leading-tight">
                                                        {step.result}
                                                    </div>
                                                )}

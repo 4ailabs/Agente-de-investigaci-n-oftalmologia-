@@ -26,6 +26,9 @@ export interface ResearchResult {
   sources: Source[];
   metadata: ResearchMetadata;
   process?: ResearchProcess; // Para transparencia
+  enhancedSources?: any[]; // Enhanced medical sources
+  qualityMetrics?: any; // Quality metrics from medical sources
+  sourcesBreakdown?: any; // Sources breakdown by type
 }
 
 export interface ResearchMetadata {

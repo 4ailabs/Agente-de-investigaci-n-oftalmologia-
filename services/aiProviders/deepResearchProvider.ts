@@ -1,13 +1,14 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { 
-  ResearchProvider, 
-  ProviderCapabilities, 
-  ResearchConfig, 
+import {
+  ResearchProvider,
+  ProviderCapabilities,
+  ResearchConfig,
   ResearchResult,
   ResearchProcess,
   SearchQuery,
   EvidenceGrade
 } from './baseProvider';
+import { enhancedMedicalSources, EnhancedSource } from '../enhancedMedicalSourcesService';
 
 export class DeepResearchProvider implements ResearchProvider {
   name = 'gemini_deep_research';
@@ -75,16 +76,40 @@ export class DeepResearchProvider implements ResearchProvider {
       });
       
       const response = await model.generateContent(deepResearchPrompt);
-      
-      // Parse results and extract metadata  
+
+      // Parse results and extract metadata
       const content = response.response.text();
       const sources = this.extractSources(response.response);
       const process = this.extractResearchProcess(content);
-      
+
+      // Get enhanced medical sources in parallel
+      let enhancedSources: EnhancedSource[] = [];
+      let qualityMetrics = undefined;
+      let sourcesBreakdown = undefined;
+
+      try {
+        console.log('🔍 Getting enhanced medical sources for Deep Research...');
+        const medicalSearchResult = await enhancedMedicalSources.searchMedicalSources({
+          query: prompt,
+          maxResults: config.maxSources || 25,
+          includeAbstract: true,
+          qualityFilter: 'high',
+          dateRange: 'recent'
+        });
+
+        enhancedSources = medicalSearchResult.sources;
+        qualityMetrics = medicalSearchResult.qualityMetrics;
+        sourcesBreakdown = medicalSearchResult.sourcesBreakdown;
+
+        console.log(`✅ Enhanced medical sources: ${enhancedSources.length} found`);
+      } catch (error) {
+        console.warn('Could not get enhanced medical sources:', error);
+      }
+
       const executionTime = Date.now() - this.startTime;
 
       console.log(`Deep Research completado en ${executionTime}ms`);
-      console.log(`Fuentes encontradas: ${sources.length}`);
+      console.log(`Fuentes encontradas: ${sources.length}, Enhanced: ${enhancedSources.length}`);
 
       return {
         content,
@@ -97,7 +122,10 @@ export class DeepResearchProvider implements ResearchProvider {
           queriesExecuted: process?.executionPhase.queriesExecuted.length || 0,
           confidenceScore: this.calculateConfidenceScore(sources, content)
         },
-        process
+        process,
+        enhancedSources,
+        qualityMetrics,
+        sourcesBreakdown
       };
 
     } catch (error) {
@@ -142,7 +170,10 @@ Como agente de investigación médica especializado en oftalmología, debes real
 **ESTRUCTURA DE RESPUESTA REQUERIDA:**
 
 ## RESUMEN EJECUTIVO
-[Diagnóstico más probable, nivel de urgencia, siguiente paso crítico]
+Proporciona de manera concisa:
+- Diagnóstico más probable con nivel de confianza
+- Nivel de urgencia clínica (bajo/medio/alto/crítico)
+- Siguiente paso crítico más importante
 
 ## PROCESO DE INVESTIGACIÓN REALIZADO
 ### Estrategia de Búsqueda Implementada
@@ -157,34 +188,62 @@ Como agente de investigación médica especializado en oftalmología, debes real
 
 ## ANÁLISIS CLÍNICO INTEGRAL
 ### Diagnósticos Diferenciales con Razonamiento Bayesiano
-[Lista priorizada con probabilidades y justificación]
+Presenta una lista ordenada por probabilidad que incluya:
+- Diagnósticos ordenados de mayor a menor probabilidad
+- Porcentaje estimado de probabilidad para cada uno
+- Justificación clínica basada en evidencia para cada diagnóstico
 
 ### Evaluación de Evidencia por Calidad
-[Gradación A/B/C/D con justificación metodológica]
+Evalúa la calidad de la evidencia encontrada:
+- Gradación A/B/C/D según metodología de estudios
+- Justificación específica para cada grado asignado
+- Limitaciones metodológicas identificadas
 
 ### Análisis de Contradiciones
-[Identificación y resolución de información conflictiva]
+Identifica y aborda información conflictiva:
+- Fuentes que presentan conclusiones contradictorias
+- Análisis crítico de las razones de las discrepancias
+- Resolución basada en calidad metodológica de estudios
 
 ## RECOMENDACIONES BASADAS EN EVIDENCIA
 ### Próximos Pasos Diagnósticos
-[Secuencia lógica basada en costo-efectividad]
+Establece una secuencia lógica y priorizada basada en costo-efectividad:
+- Exámenes diagnósticos recomendados en orden de prioridad
+- Justificación clínica para cada examen
+- Alternativas según disponibilidad de recursos
 
 ### Consideraciones de Urgencia
-[Timeline y red flags identificados]
+Identifica y especifica:
+- Timeline recomendado para seguimiento
+- Red flags o signos de alarma a vigilar
+- Criterios para derivación urgente
 
 ### Gaps de Información Identificados
-[Qué información adicional mejoraría el diagnóstico]
+Describe específicamente qué información adicional mejoraría significativamente:
+- La precisión del diagnóstico
+- La selección del tratamiento óptimo
+- El pronóstico del paciente
 
 ## METADATOS DE INVESTIGACIÓN
 ### Proceso de Búsqueda Ejecutado
-[Transparencia del proceso para validación]
+Proporciona transparencia completa del proceso de investigación ejecutado:
+- Bases de datos consultadas (especifica cuáles: PubMed, Europe PMC, Crossref, Semantic Scholar, etc.)
+- Estrategias de búsqueda utilizadas
+- Número de fuentes analizadas
+- Criterios de inclusión y exclusión aplicados
+- Limitaciones identificadas en la evidencia disponible
+- Calidad metodológica de las fuentes principales
 
-**IMPORTANTE:** 
+**IMPORTANTE:**
 - NO uses emojis en ninguna parte del reporte médico
+- NO uses texto de placeholder como "Insertar..." o "[Información...]"
+- NO dejes secciones incompletas o con instrucciones genéricas
 - Proporciona un análisis EXHAUSTIVO (mínimo 2000 palabras)
-- Cada conclusión debe estar respaldada por evidencia específica
+- Cada conclusión debe estar respaldada por evidencia específica y citas reales
 - Incluye razonamiento clínico explícito paso a paso
 - Identifica explícitamente las limitaciones del análisis
+- En la sección "Proceso de Búsqueda Ejecutado" especifica EXACTAMENTE qué bases de datos y fuentes consultaste
+- Reemplaza TODOS los placeholders con contenido médico real y específico
 
 **BÚSQUEDA DIRIGIDA:** Enfoca tu investigación autónoma en:
 - Epidemiología y factores de riesgo específicos para la demografía del paciente
