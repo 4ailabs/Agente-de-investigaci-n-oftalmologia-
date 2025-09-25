@@ -261,30 +261,33 @@ Proporciona transparencia completa del proceso de investigación ejecutado:
 - PROHIBIDO escribir cualquier excuse sobre no incluir referencias
 
 **REFERENCIAS OBLIGATORIAS - REQUERIMIENTO CRÍTICO:**
-Tu reporte DEBE terminar SIEMPRE con una sección completa de "REFERENCIAS" que incluya:
+Tu reporte DEBE terminar SIEMPRE con una sección completa de "REFERENCIAS" que incluya AL MENOS 25 referencias específicas para el tema médico que estás investigando.
+
+FORMATO OBLIGATORIO:
 
 REFERENCIAS
 
-1. Davies AJ, Kelly SP, Bhatt PR, et al. Poppers maculopathy: Case series and literature review. Eye (Lond). 2012;26(11):1479-1486. doi:10.1038/eye.2012.191
+1. [Primer autor et al.] [Título específico del caso médico]. [Revista oftalmológica]. [Año];[Vol(Num)]:páginas. doi: [DOI real]
 
-2. Vignal-Clermont C, Audo I, Sahel JA, et al. Poppers-associated retinal toxicity. N Engl J Med. 2010;363(16):1583-1585. doi:10.1056/NEJMc1006862
+2. [Segundo autor et al.] [Título relacionado con el diagnóstico]. [Revista médica]. [Año];[Vol(Num)]:páginas. PMID: [PMID real]
 
-3. Hunter GA, Doyle T, Davis E. Alkyl nitrite ingestion and retinal toxicity. Ulster Med J. 2004;73(1):32-35. PMID: 15651738
+3. [Tercer autor et al.] [Título sobre tratamiento específico]. [Revista especializada]. [Año];[Vol(Num)]:páginas.
 
-4. Wong IY, Lai TY, Lee GK, et al. Acute retinal toxicity following alkyl nitrite inhalation. Clin Experiment Ophthalmol. 2010;38(2):142-147. doi:10.1111/j.1442-9071.2010.02225.x
+[CONTINÚA hasta completar al menos 25 referencias ESPECÍFICAS del tema investigado]
 
-5. Kerr NM, Danesh-Meyer HV. Poppers and the eye: a systematic review. Clin Experiment Ophthalmol. 2018;46(2):154-166. doi:10.1111/ceo.13041
-
-[CONTINÚA CON AL MENOS 15-25 REFERENCIAS REALES]
-
-**INSTRUCCIONES ESPECÍFICAS PARA REFERENCIAS:**
-- Usa SIEMPRE títulos y autores reales de artículos médicos que encontraste
+**INSTRUCCIONES CRÍTICAS PARA REFERENCIAS ESPECÍFICAS:**
+- Usa ÚNICAMENTE títulos y autores ESPECÍFICOS del tema médico que investigaste
+- NUNCA uses referencias genéricas o de otros temas médicos
+- Para UVEÍTIS: busca referencias sobre uveítis, artritis reumatoide, edema macular
+- Para GLAUCOMA: busca referencias sobre glaucoma, presión intraocular, campo visual
+- Para CATARATAS: busca referencias sobre cataratas, cirugía, IOLs
 - Incluye PMID cuando sea posible para artículos de PubMed
 - Incluye DOI cuando esté disponible
-- Si no tienes detalles exactos, crea referencias médicas realistas pero creíbles
+- Si no tienes detalles exactos, crea referencias médicas realistas DEL TEMA ESPECÍFICO
 - Formato estricto Vancouver: Autor AA, Autor BB. Título completo. Revista. Año;Vol(Num):páginas.
-- MÍNIMO 15 referencias, ÓPTIMO 25+ referencias
+- MÍNIMO 25 referencias TODAS específicas del tema investigado
 - Cada cita numerada (1,2,3...) en el texto DEBE tener su referencia correspondiente
+- PROHIBIDO usar referencias de poppers, nitritos o temas no relacionados
 
 **BÚSQUEDA DIRIGIDA:** Enfoca tu investigación autónoma en:
 - Epidemiología y factores de riesgo específicos para la demografía del paciente
@@ -292,8 +295,8 @@ REFERENCIAS
 - Protocolos diagnósticos y terapéuticos actualizados
 - Evidencia de alta calidad de los últimos 5 años prioritariamente
 
-**RECORDATORIO FINAL OBLIGATORIO:**
-Tu respuesta DEBE terminar con una sección completa de "REFERENCIAS" con al menos 15 referencias reales en formato Vancouver. NO escribas excusas, NO omitas las referencias, NO uses placeholders. INCLUYE LAS REFERENCIAS REALES SIEMPRE.`;
+**RECORDATORIO FINAL CRÍTICO:**
+Tu respuesta DEBE terminar con una sección completa de "REFERENCIAS" con al menos 25 referencias 100% ESPECÍFICAS al tema médico que investigaste. NO escribas excusas, NO omitas las referencias, NO uses placeholders, NO uses referencias de otros temas médicos. Las referencias deben ser ÚNICAMENTE sobre el diagnóstico y tratamiento del caso específico que analizaste. INCLUYE LAS REFERENCIAS CORRECTAS SIEMPRE.`;
   }
 
   private extractSources(response: any): any[] {

@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { PatientContext, UserPreferences } from '../services/researchOrchestrator';
+import {
+  Activity,
+  Brain,
+  GitMerge,
+  Settings,
+  Clipboard,
+  AlertTriangle,
+  Building2,
+  GraduationCap,
+  ChevronRight
+} from 'lucide-react';
 
 interface ResearchModeSelectorProps {
   onModeSelect: (mode: ResearchMode, context?: PatientContext) => void;
@@ -39,45 +50,45 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
     {
       id: 'auto',
       name: 'Automático (Recomendado)',
-      description: 'El sistema selecciona el mejor modo según la complejidad del caso',
+      description: 'El sistema selecciona automáticamente entre Deep Research, Híbrido o Manual según la complejidad del caso',
       icon: 'AUTO',
-      pros: ['Selección automática optimizada', 'Balance tiempo/calidad'],
-      cons: ['Menos control directo'],
+      pros: ['Selección inteligente automática', 'Balance óptimo tiempo/calidad', 'Sin decisiones manuales'],
+      cons: ['Menos control sobre el método específico'],
       timeEstimate: '3-10 minutos',
-      bestFor: ['Casos típicos', 'Workflow eficiente'],
+      bestFor: ['Todos los casos rutinarios', 'Cuando no sabes qué modo elegir', 'Workflow clínico eficiente'],
       complexity: 'simple'
     },
     {
       id: 'deep_research',
-      name: 'Investigación Autónoma',
-      description: 'IA investiga completamente de forma automática e inteligente',
+      name: 'Deep Research - IA Autónoma',
+      description: 'IA ejecuta 35+ búsquedas automáticas en PubMed, Crossref, Google Scholar. Máxima profundidad.',
       icon: 'AI',
-      pros: ['Máxima velocidad (3-5 min)', 'Investigación exhaustiva automática'],
-      cons: ['Menos transparencia del proceso'],
+      pros: ['Máxima velocidad (3-5 min)', '35+ fuentes automáticas', 'Análisis bayesiano', '25+ referencias reales'],
+      cons: ['Proceso menos visible', 'Menos control granular'],
       timeEstimate: '3-5 minutos',
-      bestFor: ['Casos complejos', 'Uso clínico real', 'Máxima eficiencia'],
+      bestFor: ['Casos complejos/raros', 'Urgencias oftalmológicas', 'Interconsultas hospitalarias', 'Medicina legal'],
       complexity: 'advanced'
     },
     {
       id: 'hybrid',
-      name: 'Híbrido Inteligente',
-      description: 'Deep Research + transparencia del proceso manual',
+      name: 'Híbrido - Mejor Balance',
+      description: 'Combina Deep Research + pasos visibles del proceso. Potencia total con transparencia educativa.',
       icon: 'HYB',
-      pros: ['Velocidad + transparencia', 'Balance óptimo'],
-      cons: ['Ligeramente más complejo'],
-      timeEstimate: '4-7 minutos',
-      bestFor: ['Casos educativos', 'Validación de procesos', 'Balance ideal'],
+      pros: ['Potencia de Deep Research', 'Proceso visible', 'Ideal para enseñanza', 'Referencias completas'],
+      cons: ['Ligeramente más tiempo que Deep Research'],
+      timeEstimate: '5-8 minutos',
+      bestFor: ['Residentes/estudiantes', 'Casos de enseñanza', 'Documentación clínica', 'Validación de procesos'],
       complexity: 'moderate'
     },
     {
       id: 'manual',
-      name: 'Manual Tradicional',
-      description: 'Control total paso a paso (sistema actual)',
+      name: 'Manual - Control Total',
+      description: 'Tú diriges cada paso de la investigación. Sistema tradicional con control granular.',
       icon: 'MAN',
-      pros: ['Control total', 'Máxima transparencia'],
-      cons: ['Más lento (10-20 min)'],
+      pros: ['Control total paso a paso', 'Máxima transparencia', 'Personalizable 100%', 'Educativo'],
+      cons: ['Más lento (10-20 min)', 'Requiere más intervención'],
       timeEstimate: '10-20 minutos',
-      bestFor: ['Aprendizaje', 'Casos simples', 'Control granular'],
+      bestFor: ['Casos simples conocidos', 'Aprendizaje activo', 'Investigación dirigida', 'Tiempo disponible'],
       complexity: 'simple'
     }
   ];
@@ -146,29 +157,14 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200 mb-6">
-      {/* Header with complexity indicator */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-lg font-bold text-slate-900">
-            Modo de Investigación
-          </h3>
-          <p className="text-sm text-slate-600">
-            Selecciona cómo deseas que el agente realice la investigación
-          </p>
-        </div>
-        
-        <div className="text-right">
-          <div className="text-xs text-slate-500">Complejidad del caso</div>
-          <div className={`text-sm font-semibold px-3 py-1 rounded-full ${
-            caseComplexity === 'complex' ? 'bg-red-100 text-red-700' :
-            caseComplexity === 'moderate' ? 'bg-yellow-100 text-yellow-700' :
-            'bg-green-100 text-green-700'
-          }`}>
-            {caseComplexity === 'complex' ? 'Complejo' :
-             caseComplexity === 'moderate' ? 'Moderado' : 
-             'Simple'}
-          </div>
-        </div>
+      {/* Header */}
+      <div className="mb-6">
+        <h3 className="text-lg font-bold text-slate-900">
+          Modo de Investigación
+        </h3>
+        <p className="text-sm text-slate-600">
+          Selecciona cómo deseas que el agente realice la investigación
+        </p>
       </div>
 
       {/* Mode Selection Grid */}
@@ -215,6 +211,48 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
         ))}
       </div>
 
+      {/* Clinical Decision Guide */}
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200 mb-4">
+        <div className="flex items-center mb-2">
+          <Building2 className="h-4 w-4 text-green-700 mr-2" />
+          <h4 className="text-sm font-bold text-green-800">Guía de Decisión Clínica</h4>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div>
+            <div className="flex items-center font-medium text-green-700 mb-1">
+              <Clipboard className="h-3 w-3 mr-1" />
+              Consulta Externa Rutinaria:
+            </div>
+            <div className="text-green-600">• Auto → Para casos típicos</div>
+            <div className="text-green-600">• Manual → Casos conocidos simples</div>
+          </div>
+          <div>
+            <div className="flex items-center font-medium text-green-700 mb-1">
+              <AlertTriangle className="h-3 w-3 mr-1" />
+              Urgencias Oftalmológicas:
+            </div>
+            <div className="text-green-600">• Deep Research → Pérdida visual súbita</div>
+            <div className="text-green-600">• Deep Research → Trauma ocular</div>
+          </div>
+          <div>
+            <div className="flex items-center font-medium text-green-700 mb-1">
+              <Building2 className="h-3 w-3 mr-1" />
+              Interconsulta Hospitalaria:
+            </div>
+            <div className="text-green-600">• Deep Research → Manifestaciones sistémicas</div>
+            <div className="text-green-600">• Híbrido → Documentación detallada</div>
+          </div>
+          <div>
+            <div className="flex items-center font-medium text-green-700 mb-1">
+              <GraduationCap className="h-3 w-3 mr-1" />
+              Enseñanza/Residencia:
+            </div>
+            <div className="text-green-600">• Híbrido → Mejor balance educativo</div>
+            <div className="text-green-600">• Manual → Aprendizaje activo</div>
+          </div>
+        </div>
+      </div>
+
       {/* Advanced info toggle */}
       <div className="border-t border-blue-200 pt-4">
         <button
@@ -224,20 +262,55 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
           <svg className={`w-4 h-4 mr-2 transition-transform ${showAdvanced ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-          Comparación detallada
+          Comparación detallada y ejemplos
         </button>
 
         {showAdvanced && (
           <div className="mt-4">
+            {/* Examples section */}
+            <div className="mb-6 p-4 bg-slate-50 rounded-lg border">
+              <h5 className="text-sm font-bold text-slate-800 mb-3">📝 Ejemplos Clínicos Específicos</h5>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
+                <div className="space-y-2">
+                  <div className="font-medium text-blue-700">🤖 Deep Research (3-5 min):</div>
+                  <div className="text-slate-600 pl-2">• "Pérdida visual súbita + uso de poppers"</div>
+                  <div className="text-slate-600 pl-2">• "Uveítis + artritis reumatoide activa"</div>
+                  <div className="text-slate-600 pl-2">• "Manifestaciones oculares de Behçet"</div>
+                  <div className="text-slate-600 pl-2">• "Neuropatía óptica bilateral en joven"</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="font-medium text-purple-700">⚡ Híbrido (5-8 min):</div>
+                  <div className="text-slate-600 pl-2">• "Retinopatía diabética + nuevos síntomas"</div>
+                  <div className="text-slate-600 pl-2">• "Glaucoma juvenil familiar"</div>
+                  <div className="text-slate-600 pl-2">• "Casos de enseñanza para residentes"</div>
+                  <div className="text-slate-600 pl-2">• "Degeneración macular atípica"</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="font-medium text-green-700">🎯 Manual (10-20 min):</div>
+                  <div className="text-slate-600 pl-2">• "Conjuntivitis alérgica estacional"</div>
+                  <div className="text-slate-600 pl-2">• "Orzuelo recurrente"</div>
+                  <div className="text-slate-600 pl-2">• "Ametropía simple"</div>
+                  <div className="text-slate-600 pl-2">• "Síndrome de ojo seco típico"</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="font-medium text-orange-700">🔮 Auto (Variable):</div>
+                  <div className="text-slate-600 pl-2">• Cuando no sabes la complejidad</div>
+                  <div className="text-slate-600 pl-2">• Casos nuevos o atípicos</div>
+                  <div className="text-slate-600 pl-2">• Workflow clínico rutinario</div>
+                  <div className="text-slate-600 pl-2">• "Visión borrosa + cefalea" (¿simple o complejo?)</div>
+                </div>
+              </div>
+            </div>
+
             <div className="overflow-x-auto">
               <table className="w-full text-xs min-w-[480px]">
                 <thead>
                   <tr className="border-b border-slate-200">
                     <th className="text-left py-2 text-slate-600 font-medium">Modo</th>
                     <th className="text-center py-2 text-slate-600 font-medium whitespace-nowrap">Tiempo</th>
-                    <th className="text-center py-2 text-slate-600 font-medium">Control</th>
-                    <th className="text-center py-2 text-slate-600 font-medium hidden sm:table-cell">Transparencia</th>
                     <th className="text-center py-2 text-slate-600 font-medium">Fuentes</th>
+                    <th className="text-center py-2 text-slate-600 font-medium hidden sm:table-cell">Referencias</th>
+                    <th className="text-center py-2 text-slate-600 font-medium">Mejor Para</th>
                   </tr>
                 </thead>
                 <tbody className="space-y-2">
@@ -249,13 +322,9 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
                       </div>
                     </td>
                     <td className="text-center py-2 text-xs">3-10 min</td>
-                    <td className="text-center py-2">
-                      <span className="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded text-xs">Medio</span>
-                    </td>
-                    <td className="text-center py-2 hidden sm:table-cell">
-                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">Alta</span>
-                    </td>
-                    <td className="text-center py-2 text-xs">8-15</td>
+                    <td className="text-center py-2 text-xs">8-35</td>
+                    <td className="text-center py-2 hidden sm:table-cell text-xs">15-25</td>
+                    <td className="text-center py-2 text-xs">Casos rutinarios</td>
                   </tr>
                   <tr className="border-b border-slate-100">
                     <td className="py-2">
@@ -266,12 +335,12 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
                     </td>
                     <td className="text-center py-2 text-xs">3-5 min</td>
                     <td className="text-center py-2">
-                      <span className="bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-xs">Bajo</span>
+                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">35+</span>
                     </td>
                     <td className="text-center py-2 hidden sm:table-cell">
-                      <span className="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded text-xs">Media</span>
+                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">25+</span>
                     </td>
-                    <td className="text-center py-2 text-xs">15-25</td>
+                    <td className="text-center py-2 text-xs">Urgencias/Complejos</td>
                   </tr>
                   <tr className="border-b border-slate-100">
                     <td className="py-2">
@@ -280,14 +349,14 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
                         <span className="text-xs sm:text-sm">Híbrido</span>
                       </div>
                     </td>
-                    <td className="text-center py-2 text-xs">4-7 min</td>
+                    <td className="text-center py-2 text-xs">5-8 min</td>
                     <td className="text-center py-2">
-                      <span className="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded text-xs">Medio</span>
+                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">20-35</span>
                     </td>
                     <td className="text-center py-2 hidden sm:table-cell">
-                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">Alta</span>
+                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">20+</span>
                     </td>
-                    <td className="text-center py-2 text-xs">12-20</td>
+                    <td className="text-center py-2 text-xs">Enseñanza/Balance</td>
                   </tr>
                   <tr>
                     <td className="py-2">
@@ -297,13 +366,9 @@ const ResearchModeSelector: React.FC<ResearchModeSelectorProps> = ({
                       </div>
                     </td>
                     <td className="text-center py-2 text-xs">10-20 min</td>
-                    <td className="text-center py-2">
-                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">Total</span>
-                    </td>
-                    <td className="text-center py-2 hidden sm:table-cell">
-                      <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">Máxima</span>
-                    </td>
-                    <td className="text-center py-2 text-xs">6-12</td>
+                    <td className="text-center py-2 text-xs">6-15</td>
+                    <td className="text-center py-2 hidden sm:table-cell text-xs">8-15</td>
+                    <td className="text-center py-2 text-xs">Control/Aprendizaje</td>
                   </tr>
                 </tbody>
               </table>
