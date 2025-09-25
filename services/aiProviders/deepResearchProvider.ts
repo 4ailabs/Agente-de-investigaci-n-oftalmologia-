@@ -234,16 +234,19 @@ Proporciona transparencia completa del proceso de investigación ejecutado:
 - Limitaciones identificadas en la evidencia disponible
 - Calidad metodológica de las fuentes principales
 
-**IMPORTANTE:**
+**IMPORTANTE - REGLAS ESTRICTAS DE FORMATO:**
+- JAMÁS uses placeholders como "[Insertar...]", "[Información...]", "[Referencias...]", "[Se incluirían aquí...]"
+- JAMÁS escribas "(Evidencia: [Referencias a...])" o similar - usa evidencia específica real
 - NO uses emojis en ninguna parte del reporte médico
-- NO uses texto de placeholder como "Insertar..." o "[Información...]"
 - NO dejes secciones incompletas o con instrucciones genéricas
 - Proporciona un análisis EXHAUSTIVO (mínimo 2000 palabras)
-- Cada conclusión debe estar respaldada por evidencia específica y citas reales
+- Cada afirmación debe incluir evidencia específica real encontrada en tu búsqueda
+- Cuando menciones evidencia, cita fuentes reales y específicas que encontraste
+- En lugar de "(Evidencia: [Referencias...])" escribe las fuentes reales que consultaste
 - Incluye razonamiento clínico explícito paso a paso
 - Identifica explícitamente las limitaciones del análisis
-- En la sección "Proceso de Búsqueda Ejecutado" especifica EXACTAMENTE qué bases de datos y fuentes consultaste
-- Reemplaza TODOS los placeholders con contenido médico real y específico
+- En "Proceso de Búsqueda Ejecutado" especifica las bases de datos REALES consultadas
+- Si no tienes una referencia específica, no uses placeholders - describe la evidencia general encontrada
 
 **BÚSQUEDA DIRIGIDA:** Enfoca tu investigación autónoma en:
 - Epidemiología y factores de riesgo específicos para la demografía del paciente

@@ -234,17 +234,48 @@ export class CrossrefService {
     // Limpiar y optimizar la consulta
     let optimizedQuery = query.trim();
 
-    // Agregar términos oftalmológicos si no están presentes
+    // Si la query es muy larga, extraer solo términos clave médicos
+    if (optimizedQuery.length > 100) {
+      optimizedQuery = this.extractMedicalKeywords(optimizedQuery);
+    }
+
+    // Agregar términos oftalmológicos si no están presentes y la query es corta
     const ophthalmologyTerms = ['ophthalmology', 'eye', 'retina', 'ocular', 'visual', 'ophthalmic'];
     const hasOphthalmologyTerm = ophthalmologyTerms.some(term =>
       optimizedQuery.toLowerCase().includes(term.toLowerCase())
     );
 
-    if (!hasOphthalmologyTerm) {
-      optimizedQuery += ' ophthalmology OR eye OR retina OR ocular';
+    if (!hasOphthalmologyTerm && optimizedQuery.length < 80) {
+      optimizedQuery += ' ophthalmology';
+    }
+
+    // Limitar longitud final para evitar errores 400
+    if (optimizedQuery.length > 150) {
+      optimizedQuery = optimizedQuery.substring(0, 150).trim();
     }
 
     return optimizedQuery;
+  }
+
+  private extractMedicalKeywords(query: string): string {
+    // Extraer palabras clave médicas importantes
+    const medicalTerms = [
+      'amaurosis', 'retina', 'ischemia', 'transient', 'ophthalmology', 'eye',
+      'visual', 'ocular', 'blindness', 'vision', 'fundus', 'arterial', 'vascular',
+      'migraine', 'glaucoma', 'macular', 'diabetic', 'hypertensive'
+    ];
+
+    const words = query.toLowerCase().split(/\s+/);
+    const keywords = words.filter(word =>
+      medicalTerms.some(term => word.includes(term) || term.includes(word))
+    );
+
+    // Si no encontramos keywords médicos, usar las primeras palabras
+    if (keywords.length === 0) {
+      return words.slice(0, 5).join(' ');
+    }
+
+    return keywords.slice(0, 8).join(' ');
   }
 
   /**
