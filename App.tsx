@@ -1531,9 +1531,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
            </div>
          </div>
       ) : (
-          <main className="bg-slate-50">
+          <main className="bg-slate-50 flex-1">
             {/* Mobile Layout */}
-            <div className="lg:hidden">
+            <div className="lg:hidden h-full">
               <div className="max-w-7xl mx-auto py-2 sm:py-4 px-2 sm:px-4">
                 <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   {/* Mobile Control Panel */}
