@@ -10,9 +10,9 @@ const Header: React.FC<{
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-[100] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        <div className="flex items-center justify-between h-12 lg:h-14">
+        <div className="flex items-center h-12 lg:h-14">
             {/* Logo and Title - Medical Professional Style */}
-            <div className="flex items-center space-x-4 flex-1 min-w-0">
+            <div className="flex items-center space-x-4">
                 <div className="relative flex-shrink-0">
                     {/* Mobile logo - Medical Cross */}
                     <div className="lg:hidden w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center shadow-md">
@@ -41,7 +41,7 @@ const Header: React.FC<{
             </div>
             
             {/* Action buttons - Responsive */}
-            <div className="flex items-center space-x-2 flex-shrink-0">
+            <div className="flex items-center space-x-2 ml-6">
                 {/* History button - Mobile */}
                 <button 
                     onClick={onShowHistory} 
