@@ -367,7 +367,7 @@ const ImageAnalysisResults: React.FC<ImageAnalysisResultsProps> = ({
         )}
 
       {/* Content */}
-        <div className="p-4 lg:p-6 overflow-y-auto lg:max-h-[60vh]">
+      <div className="p-4 lg:p-6 overflow-y-auto lg:max-h-[60vh]">
           {analyses.map((analysis, index) => (
             <div key={index} className={activeTab === index ? 'block' : 'hidden'}>
               {/* Información general */}
