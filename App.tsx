@@ -1512,31 +1512,31 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
       )}
       {/* Enhanced Main Container */}
       <div className="flex-1 flex flex-col relative z-10">
-      {!investigation ? (
-        <InitialQueryInput
-          onSubmit={handleStartInvestigation}
-          onSubmitEnhanced={handleEnhancedFormSubmit}
-          isLoading={investigation?.isGenerating ?? false}
-        />
-      ) : investigation.isGenerating && investigation.plan.length === 0 ? (
-         <div className="flex-1 flex items-center justify-center">
-           <div className="text-center">
-             <MobileLoadingCard
-               title="Creando Plan de Investigación"
-               description="Nuestro agente de IA está analizando el caso y diseñando un plan de investigación personalizado basado en evidencia médica."
-             />
-             <div className="mt-6">
-               <button
-                 onClick={handleCancelInvestigation}
-                 className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors duration-200"
-               >
-                 <X className="h-4 w-4 mr-2" />
-                 Cancelar Investigación
-               </button>
-             </div>
-           </div>
-         </div>
-      ) : (
+        {!investigation ? (
+          <InitialQueryInput
+            onSubmit={handleStartInvestigation}
+            onSubmitEnhanced={handleEnhancedFormSubmit}
+            isLoading={investigation?.isGenerating ?? false}
+          />
+        ) : investigation.isGenerating && investigation.plan.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <MobileLoadingCard
+                title="Creando Plan de Investigación"
+                description="Nuestro agente de IA está analizando el caso y diseñando un plan de investigación personalizado basado en evidencia médica."
+              />
+              <div className="mt-6">
+                <button
+                  onClick={handleCancelInvestigation}
+                  className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors duration-200"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Cancelar Investigación
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
           <main className="bg-slate-50 flex-1">
             {/* Mobile Layout */}
             <div className="lg:hidden h-full">
