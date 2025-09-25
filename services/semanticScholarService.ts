@@ -128,6 +128,12 @@ export class SemanticScholarService {
    * Buscar papers en Semantic Scholar
    */
   async searchPapers(params: SemanticScholarSearchParams): Promise<SemanticScholarSearchResult> {
+    // TEMPORAL: Deshabilitado debido a CORS policy
+    // Semantic Scholar no permite requests directos desde el navegador
+    console.log('⚠️ Semantic Scholar temporarily disabled due to CORS policy');
+    return this.createEmptyResult(params.query, params.offset || 0);
+    
+    /* Código original comentado para referencia futura:
     const cacheKey = this.generateCacheKey(params);
 
     // Verificar caché
@@ -184,6 +190,7 @@ export class SemanticScholarService {
       console.error('❌ Semantic Scholar API Error:', error);
       return this.createEmptyResult(params.query, params.offset || 0);
     }
+    */
   }
 
   /**

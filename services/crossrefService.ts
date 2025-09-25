@@ -255,9 +255,9 @@ export class CrossrefService {
       console.log('🔍 Added ophthalmology term:', optimizedQuery);
     }
 
-    // Limitar longitud final para evitar errores 400
-    if (optimizedQuery.length > 150) {
-      optimizedQuery = optimizedQuery.substring(0, 150).trim();
+    // Limitar longitud final para evitar errores 400 (Crossref tiene límite de ~100 chars)
+    if (optimizedQuery.length > 100) {
+      optimizedQuery = optimizedQuery.substring(0, 100).trim();
       console.log('🔍 Truncated query:', optimizedQuery);
     }
 
