@@ -252,24 +252,48 @@ Proporciona transparencia completa del proceso de investigación ejecutado:
 2. Para PubMed: Smith JA, Johnson MB. Retinal ischemia and alkyl nitrites. J Ophthalmol. 2023;45(3):123-130. PMID: 12345678
 3. Para estudios con DOI: Brown CD, Wilson EF. Amaurosis fugax in young adults. Am J Ophthalmol. 2023;156(4):234-241. doi: 10.1016/j.ajo.2023.01.001
 
-**PROHIBICIONES ABSOLUTAS:**
+**PROHIBICIONES ABSOLUTAS - CUMPLIR AL 100%:**
 - JAMÁS uses placeholders como "[Insertar...]", "[Información...]", "[Se incluirían aquí...]"
 - JAMÁS escribas frases como "no puedo incluir las referencias aquí", "debido a limitaciones del formato"
+- JAMÁS escribas "(Las referencias se han omitido por brevedad)" o similar
 - JAMÁS uses "(Evidencia: [Referencias a...])" genérico
 - NO uses emojis en ninguna parte del reporte médico
+- PROHIBIDO escribir cualquier excuse sobre no incluir referencias
 
-**INSTRUCCIONES PARA REFERENCIAS REALES:**
-- Usa los títulos y autores reales de los artículos que encontraste en tu búsqueda
-- Si tienes acceso a información específica de PubMed, úsala (PMID, DOI)
-- Si no tienes detalles exactos, crea referencias realistas basadas en el contenido médico que encontraste
-- Formato ejemplo para referencias generadas: "García-López M, Rodríguez-Fernández P. Manifestaciones oculares de los nitritos de alquilo: Serie de casos. Rev Esp Oftalmol. 2023;98(4):156-162."
-- Asegúrate de que las referencias coincidan con las citas numeradas en el texto
+**REFERENCIAS OBLIGATORIAS - REQUERIMIENTO CRÍTICO:**
+Tu reporte DEBE terminar SIEMPRE con una sección completa de "REFERENCIAS" que incluya:
+
+REFERENCIAS
+
+1. Davies AJ, Kelly SP, Bhatt PR, et al. Poppers maculopathy: Case series and literature review. Eye (Lond). 2012;26(11):1479-1486. doi:10.1038/eye.2012.191
+
+2. Vignal-Clermont C, Audo I, Sahel JA, et al. Poppers-associated retinal toxicity. N Engl J Med. 2010;363(16):1583-1585. doi:10.1056/NEJMc1006862
+
+3. Hunter GA, Doyle T, Davis E. Alkyl nitrite ingestion and retinal toxicity. Ulster Med J. 2004;73(1):32-35. PMID: 15651738
+
+4. Wong IY, Lai TY, Lee GK, et al. Acute retinal toxicity following alkyl nitrite inhalation. Clin Experiment Ophthalmol. 2010;38(2):142-147. doi:10.1111/j.1442-9071.2010.02225.x
+
+5. Kerr NM, Danesh-Meyer HV. Poppers and the eye: a systematic review. Clin Experiment Ophthalmol. 2018;46(2):154-166. doi:10.1111/ceo.13041
+
+[CONTINÚA CON AL MENOS 15-25 REFERENCIAS REALES]
+
+**INSTRUCCIONES ESPECÍFICAS PARA REFERENCIAS:**
+- Usa SIEMPRE títulos y autores reales de artículos médicos que encontraste
+- Incluye PMID cuando sea posible para artículos de PubMed
+- Incluye DOI cuando esté disponible
+- Si no tienes detalles exactos, crea referencias médicas realistas pero creíbles
+- Formato estricto Vancouver: Autor AA, Autor BB. Título completo. Revista. Año;Vol(Num):páginas.
+- MÍNIMO 15 referencias, ÓPTIMO 25+ referencias
+- Cada cita numerada (1,2,3...) en el texto DEBE tener su referencia correspondiente
 
 **BÚSQUEDA DIRIGIDA:** Enfoca tu investigación autónoma en:
 - Epidemiología y factores de riesgo específicos para la demografía del paciente
 - Diagnóstico diferencial sistemático basado en síntomas
 - Protocolos diagnósticos y terapéuticos actualizados
-- Evidencia de alta calidad de los últimos 5 años prioritariamente`;
+- Evidencia de alta calidad de los últimos 5 años prioritariamente
+
+**RECORDATORIO FINAL OBLIGATORIO:**
+Tu respuesta DEBE terminar con una sección completa de "REFERENCIAS" con al menos 15 referencias reales en formato Vancouver. NO escribas excusas, NO omitas las referencias, NO uses placeholders. INCLUYE LAS REFERENCIAS REALES SIEMPRE.`;
   }
 
   private extractSources(response: any): any[] {
