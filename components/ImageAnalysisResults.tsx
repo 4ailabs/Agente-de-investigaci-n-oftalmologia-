@@ -48,7 +48,7 @@ const ImageAnalysisResults: React.FC<ImageAnalysisResultsProps> = ({
         {/* Nervio óptico */}
         <div className="bg-slate-50 rounded-lg p-4">
           <h4 className="font-semibold text-slate-800 mb-3">Nervio Óptico</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 text-sm">
             <div>
               <span className="font-medium">Apariencia:</span> {opticNerve.appearance}
             </div>
@@ -69,7 +69,7 @@ const ImageAnalysisResults: React.FC<ImageAnalysisResultsProps> = ({
         {/* Mácula */}
         <div className="bg-slate-50 rounded-lg p-4">
           <h4 className="font-semibold text-slate-800 mb-3">Mácula</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 text-sm">
             <div>
               <span className="font-medium">Apariencia:</span> {macula.appearance}
             </div>
@@ -167,7 +167,7 @@ const ImageAnalysisResults: React.FC<ImageAnalysisResultsProps> = ({
 
         <div className="bg-slate-50 rounded-lg p-4">
           <h4 className="font-semibold text-slate-800 mb-3">Capas Retinianas</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 text-sm">
             <div>
               <span className="font-medium">RPE:</span> {layers.rpe}
             </div>
@@ -189,7 +189,7 @@ const ImageAnalysisResults: React.FC<ImageAnalysisResultsProps> = ({
         {thickness && (
           <div className="bg-slate-50 rounded-lg p-4">
             <h4 className="font-semibold text-slate-800 mb-3">Espesores (μm)</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
               {thickness.central && (
                 <div>
                   <span className="font-medium">Central:</span> {thickness.central}
@@ -299,27 +299,34 @@ const ImageAnalysisResults: React.FC<ImageAnalysisResultsProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h3 className="text-xl font-semibold text-slate-800">
-            Resultados del Análisis de Imágenes ({analyses.length})
-          </h3>
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+    <div className="bg-white lg:rounded-lg lg:shadow-xl w-full h-full lg:max-w-6xl lg:max-h-[90vh] overflow-hidden">
+      {/* Desktop Header - only show on desktop since mobile has its own header in App.tsx */}
+      <div className="hidden lg:flex items-center justify-between p-6 border-b border-slate-200">
+        <h3 className="text-xl font-semibold text-slate-800">
+          Resultados del Análisis de Imágenes ({analyses.length})
+        </h3>
+        <button
+          onClick={onClose}
+          className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
+        >
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile Header */}
+      <div className="lg:hidden mb-4">
+        <p className="text-sm text-slate-600">
+          {analyses.length} {analyses.length === 1 ? 'análisis completado' : 'análisis completados'}
+        </p>
+      </div>
 
         {/* Tabs */}
         {analyses.length > 1 && (
           <div className="border-b border-slate-200">
-            <div className="flex space-x-1 p-4">
+            {/* Desktop Tabs */}
+            <div className="hidden lg:flex space-x-1 p-4">
               {analyses.map((analysis, index) => (
                 <button
                   key={index}
@@ -334,11 +341,33 @@ const ImageAnalysisResults: React.FC<ImageAnalysisResultsProps> = ({
                 </button>
               ))}
             </div>
+
+            {/* Mobile Tabs - Horizontal scroll */}
+            <div className="lg:hidden p-4">
+              <div className="flex space-x-2 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300">
+                {analyses.map((analysis, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveTab(index)}
+                    className={`flex-shrink-0 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                      activeTab === index
+                        ? 'bg-blue-100 text-blue-800 border-2 border-blue-600'
+                        : 'text-slate-600 hover:text-slate-800 bg-white border-2 border-slate-200'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="font-semibold">Imagen {index + 1}</div>
+                      <div className="text-xs">{getImageTypeLabel(analysis.imageType)}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh]">
+      {/* Content */}
+        <div className="p-4 lg:p-6 overflow-y-auto lg:max-h-[60vh]">
           {analyses.map((analysis, index) => (
             <div key={index} className={activeTab === index ? 'block' : 'hidden'}>
               {/* Información general */}
@@ -384,17 +413,6 @@ const ImageAnalysisResults: React.FC<ImageAnalysisResultsProps> = ({
             </div>
           ))}
         </div>
-
-        {/* Footer */}
-        <div className="flex justify-end p-6 border-t border-slate-200">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Cerrar
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
