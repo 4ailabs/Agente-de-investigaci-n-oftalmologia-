@@ -248,6 +248,14 @@ ${getReferenceInstructions('deepResearch')}
 - Protocolos diagnósticos y terapéuticos actualizados
 - Evidencia de alta calidad de los últimos 5 años prioritariamente
 
+**RECORDATORIO FINAL CRÍTICO:**
+- Tu reporte DEBE terminar con una sección completa de "REFERENCIAS" con referencias reales
+- JAMÁS escribas notas finales como "(Las referencias se incluirían aquí...)"
+- JAMÁS uses excusas como "Debido a las limitaciones del formato"
+- JAMÁS uses "no es posible incluirlas aquí" o similar
+- INCLUYE las referencias reales encontradas en tu búsqueda médica
+- Si no tienes referencias reales, NO escribas excusas - simplemente omite la sección de referencias
+
 `;
   }
 

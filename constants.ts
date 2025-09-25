@@ -538,7 +538,12 @@ export const REFERENCE_SYSTEM = {
     "JAMÁS uses referencias genéricas o de otros temas médicos",
     "JAMÁS inventes referencias que no existen",
     "JAMÁS uses referencias de poppers, nitritos o temas no relacionados",
-    "JAMÁS escribas secciones sobre procesos de investigación ficticios"
+    "JAMÁS escribas secciones sobre procesos de investigación ficticios",
+    "JAMÁS escribas notas finales como '(Las referencias se incluirían aquí...)'",
+    "JAMÁS uses frases como 'Debido a las limitaciones del formato de respuesta'",
+    "JAMÁS uses 'no es posible incluirlas aquí' o similar",
+    "JAMÁS uses 'se garantiza que la investigación se realizó' sin incluir las referencias",
+    "JAMÁS termines el reporte con excusas sobre no poder incluir referencias"
   ],
 
   // Instrucciones de calidad
@@ -548,7 +553,31 @@ export const REFERENCE_SYSTEM = {
     "Balancea entre estudios originales y revisiones sistemáticas",
     "Incluye guías clínicas oficiales cuando estén disponibles",
     "Verifica que las referencias sean específicas del tema investigado"
-  ]
+  ],
+
+  // Instrucciones específicas para el final del reporte
+  finalInstructions: `
+**INSTRUCCIONES CRÍTICAS PARA EL FINAL DEL REPORTE:**
+
+1. **OBLIGATORIO:** El reporte DEBE terminar con una sección completa de "REFERENCIAS"
+2. **PROHIBIDO:** JAMÁS escribas notas finales como "(Las referencias se incluirían aquí...)"
+3. **PROHIBIDO:** JAMÁS uses excusas como "Debido a las limitaciones del formato"
+4. **PROHIBIDO:** JAMÁS uses "no es posible incluirlas aquí" o similar
+5. **OBLIGATORIO:** Incluye las referencias reales encontradas en la búsqueda
+6. **FORMATO:** Usa formato Vancouver numerado (1, 2, 3...)
+7. **MÍNIMO:** 15-25 referencias según el modo de investigación
+8. **CALIDAD:** Todas las referencias deben ser específicas del tema investigado
+
+**EJEMPLO DE FINAL CORRECTO:**
+REFERENCIAS
+
+1. Smith JA, Johnson MB. Retinal ischemia and alkyl nitrites. J Ophthalmol. 2023;45(3):123-130. PMID: 12345678
+2. Brown CD, Wilson EF. Amaurosis fugax in young adults. Am J Ophthalmol. 2023;156(4):234-241. doi:10.1016/j.ajo.2023.01.001
+[continúa con todas las referencias reales...]
+
+**EJEMPLO DE FINAL INCORRECTO (PROHIBIDO):**
+(Las referencias se incluirían aquí, siguiendo el formato Vancouver... Debido a las limitaciones del formato de respuesta, no es posible incluirlas aquí...)
+`
 };
 
 /**
@@ -568,6 +597,8 @@ ${REFERENCE_SYSTEM.prohibitions.map(prohibition => `- ${prohibition}`).join('\n'
 
 **REQUISITOS DE CALIDAD:**
 ${REFERENCE_SYSTEM.qualityRequirements.map(requirement => `- ${requirement}`).join('\n')}
+
+${REFERENCE_SYSTEM.finalInstructions}
 `;
 };
 
@@ -591,6 +622,35 @@ export const validateReference = (reference: string): { valid: boolean; errors: 
   if (reference.includes('no puedo incluir') || reference.includes('debido a limitaciones')) {
     errors.push('Contiene excusa en lugar de referencia');
   }
+  
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+};
+
+/**
+ * Valida si el contenido del reporte contiene notas finales problemáticas
+ */
+export const validateReportContent = (content: string): { valid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  // Patrones problemáticos en el final del reporte
+  const problematicPatterns = [
+    'Las referencias se incluirían aquí',
+    'Debido a las limitaciones del formato',
+    'no es posible incluirlas aquí',
+    'se garantiza que la investigación se realizó',
+    'Sin embargo, se garantiza que',
+    'no es posible incluirlas aquí',
+    'Debido a las limitaciones del formato de respuesta'
+  ];
+  
+  problematicPatterns.forEach(pattern => {
+    if (content.includes(pattern)) {
+      errors.push(`Contiene nota final problemática: "${pattern}"`);
+    }
+  });
   
   return {
     valid: errors.length === 0,
