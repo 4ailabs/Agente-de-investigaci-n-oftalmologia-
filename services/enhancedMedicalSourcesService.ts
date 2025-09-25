@@ -584,15 +584,19 @@ Máximo ${maxResults} resultados.`;
 
     console.log(`📝 Query length: ${query.length} chars - extracting medical keywords...`);
 
-    // Lista de términos médicos oftalmológicos relevantes
+    // Lista de términos médicos oftalmológicos relevantes (ordenados por prioridad)
+    const highPriorityTerms = [
+      'amaurosis', 'fugax', 'retina', 'retinal', 'ischemia', 'ischemic',
+      'poppers', 'nitrites', 'alkyl', 'glaucoma', 'macular'
+    ];
+
     const medicalTerms = [
-      'amaurosis', 'fugax', 'retina', 'retinal', 'ischemia', 'ischemic', 'transient',
-      'vision', 'visual', 'blindness', 'ophthalmology', 'ophthalmic', 'eye', 'ocular',
-      'fundus', 'arterial', 'vascular', 'migraine', 'headache', 'glaucoma', 'macular',
-      'diabetic', 'hypertensive', 'poppers', 'nitrites', 'alkyl', 'substance', 'drug',
-      'diagnosis', 'differential', 'symptoms', 'treatment', 'therapy', 'pathology',
-      'etiology', 'epidemiology', 'prevalence', 'incidence', 'risk', 'factors',
-      'clinical', 'medical', 'patient', 'case', 'study', 'examination', 'test'
+      ...highPriorityTerms,
+      'transient', 'vision', 'visual', 'blindness', 'ophthalmology', 'ophthalmic',
+      'eye', 'ocular', 'fundus', 'arterial', 'vascular', 'migraine', 'headache',
+      'diabetic', 'hypertensive', 'substance', 'drug', 'diagnosis', 'differential',
+      'symptoms', 'treatment', 'therapy', 'pathology', 'etiology', 'epidemiology',
+      'prevalence', 'incidence', 'risk', 'factors', 'clinical', 'medical', 'patient'
     ];
 
     // Extraer palabras de la consulta (limpiar puntuación y convertir a minúsculas)
@@ -601,12 +605,12 @@ Máximo ${maxResults} resultados.`;
       .split(/\s+/)
       .filter(word => word.length > 2);
 
-    // Buscar términos médicos presentes en la consulta
+    // Buscar términos médicos presentes en la consulta, priorizando términos de alta prioridad
     const relevantTerms: string[] = [];
     const foundTerms = new Set<string>();
 
-    // Primero, buscar términos médicos exactos
-    medicalTerms.forEach(term => {
+    // Primero, buscar términos de alta prioridad
+    highPriorityTerms.forEach(term => {
       if (words.some(word => word.includes(term) || term.includes(word))) {
         if (!foundTerms.has(term)) {
           relevantTerms.push(term);
@@ -615,11 +619,25 @@ Máximo ${maxResults} resultados.`;
       }
     });
 
-    // Si no se encuentran suficientes términos médicos, extraer palabras clave generales
+    // Si tenemos menos de 3 términos, buscar en el resto de términos médicos
+    if (relevantTerms.length < 3) {
+      medicalTerms.forEach(term => {
+        if (relevantTerms.length >= 3) return; // Parar cuando tengamos 3
+        if (!highPriorityTerms.includes(term) && words.some(word => word.includes(term) || term.includes(word))) {
+          if (!foundTerms.has(term)) {
+            relevantTerms.push(term);
+            foundTerms.add(term);
+          }
+        }
+      });
+    }
+
+    // Si no se encuentran suficientes términos médicos, extraer palabras clave generales (máximo 3 total)
     if (relevantTerms.length < 3) {
       const commonWords = ['the', 'and', 'or', 'of', 'in', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'must', 'shall', 'para', 'con', 'por', 'una', 'uno', 'del', 'las', 'los', 'que', 'como', 'esta', 'este', 'son', 'ser'];
 
       words.forEach(word => {
+        if (relevantTerms.length >= 3) return; // Parar cuando tengamos 3 total
         if (word.length > 3 && !commonWords.includes(word) && !foundTerms.has(word)) {
           relevantTerms.push(word);
           foundTerms.add(word);
@@ -627,13 +645,14 @@ Máximo ${maxResults} resultados.`;
       });
     }
 
-    // Construir consulta optimizada (máximo 8 términos para evitar URLs muy largas)
-    const optimizedQuery = relevantTerms.slice(0, 8).join(' ');
+    // Construir consulta optimizada (máximo 3 términos para evitar URLs muy largas)
+    const optimizedQuery = relevantTerms.slice(0, 3).join(' ');
 
-    console.log(`🔍 Extracted keywords: ${relevantTerms.slice(0, 8).join(', ')}`);
+    console.log(`🔍 Extracted keywords (limited to 3): ${relevantTerms.slice(0, 3).join(', ')}`);
+    console.log(`🔍 Original query length: ${query.length} → Optimized query: "${optimizedQuery}"`);
 
-    // Si no se pudieron extraer términos relevantes, usar una búsqueda genérica
-    return optimizedQuery || 'ophthalmology retinal disorders';
+    // Si no se pudieron extraer términos relevantes, usar una búsqueda genérica corta
+    return optimizedQuery || 'ophthalmology retina';
   }
 
   /**
