@@ -5,8 +5,9 @@ const Header: React.FC<{
   onShowExplanation: () => void;
   onShowHistory: () => void;
   onShowImageUploader: () => void;
+  onGoHome: () => void;
   investigationCount: number;
-}> = ({ onShowExplanation, onShowHistory, onShowImageUploader, investigationCount }) => {
+}> = ({ onShowExplanation, onShowHistory, onShowImageUploader, onGoHome, investigationCount }) => {
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-[100] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
@@ -14,19 +15,27 @@ const Header: React.FC<{
             {/* Logo and Title - Medical Professional Style */}
             <div className="flex items-center space-x-4">
                 <div className="relative flex-shrink-0">
-                    {/* Mobile logo - Medical Cross */}
-                    <div className="lg:hidden w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center shadow-md">
-                        <Eye className="h-4 w-4 text-white" />
+                    {/* Mobile logo - Medical Cross - Clickable */}
+                    <button 
+                        onClick={onGoHome}
+                        className="lg:hidden w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center shadow-md hover:bg-slate-700 transition-colors duration-200 group"
+                        aria-label="Volver al inicio"
+                    >
+                        <Eye className="h-4 w-4 text-white group-hover:scale-110 transition-transform duration-200" />
                         <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-600 rounded-full border border-white"></div>
-                    </div>
+                    </button>
                     
-                    {/* Desktop logo - Professional Medical */}
-                    <div className="hidden lg:block relative">
-                        <div className="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center shadow-lg">
-                            <Eye className="h-6 w-6 text-white" />
+                    {/* Desktop logo - Professional Medical - Clickable */}
+                    <button 
+                        onClick={onGoHome}
+                        className="hidden lg:block relative group"
+                        aria-label="Volver al inicio"
+                    >
+                        <div className="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center shadow-lg hover:bg-slate-700 transition-colors duration-200">
+                            <Eye className="h-6 w-6 text-white group-hover:scale-110 transition-transform duration-200" />
                         </div>
                         <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white"></div>
-                    </div>
+                    </button>
                 </div>
                 
                 {/* Title - Medical Professional Style */}

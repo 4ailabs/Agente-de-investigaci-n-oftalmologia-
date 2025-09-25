@@ -1473,6 +1473,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
         onShowExplanation={() => setShowExplanation(true)} 
         onShowHistory={() => setShowHistory(true)}
         onShowImageUploader={handleOpenImageUploader}
+        onGoHome={handleNewInvestigation}
         investigationCount={investigationHistory.length}
       />
       {showExplanation && (
