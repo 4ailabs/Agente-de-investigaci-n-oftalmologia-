@@ -462,10 +462,6 @@ ${clinicalInfo.trim()}`;
       <div className="lg:hidden">
         {/* Mobile Header - Minimalist */}
         <div className="bg-slate-100 px-4 py-6 text-center border-b border-slate-200">
-          <div className="mb-3">
-            <h1 className="text-xl font-bold text-slate-900">Investigación Clínica</h1>
-            <p className="text-slate-600 text-sm font-medium">Oftalmología</p>
-          </div>
           <p className="text-slate-600 text-sm leading-relaxed">
             Análisis basado en evidencia médica
           </p>
