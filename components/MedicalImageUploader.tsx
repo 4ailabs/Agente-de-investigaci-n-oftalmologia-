@@ -193,13 +193,21 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-6">
-      <div className="mb-6">
+    <div className="bg-white lg:rounded-lg lg:border lg:border-slate-200 lg:p-6">
+      {/* Desktop Header */}
+      <div className="hidden lg:block mb-6">
         <h3 className="text-lg font-semibold text-slate-800 mb-2">
           Análisis de Imágenes Médicas
         </h3>
         <p className="text-sm text-slate-600">
           Sube imágenes oftalmológicas para análisis automático con IA especializada
+        </p>
+      </div>
+
+      {/* Mobile Header */}
+      <div className="lg:hidden mb-4">
+        <p className="text-sm text-slate-600">
+          Sube imágenes oftalmológicas para análisis con IA
         </p>
       </div>
 
@@ -209,19 +217,19 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
           type="button"
           onClick={handleFileSelect}
           disabled={isAnalyzing || selectedImages.length >= maxImages}
-          className="w-full py-3 px-4 border-2 border-dashed border-slate-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-6 lg:py-3 px-4 border-2 border-dashed border-slate-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <div className="flex flex-col items-center">
-            <svg className="h-8 w-8 text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-12 w-12 lg:h-8 lg:w-8 text-slate-400 mb-3 lg:mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            <span className="text-sm font-medium text-slate-600">
-              {selectedImages.length >= maxImages 
+            <span className="text-base lg:text-sm font-medium text-slate-600">
+              {selectedImages.length >= maxImages
                 ? `Máximo ${maxImages} imágenes alcanzado`
                 : 'Seleccionar Imágenes Médicas'
               }
             </span>
-            <span className="text-xs text-slate-500 mt-1">
+            <span className="text-sm lg:text-xs text-slate-500 mt-2 lg:mt-1">
               JPG, PNG, GIF, WebP (máx. 10MB cada una)
             </span>
           </div>
@@ -256,57 +264,112 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
 
           <div className="space-y-3">
             {selectedImages.map((image, index) => (
-              <div key={index} className="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
-                {/* Preview de imagen */}
-                <div className="flex-shrink-0">
-                  <img
-                    src={URL.createObjectURL(image.file)}
-                    alt={`Imagen ${index + 1}`}
-                    className="w-16 h-16 object-cover rounded border"
-                  />
-                </div>
+              <div key={index} className="bg-slate-50 rounded-lg">
+                {/* Desktop Layout */}
+                <div className="hidden lg:flex items-center space-x-3 p-3">
+                  {/* Preview de imagen */}
+                  <div className="flex-shrink-0">
+                    <img
+                      src={URL.createObjectURL(image.file)}
+                      alt={`Imagen ${index + 1}`}
+                      className="w-16 h-16 object-cover rounded border"
+                    />
+                  </div>
 
-                {/* Información de la imagen */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-800 truncate">
-                    {image.file.name}
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    {(image.file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                  <p className="text-xs text-blue-600 font-medium">
-                    Tipo detectado: {imageTypes.find(t => t.value === image.type)?.label || 'Desconocido'}
-                  </p>
-                </div>
+                  {/* Información de la imagen */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-800 truncate">
+                      {image.file.name}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {(image.file.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                    <p className="text-xs text-blue-600 font-medium">
+                      Tipo detectado: {imageTypes.find(t => t.value === image.type)?.label || 'Desconocido'}
+                    </p>
+                  </div>
 
-                {/* Selector de tipo */}
-                <div className="flex-shrink-0">
-                  <label className="text-xs text-slate-600 block mb-1">Tipo:</label>
-                  <select
-                    value={image.type}
-                    onChange={(e) => handleImageTypeChange(index, e.target.value as MedicalImageType)}
+                  {/* Selector de tipo */}
+                  <div className="flex-shrink-0">
+                    <label className="text-xs text-slate-600 block mb-1">Tipo:</label>
+                    <select
+                      value={image.type}
+                      onChange={(e) => handleImageTypeChange(index, e.target.value as MedicalImageType)}
+                      disabled={isAnalyzing}
+                      className="text-xs border border-slate-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                    >
+                      {imageTypes.map(type => (
+                        <option key={type.value} value={type.value}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Botón de eliminar */}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
                     disabled={isAnalyzing}
-                    className="text-xs border border-slate-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                    className="flex-shrink-0 p-1 text-red-500 hover:text-red-700 disabled:opacity-50"
                   >
-                    {imageTypes.map(type => (
-                      <option key={type.value} value={type.value}>
-                        {type.label}
-                      </option>
-                    ))}
-                  </select>
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
 
-                {/* Botón de eliminar */}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(index)}
-                  disabled={isAnalyzing}
-                  className="flex-shrink-0 p-1 text-red-500 hover:text-red-700 disabled:opacity-50"
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                {/* Mobile Layout */}
+                <div className="lg:hidden p-3 space-y-3">
+                  {/* Image and basic info */}
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0">
+                      <img
+                        src={URL.createObjectURL(image.file)}
+                        alt={`Imagen ${index + 1}`}
+                        className="w-20 h-20 object-cover rounded border"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-800 truncate">
+                        {image.file.name}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {(image.file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                      <p className="text-xs text-blue-600 font-medium">
+                        {imageTypes.find(t => t.value === image.type)?.label || 'Desconocido'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      disabled={isAnalyzing}
+                      className="flex-shrink-0 p-2 text-red-500 hover:text-red-700 disabled:opacity-50"
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Type selector - full width on mobile */}
+                  <div className="w-full">
+                    <label className="text-sm text-slate-600 block mb-2">Tipo de imagen:</label>
+                    <select
+                      value={image.type}
+                      onChange={(e) => handleImageTypeChange(index, e.target.value as MedicalImageType)}
+                      disabled={isAnalyzing}
+                      className="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 bg-white"
+                    >
+                      {imageTypes.map(type => (
+                        <option key={type.value} value={type.value}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -330,12 +393,12 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
       )}
 
       {/* Botones de acción */}
-      <div className="flex space-x-3">
+      <div className="flex flex-col lg:flex-row lg:space-x-3 space-y-3 lg:space-y-0">
         <button
           type="button"
           onClick={handleAnalyzeImages}
           disabled={selectedImages.length === 0 || isAnalyzing}
-          className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full lg:flex-1 bg-blue-600 text-white py-3 lg:py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
         >
           {isAnalyzing ? 'Analizando...' : 'Analizar Imágenes'}
         </button>
@@ -345,21 +408,21 @@ const MedicalImageUploader: React.FC<MedicalImageUploaderProps> = ({
             type="button"
             onClick={handleClearImages}
             disabled={isAnalyzing}
-            className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 transition-colors"
+            className="w-full lg:w-auto px-4 py-3 lg:py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 transition-colors font-medium"
           >
-            Cancelar
+            Limpiar Todo
           </button>
         )}
       </div>
 
       {/* Información sobre tipos de imagen */}
       <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-        <h5 className="text-sm font-medium text-blue-800 mb-2">Tipos de Imagen Soportados:</h5>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-blue-700">
+        <h5 className="text-sm lg:text-sm font-medium text-blue-800 mb-3 lg:mb-2">Tipos de Imagen Soportados:</h5>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-2 text-sm lg:text-xs text-blue-700">
           {imageTypes.map(type => (
-            <div key={type.value} className="flex items-center">
-              <span className="font-medium">{type.label}:</span>
-              <span className="ml-1">{type.description}</span>
+            <div key={type.value} className="flex flex-col lg:flex-row lg:items-center">
+              <span className="font-medium text-blue-800">{type.label}</span>
+              <span className="lg:ml-1 text-xs lg:text-xs text-blue-600">{type.description}</span>
             </div>
           ))}
         </div>

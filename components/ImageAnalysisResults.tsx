@@ -368,51 +368,51 @@ const ImageAnalysisResults: React.FC<ImageAnalysisResultsProps> = ({
 
       {/* Content */}
       <div className="p-4 lg:p-6 overflow-y-auto lg:max-h-[60vh]">
-          {analyses.map((analysis, index) => (
-            <div key={index} className={activeTab === index ? 'block' : 'hidden'}>
-              {/* Información general */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-lg font-semibold text-slate-800">
-                    {getImageTypeLabel(analysis.imageType)}
-                  </h4>
-                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${getConfidenceColor(analysis.confidence)}`}>
-                    Confianza: {getConfidenceLabel(analysis.confidence)} ({(analysis.confidence * 100).toFixed(0)}%)
-                  </div>
+        {analyses.map((analysis, index) => (
+          <div key={index} className={activeTab === index ? 'block' : 'hidden'}>
+            {/* Información general */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-lg font-semibold text-slate-800">
+                  {getImageTypeLabel(analysis.imageType)}
+                </h4>
+                <div className={`px-3 py-1 rounded-full text-sm font-medium ${getConfidenceColor(analysis.confidence)}`}>
+                  Confianza: {getConfidenceLabel(analysis.confidence)} ({(analysis.confidence * 100).toFixed(0)}%)
                 </div>
-
-                {/* Imagen */}
-                {analysis.imageUrl && (
-                  <div className="mb-4">
-                    <img
-                      src={analysis.imageUrl}
-                      alt="Imagen analizada"
-                      className="max-w-full h-64 object-contain rounded-lg border border-slate-200"
-                    />
-                  </div>
-                )}
               </div>
 
-              {/* Hallazgos específicos */}
-              {renderFindings(analysis)}
-
-              {/* Recomendaciones */}
-              {analysis.recommendations && analysis.recommendations.length > 0 && (
-                <div className="mt-6 bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-800 mb-3">Recomendaciones</h4>
-                  <ul className="space-y-2">
-                    {analysis.recommendations.map((rec, recIndex) => (
-                      <li key={recIndex} className="text-sm text-blue-700 flex items-start">
-                        <span className="text-blue-500 mr-2">•</span>
-                        {rec}
-                      </li>
-                    ))}
-                  </ul>
+              {/* Imagen */}
+              {analysis.imageUrl && (
+                <div className="mb-4">
+                  <img
+                    src={analysis.imageUrl}
+                    alt="Imagen analizada"
+                    className="max-w-full h-64 object-contain rounded-lg border border-slate-200"
+                  />
                 </div>
               )}
             </div>
-          ))}
-        </div>
+
+            {/* Hallazgos específicos */}
+            {renderFindings(analysis)}
+
+            {/* Recomendaciones */}
+            {analysis.recommendations && analysis.recommendations.length > 0 && (
+              <div className="mt-6 bg-blue-50 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-800 mb-3">Recomendaciones</h4>
+                <ul className="space-y-2">
+                  {analysis.recommendations.map((rec, recIndex) => (
+                    <li key={recIndex} className="text-sm text-blue-700 flex items-start">
+                      <span className="text-blue-500 mr-2">•</span>
+                      {rec}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

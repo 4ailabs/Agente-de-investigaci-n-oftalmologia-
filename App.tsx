@@ -154,18 +154,18 @@ ${clinicalInfo.trim()}`;
       {/* Desktop Layout */}
       <div className="hidden lg:flex items-center justify-center py-4 lg:py-8 px-4">
         <div className="w-full max-w-5xl bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          {/* Header Section - Enhanced Medical Professional Style */}
-          <div className="bg-gradient-to-r from-slate-600 to-slate-700 px-8 py-8 text-center">
+          {/* Header Section - Minimalist */}
+          <div className="bg-slate-100 px-8 py-8 text-center border-b border-slate-200">
             <div className="flex items-center justify-center mb-4">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                <ClipboardCheck className="h-7 w-7 text-slate-800" />
+              <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mr-4">
+                <ClipboardCheck className="h-7 w-7 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-white">Sistema de Investigación Clínica</h1>
-                <p className="text-slate-200 text-sm lg:text-base font-medium">Especializada en Oftalmología</p>
+                <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Sistema de Investigación Clínica</h1>
+                <p className="text-slate-600 text-sm lg:text-base font-medium">Especializada en Oftalmología</p>
               </div>
             </div>
-            <p className="text-slate-200 max-w-4xl mx-auto leading-relaxed text-base">
+            <p className="text-slate-600 max-w-4xl mx-auto leading-relaxed text-base">
               Plataforma avanzada para análisis clínico basado en evidencia médica, protocolos de investigación sistemática y fuentes académicas verificadas.
             </p>
           </div>
@@ -465,18 +465,18 @@ ${clinicalInfo.trim()}`;
 
       {/* Mobile Layout - Optimized without nested cards */}
       <div className="lg:hidden">
-        {/* Mobile Header - Compact */}
-        <div className="bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-6 text-center">
+        {/* Mobile Header - Minimalist */}
+        <div className="bg-slate-100 px-4 py-6 text-center border-b border-slate-200">
           <div className="flex items-center justify-center mb-3">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3 shadow-lg">
-              <ClipboardCheck className="h-6 w-6 text-slate-800" />
+            <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center mr-3">
+              <ClipboardCheck className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">Investigación Clínica</h1>
-              <p className="text-slate-200 text-sm font-medium">Oftalmología</p>
+              <h1 className="text-xl font-bold text-slate-900">Investigación Clínica</h1>
+              <p className="text-slate-600 text-sm font-medium">Oftalmología</p>
             </div>
           </div>
-          <p className="text-slate-200 text-sm leading-relaxed">
+          <p className="text-slate-600 text-sm leading-relaxed">
             Análisis basado en evidencia médica
           </p>
         </div>
@@ -1472,7 +1472,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
   }, [investigation, activeView]);
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-200/30 flex flex-col overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-200/30 flex flex-col overflow-y-auto relative">
       {showSplash && (
         <SplashScreen onComplete={() => setShowSplash(false)} />
       )}
@@ -1518,27 +1518,30 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
           />
         </Suspense>
       )}
-      <div className="flex-1 flex flex-col">
+      {/* Enhanced Main Container */}
+      <div className="flex-1 flex flex-col relative z-10">
       {!investigation ? (
-        <InitialQueryInput 
-          onSubmit={handleStartInvestigation} 
-          onSubmitEnhanced={handleEnhancedFormSubmit} 
+        <InitialQueryInput
+          onSubmit={handleStartInvestigation}
+          onSubmitEnhanced={handleEnhancedFormSubmit}
           isLoading={investigation?.isGenerating ?? false}
         />
       ) : investigation.isGenerating && investigation.plan.length === 0 ? (
-         <div className="relative">
-           <MobileLoadingCard 
-             title="Creando Plan de Investigación"
-             description="Nuestro agente de IA está analizando el caso y diseñando un plan de investigación personalizado basado en evidencia médica."
-           />
-           <div className="mt-4 flex justify-center">
-             <button
-               onClick={handleCancelInvestigation}
-               className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors duration-200"
-             >
-               <X className="h-4 w-4 mr-2" />
-               Cancelar Investigación
-             </button>
+         <div className="flex-1 flex items-center justify-center">
+           <div className="text-center">
+             <MobileLoadingCard
+               title="Creando Plan de Investigación"
+               description="Nuestro agente de IA está analizando el caso y diseñando un plan de investigación personalizado basado en evidencia médica."
+             />
+             <div className="mt-6">
+               <button
+                 onClick={handleCancelInvestigation}
+                 className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors duration-200"
+               >
+                 <X className="h-4 w-4 mr-2" />
+                 Cancelar Investigación
+               </button>
+             </div>
            </div>
          </div>
       ) : (
@@ -2084,10 +2087,10 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
             {/* Desktop Layout */}
             <div className="hidden lg:flex flex-1 h-full">
-                {/* Sidebar: Steps Navigation */}
-                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm h-full min-w-0">
-                    {/* Sidebar Header */}
-                    <div className="p-4 border-b border-slate-200 bg-slate-50">
+                {/* Enhanced Sidebar: Steps Navigation */}
+                <div className="w-96 bg-white border-r border-slate-200 flex flex-col shadow-sm h-full min-w-0">
+                    {/* Enhanced Sidebar Header */}
+                    <div className="p-5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-slate-100">
                         {/* Header - Medical Professional Style */}
                         <div className="pb-3 border-b-2 border-slate-300">
                              <div className="flex justify-between items-center mb-3">
@@ -2120,52 +2123,103 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                              </div>
                         </div>
 
-                             {/* Patient Info - Compact */}
-                             <div className="mt-4 p-3 bg-white rounded-lg border border-slate-200 shadow-sm">
-                                 <div className="text-sm text-slate-800 space-y-2">
-                                     {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
-                                         if (index === 0) {
-                                             // Patient demographics (first line)
-                                             return (
-                                                 <div key={index} className="font-bold text-slate-900 text-sm border-b border-slate-300 pb-2">
-                                                     {section.trim()}
-                                                 </div>
-                                             );
-                                         } else {
-                                             // Clinical symptoms (truncated for sidebar)
-                                             const symptoms = section.replace('Síntomas y Antecedentes Clínicos:', '').trim();
-                                             const truncated = symptoms.length > 80 ? symptoms.substring(0, 80) + '...' : symptoms;
-                                             return (
-                                                 <div key={index} className="text-slate-700">
-                                                     <div className="text-xs font-semibold text-slate-600 mb-1">Motivo:</div>
-                                                     <div className="text-xs leading-relaxed" title={symptoms}>
-                                                         {truncated}
+                             {/* Enhanced Patient Info Card */}
+                             <div className="mt-4 space-y-3">
+                                 {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
+                                     if (index === 0) {
+                                         // Patient demographics card
+                                         return (
+                                             <div key={index} className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 shadow-sm">
+                                                 <div className="flex items-center mb-2">
+                                                     <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                                                         <User className="h-3 w-3 text-blue-600" />
                                                      </div>
+                                                     <div className="text-xs font-semibold text-blue-800">Información del Paciente</div>
                                                  </div>
-                                             );
-                                         }
-                                     }) : (
-                                         <div className="text-xs text-slate-500 font-medium">Cargando información del caso...</div>
-                                     )}
-                                 </div>
+                                                 <div className="text-sm font-bold text-blue-900">{section.trim()}</div>
+                                             </div>
+                                         );
+                                     } else {
+                                         // Clinical symptoms expandable card
+                                         const symptoms = section.replace('Síntomas y Antecedentes Clínicos:', '').trim();
+                                         const isLong = symptoms.length > 100;
+                                         const [expanded, setExpanded] = React.useState(false);
+                                         const displayText = isLong && !expanded ? symptoms.substring(0, 100) + '...' : symptoms;
+
+                                         return (
+                                             <div key={index} className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200 shadow-sm">
+                                                 <div className="flex items-center mb-3">
+                                                     <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mr-2">
+                                                         <ClipboardCheck className="h-3 w-3 text-purple-600" />
+                                                     </div>
+                                                     <div className="text-xs font-semibold text-purple-800">Motivo de Consulta</div>
+                                                 </div>
+                                                 <div className="text-xs text-purple-700 leading-relaxed">
+                                                     {displayText}
+                                                     {isLong && (
+                                                         <button
+                                                             className="block text-purple-600 hover:text-purple-800 font-semibold text-xs mt-2 transition-colors"
+                                                             onClick={() => setExpanded(!expanded)}
+                                                         >
+                                                             {expanded ? '← Ver menos' : 'Ver más →'}
+                                                         </button>
+                                                     )}
+                                                 </div>
+                                             </div>
+                                         );
+                                     }
+                                 }) : (
+                                     <div className="text-xs text-slate-500 font-medium animate-pulse">Cargando información del caso...</div>
+                                 )}
                              </div>
                         </div>
 
-                        {/* Progress Indicator - Compact */}
-                        <div className="mt-4">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-bold text-slate-800">Progreso</span>
-                                <span className="text-xs text-slate-600 font-semibold bg-slate-100 px-2 py-1 rounded-full">
-                                    {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length}
-                                </span>
-                            </div>
-                            <div className="w-full bg-slate-200 rounded-full h-2 border border-slate-300 shadow-inner">
-                                <div
-                                    className="bg-gradient-to-r from-slate-700 to-slate-800 h-2 rounded-full transition-all duration-500 shadow-sm"
-                                    style={{
-                                        width: `${(investigation.plan.filter(step => step.status === 'completed').length / investigation.plan.length) * 100}%`
-                                    }}
-                                ></div>
+                        {/* Enhanced Progress Indicator */}
+                        <div className="mt-5">
+                            <div className="bg-gradient-to-r from-slate-50 to-slate-100 p-4 rounded-lg border border-slate-200 shadow-sm">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center">
+                                        <div className="w-7 h-7 bg-slate-100 rounded-full flex items-center justify-center mr-3">
+                                            <TrendingUp className="h-4 w-4 text-slate-700" />
+                                        </div>
+                                        <span className="text-sm font-bold text-slate-800">Progreso del Protocolo</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <span className="text-xs text-slate-600 font-semibold bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">
+                                            {investigation.plan.filter(step => step.status === 'completed').length}/{investigation.plan.length} Completados
+                                        </span>
+                                        <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                                            investigation.plan.filter(step => step.status === 'completed').length === investigation.plan.length
+                                                ? 'bg-green-100 text-green-800'
+                                                : investigation.plan.filter(step => step.status === 'completed').length > 0
+                                                ? 'bg-blue-100 text-blue-800'
+                                                : 'bg-gray-100 text-gray-600'
+                                        }`}>
+                                            {investigation.plan.filter(step => step.status === 'completed').length === investigation.plan.length
+                                                ? '✓ Completo'
+                                                : investigation.plan.filter(step => step.status === 'completed').length > 0
+                                                ? 'En progreso'
+                                                : 'Iniciando'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="w-full bg-slate-200 rounded-full h-3 border border-slate-300 shadow-inner relative">
+                                    <div
+                                        className="bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 h-3 rounded-full transition-all duration-700 shadow-sm relative"
+                                        style={{
+                                            width: `${(investigation.plan.filter(step => step.status === 'completed').length / investigation.plan.length) * 100}%`
+                                        }}
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/20 rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div className="flex justify-between text-xs text-slate-600 mt-2">
+                                    <span>Inicio</span>
+                                    <span className="text-center">
+                                        {Math.round((investigation.plan.filter(step => step.status === 'completed').length / investigation.plan.length) * 100)}% completado
+                                    </span>
+                                    <span>Reporte Final</span>
+                                </div>
                             </div>
                         </div>
 
@@ -2414,50 +2468,273 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                     {/* Scroll Indicator - Top Gradient for Main Content */}
                     <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-slate-50 to-transparent pointer-events-none z-10"></div>
+
+                    {/* Enhanced Bottom Action Bar - Desktop Only */}
+                    <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
+                        <div className="bg-white/95 backdrop-blur-sm border border-slate-200 rounded-2xl shadow-2xl p-4">
+                            <div className="flex items-center space-x-6">
+                                {/* Investigation Controls */}
+                                {investigation && investigation.currentStep < investigation.plan.length && (
+                                    <div className="flex items-center space-x-3">
+                                        <div className="text-xs text-slate-600 font-medium">
+                                            Protocolo en progreso
+                                        </div>
+                                        <button
+                                            onClick={handleExecuteNextStep}
+                                            disabled={investigation.isGenerating}
+                                            className="flex items-center space-x-2 px-4 py-2 bg-slate-800 text-white text-sm font-medium rounded-lg hover:bg-slate-900 disabled:bg-slate-400 transition-all duration-200 shadow-sm"
+                                        >
+                                            {investigation.isGenerating ? (
+                                                <>
+                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                    <span>Ejecutando...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Zap className="h-4 w-4" />
+                                                    <span>Ejecutar Paso {investigation.currentStep + 1}</span>
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Report Generation */}
+                                {investigation && investigation.plan.some(step => step.status === 'completed') && !investigation.finalReport && (
+                                    <div className="flex items-center space-x-3 border-l border-slate-200 pl-6">
+                                        <div className="text-xs text-slate-600 font-medium">
+                                            Pasos completados
+                                        </div>
+                                        <button
+                                            onClick={handleGenerateReport}
+                                            disabled={investigation.isGeneratingReport}
+                                            className="flex items-center space-x-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:bg-slate-400 transition-all duration-200 shadow-sm"
+                                        >
+                                            {investigation.isGeneratingReport ? (
+                                                <>
+                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                    <span>Generando...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <FileText className="h-4 w-4" />
+                                                    <span>Generar Reporte</span>
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Quick Actions for Completed Investigation */}
+                                {investigation && investigation.finalReport && (
+                                    <div className="flex items-center space-x-3">
+                                        <div className="text-xs text-green-600 font-medium">
+                                            ✅ Investigación completa
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <button
+                                                onClick={() => setShowImageUploader(true)}
+                                                className="flex items-center space-x-2 px-3 py-2 bg-blue-50 text-blue-700 text-sm font-medium rounded-lg hover:bg-blue-100 transition-colors border border-blue-200"
+                                                title="Analizar imágenes médicas"
+                                            >
+                                                <Camera className="h-4 w-4" />
+                                                <span>Imágenes</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleCopyReport()}
+                                                className="flex items-center space-x-2 px-3 py-2 bg-emerald-50 text-emerald-700 text-sm font-medium rounded-lg hover:bg-emerald-100 transition-colors border border-emerald-200"
+                                                title="Copiar reporte completo"
+                                            >
+                                                <Copy className="h-4 w-4" />
+                                                <span>Copiar</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Keyboard Shortcuts Hint */}
+                                <div className="flex items-center space-x-2 border-l border-slate-200 pl-6">
+                                    <kbd className="px-2 py-1 text-xs font-mono bg-slate-100 text-slate-600 rounded border border-slate-200">←</kbd>
+                                    <kbd className="px-2 py-1 text-xs font-mono bg-slate-100 text-slate-600 rounded border border-slate-200">→</kbd>
+                                    <span className="text-xs text-slate-500">Navegar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div
                       ref={contentRef}
-                      className="flex-1 bg-slate-50 p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400"
+                      className="flex-1 bg-slate-50/30 p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400"
                     >
                         {activeContent ? (
                             <div>
-                                {/* Header - Desktop Enhanced */}
-                                <div className="flex justify-between items-start mb-8">
-                                    <div className="flex-1">
-                                        <div className="flex items-center mb-4">
-                                            {activeView.type === 'step' ? (
-                                                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4 shadow-sm">
-                                                    <ClipboardCheck className="h-7 w-7 text-blue-600" />
-                                                </div>
-                                            ) : (
-                                                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4 shadow-sm">
-                                                    <FileText className="h-7 w-7 text-green-600" />
-                                                </div>
-                                            )}
-                                            <div>
-                                                <h2 className="text-2xl font-bold text-slate-900">{activeContent.title}</h2>
-                                                <div className="flex items-center mt-2">
-                                                    <StatusIcon status={activeContent.status as ResearchStep['status']} />
-                                                    <span className="ml-3 text-base text-slate-600 font-medium">
-                                                        {activeContent.status === 'completed' ? 'Completado' :
-                                                         activeContent.status === 'in-progress' ? 'En progreso' :
-                                                         activeContent.status === 'error' ? 'Error' : 'Pendiente'}
-                                                    </span>
+                                {/* Enhanced Desktop Header with Rich Context */}
+                                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex-1">
+                                            <div className="flex items-start space-x-4">
+                                                {activeView.type === 'step' ? (
+                                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center shadow-md border border-blue-200">
+                                                        <ClipboardCheck className="h-8 w-8 text-blue-600" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-14 h-14 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl flex items-center justify-center shadow-md border border-emerald-200">
+                                                        <FileText className="h-8 w-8 text-emerald-600" />
+                                                    </div>
+                                                )}
+                                                <div className="flex-1">
+                                                    <div className="flex items-center space-x-4 mb-2">
+                                                        <h2 className="text-2xl font-bold text-slate-900">{activeContent.title}</h2>
+                                                        <div className="flex items-center space-x-3">
+                                                            <div className="flex items-center space-x-2">
+                                                                <StatusIcon status={activeContent.status as ResearchStep['status']} />
+                                                                <span className={`text-sm font-bold px-3 py-1.5 rounded-full ${
+                                                                    activeContent.status === 'completed' ? 'bg-green-100 text-green-800 border border-green-200' :
+                                                                    activeContent.status === 'in-progress' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                                                                    activeContent.status === 'error' ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-slate-100 text-slate-700 border border-slate-200'
+                                                                }`}>
+                                                                    {activeContent.status === 'completed' ? '✓ Completado' :
+                                                                     activeContent.status === 'in-progress' ? '⏳ En progreso' :
+                                                                     activeContent.status === 'error' ? '⚠ Error' : '○ Pendiente'}
+                                                                </span>
+                                                            </div>
+                                                            {activeView.type === 'step' && (
+                                                                <span className="text-sm text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200 font-medium">
+                                                                    Paso {activeView.id} de {investigation?.plan.length}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-sm text-slate-600 leading-relaxed">
+                                                        {activeView.type === 'step'
+                                                            ? 'Análisis detallado de investigación médica basado en evidencia científica'
+                                                            : 'Reporte médico completo con diagnóstico diferencial y recomendaciones clínicas'}
+                                                    </div>
+
+                                                    {/* Quick Stats for Step */}
+                                                    {activeView.type === 'step' && activeContent.status === 'completed' && activeContent.sources && (
+                                                        <div className="flex items-center space-x-4 mt-3">
+                                                            <div className="flex items-center text-xs text-slate-500">
+                                                                <Globe className="h-3 w-3 mr-1" />
+                                                                {activeContent.sources.length} fuente{activeContent.sources.length !== 1 ? 's' : ''} consultada{activeContent.sources.length !== 1 ? 's' : ''}
+                                                            </div>
+                                                            <div className="flex items-center text-xs text-slate-500">
+                                                                <Clock className="h-3 w-3 mr-1" />
+                                                                Análisis completado
+                                                            </div>
+                                                            {activeContent.content && (
+                                                                <div className="flex items-center text-xs text-slate-500">
+                                                                    <FileText className="h-3 w-3 mr-1" />
+                                                                    ~{Math.round(activeContent.content.split(' ').length / 200)} min lectura
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {/* Enhanced Action Bar */}
+                                        <div className="flex items-center space-x-3">
+                                            {/* Quick Navigation */}
+                                            <div className="flex items-center space-x-1 mr-4">
+                                                <button
+                                                    onClick={() => {
+                                                        const prevStepId = Math.max(1, (activeView.id || 1) - 1);
+                                                        if (investigation?.plan[prevStepId - 1]) {
+                                                            setActiveView({ type: 'step', id: prevStepId });
+                                                        }
+                                                    }}
+                                                    disabled={!activeView.id || activeView.id <= 1}
+                                                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                    title="Paso anterior (←)"
+                                                >
+                                                    <ChevronLeft className="h-4 w-4" />
+                                                </button>
+                                                <span className="text-xs text-slate-500 px-2">
+                                                    {activeView.type === 'step' ? `${activeView.id}/${investigation?.plan.length}` : 'Reporte'}
+                                                </span>
+                                                <button
+                                                    onClick={() => {
+                                                        if (activeView.type === 'step') {
+                                                            const nextStepId = Math.min(investigation?.plan.length || 1, (activeView.id || 1) + 1);
+                                                            if (investigation?.plan[nextStepId - 1]) {
+                                                                setActiveView({ type: 'step', id: nextStepId });
+                                                            } else if (investigation?.finalReport) {
+                                                                setActiveView({ type: 'report', id: null });
+                                                            }
+                                                        }
+                                                    }}
+                                                    disabled={
+                                                        activeView.type === 'report' ||
+                                                        (activeView.type === 'step' && (!investigation?.plan || activeView.id >= investigation.plan.length) && !investigation?.finalReport)
+                                                    }
+                                                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                    title="Paso siguiente (→)"
+                                                >
+                                                    <ChevronRight className="h-4 w-4" />
+                                                </button>
+                                            </div>
+
+                                            {activeView.type === 'step' && activeContent.status === 'completed' && (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleCopyStep(activeView.id!)}
+                                                        className={`flex items-center space-x-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 shadow-sm hover:shadow-md ${
+                                                            copiedStepId === activeView.id
+                                                                ? 'text-green-700 bg-green-50 border border-green-200 hover:bg-green-100'
+                                                                : 'text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                                                        }`}
+                                                        title="Copiar contenido (Ctrl+C)"
+                                                    >
+                                                        {copiedStepId === activeView.id ? (
+                                                            <>
+                                                                <Check className="h-4 w-4" />
+                                                                <span>¡Copiado!</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Copy className="h-4 w-4" />
+                                                                <span>Copiar</span>
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleOpenStepFeedback(activeView.id!, activeContent.title)}
+                                                        className={`flex items-center space-x-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 shadow-sm ${
+                                                            activeContent.feedback
+                                                                ? 'text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100'
+                                                                : 'text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100'
+                                                        }`}
+                                                        title="Agregar feedback del especialista (F)"
+                                                    >
+                                                        <Edit className="h-4 w-4" />
+                                                        <span>{activeContent.feedback ? 'Ver Feedback' : 'Add Feedback'}</span>
+                                                    </button>
+                                                </>
+                                            )}
+                                            {activeView.type === 'report' && (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleCopyReport()}
+                                                        className="flex items-center space-x-2 px-4 py-2.5 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-200 shadow-sm"
+                                                        title="Copiar reporte completo (Ctrl+Shift+C)"
+                                                    >
+                                                        <Copy className="h-4 w-4" />
+                                                        <span>Copiar Reporte</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setShowImageUploader(true)}
+                                                        className="flex items-center space-x-2 px-4 py-2.5 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 hover:border-blue-300 transition-all duration-200 shadow-sm"
+                                                        title="Analizar imágenes médicas (I)"
+                                                    >
+                                                        <Camera className="h-4 w-4" />
+                                                        <span>Imágenes</span>
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        {activeView.type === 'step' && activeContent.status === 'completed' && (
-                                        <button
-                                                onClick={() => handleCopyStep(activeView.id!)}
-                                                className="flex items-center space-x-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md"
-                                        >
-                                            <Copy className="h-4 w-4" />
-                                                <span>{copiedStepId === activeView.id ? '¡Copiado!' : 'Copiar Paso'}</span>
-                                        </button>
-                                    )}
-                                </div>
                                 </div>
 
                                 {/* Content */}
@@ -2737,10 +3014,11 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
         />
       )}
 
-      {/* Medical Image Uploader Modal */}
+      {/* Medical Image Uploader Modal - Mobile Optimized */}
       {showImageUploader && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-end lg:items-center p-0 lg:p-4">
+          {/* Desktop Modal */}
+          <div className="hidden lg:block bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <h3 className="text-xl font-semibold text-slate-800">
                 Análisis de Imágenes Médicas
@@ -2765,17 +3043,97 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
               </ErrorBoundary>
             </div>
           </div>
+
+          {/* Mobile Full-Screen Modal */}
+          <div className="lg:hidden bg-white w-full h-full flex flex-col overflow-hidden">
+            {/* Mobile Header */}
+            <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-white sticky top-0 z-10">
+              <div className="flex items-center">
+                <Camera className="h-6 w-6 text-slate-800 mr-3" />
+                <h3 className="text-lg font-semibold text-slate-800">
+                  Análisis de Imágenes
+                </h3>
+              </div>
+              <button
+                onClick={handleCloseImageUploader}
+                className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Mobile Content */}
+            <div className="flex-1 overflow-y-auto p-4">
+              <ErrorBoundary>
+                <MedicalImageUploader
+                  onAnalysisComplete={handleImageAnalysisComplete}
+                  onError={handleImageAnalysisError}
+                  isLoading={false}
+                  maxImages={5}
+                />
+              </ErrorBoundary>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Image Analysis Results Modal */}
+      {/* Image Analysis Results Modal - Mobile Optimized */}
       {showImageResults && (
-        <ErrorBoundary>
-          <ImageAnalysisResults
-            analyses={imageAnalyses}
-            onClose={handleCloseImageResults}
-          />
-        </ErrorBoundary>
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-end lg:items-center p-0 lg:p-4">
+          {/* Desktop Modal */}
+          <div className="hidden lg:block bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <h3 className="text-xl font-semibold text-slate-800">
+                Resultados del Análisis de Imágenes
+              </h3>
+              <button
+                onClick={handleCloseImageResults}
+                className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              <ErrorBoundary>
+                <ImageAnalysisResults
+                  analyses={imageAnalyses}
+                  onClose={handleCloseImageResults}
+                />
+              </ErrorBoundary>
+            </div>
+          </div>
+
+          {/* Mobile Full-Screen Modal */}
+          <div className="lg:hidden bg-white w-full h-full flex flex-col overflow-hidden">
+            {/* Mobile Header */}
+            <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-white sticky top-0 z-10">
+              <div className="flex items-center">
+                <FileText className="h-6 w-6 text-slate-800 mr-3" />
+                <h3 className="text-lg font-semibold text-slate-800">
+                  Resultados del Análisis
+                </h3>
+              </div>
+              <button
+                onClick={handleCloseImageResults}
+                className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Mobile Content */}
+            <div className="flex-1 overflow-y-auto p-4">
+              <ErrorBoundary>
+                <ImageAnalysisResults
+                  analyses={imageAnalyses}
+                  onClose={handleCloseImageResults}
+                />
+              </ErrorBoundary>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Image Analysis Announcement */}
