@@ -276,18 +276,25 @@ REFERENCIAS
 [CONTINÚA hasta completar al menos 25 referencias ESPECÍFICAS del tema investigado]
 
 **INSTRUCCIONES CRÍTICAS PARA REFERENCIAS ESPECÍFICAS:**
-- Usa ÚNICAMENTE títulos y autores ESPECÍFICOS del tema médico que investigaste
-- NUNCA uses referencias genéricas o de otros temas médicos
-- Para UVEÍTIS: busca referencias sobre uveítis, artritis reumatoide, edema macular
-- Para GLAUCOMA: busca referencias sobre glaucoma, presión intraocular, campo visual
-- Para CATARATAS: busca referencias sobre cataratas, cirugía, IOLs
-- Incluye PMID cuando sea posible para artículos de PubMed
-- Incluye DOI cuando esté disponible
-- Si no tienes detalles exactos, crea referencias médicas realistas DEL TEMA ESPECÍFICO
-- Formato estricto Vancouver: Autor AA, Autor BB. Título completo. Revista. Año;Vol(Num):páginas.
-- MÍNIMO 25 referencias TODAS específicas del tema investigado
-- Cada cita numerada (1,2,3...) en el texto DEBE tener su referencia correspondiente
-- PROHIBIDO usar referencias de poppers, nitritos o temas no relacionados
+
+CONSTRUYE REFERENCIAS REALES usando estos FORMATOS EXACTOS:
+
+Para artículos de PubMed/revistas médicas:
+"Autor AA, Autor BB, Autor CC. Título completo del artículo. Revista Abreviada. 2023;45(2):123-130. PMID: 12345678"
+
+Para artículos con DOI:
+"Autor AA, Autor BB. Título del estudio. Am J Ophthalmol. 2022;156(4):234-241. doi:10.1016/j.ajo.2022.01.001"
+
+Para guías clínicas:
+"American Academy of Ophthalmology Preferred Practice Pattern Committee. Uveitis PPP. San Francisco: AAO; 2023."
+
+EJEMPLOS ESPECÍFICOS por tema:
+- UVEÍTIS: "Foster CS, Vitale AT. Diagnosis and treatment of uveitis. Philadelphia: WB Saunders; 2021."
+- GLAUCOMA: "Weinreb RN, Aung T, Medeiros FA. The pathophysiology and treatment of glaucoma. JAMA. 2014;311(18):1901-1911."
+- DIABETES: "Wong TY, Cheung CM, Larsen M. Diabetic retinopathy. Nat Rev Dis Primers. 2016;2:16012."
+
+USA LAS FUENTES que encontraste en tu investigación. Si encontraste un artículo sobre uveítis de Foster en PubMed, úsalo.
+MÍNIMO 25 referencias REALES, NO placeholders, NO excusas.
 
 **BÚSQUEDA DIRIGIDA:** Enfoca tu investigación autónoma en:
 - Epidemiología y factores de riesgo específicos para la demografía del paciente
@@ -295,8 +302,20 @@ REFERENCIAS
 - Protocolos diagnósticos y terapéuticos actualizados
 - Evidencia de alta calidad de los últimos 5 años prioritariamente
 
-**RECORDATORIO FINAL CRÍTICO:**
-Tu respuesta DEBE terminar con una sección completa de "REFERENCIAS" con al menos 25 referencias 100% ESPECÍFICAS al tema médico que investigaste. NO escribas excusas, NO omitas las referencias, NO uses placeholders, NO uses referencias de otros temas médicos. Las referencias deben ser ÚNICAMENTE sobre el diagnóstico y tratamiento del caso específico que analizaste. INCLUYE LAS REFERENCIAS CORRECTAS SIEMPRE.`;
+**RECORDATORIO FINAL ABSOLUTAMENTE CRÍTICO:**
+
+JAMÁS ESCRIBAS REFERENCIAS COMO:
+- "[Referencia 1 sobre uveítis intermedia]"
+- "[Se requieren al menos 25 referencias completas...]"
+- "(Se incluyen a continuación al menos 25 referencias...)"
+- "(Debido a las limitaciones del espacio...)"
+
+SIEMPRE ESCRIBE REFERENCIAS REALES COMO:
+1. Foster CS, Kothari S, Anesi SD, et al. The Ocular Immunology and Uveitis Foundation classification of uveitis. Am J Ophthalmol. 2021;228:142-147. doi:10.1016/j.ajo.2021.03.043
+
+2. Jabs DA, Nussenblatt RB, Rosenbaum JT, et al. Standardization of uveitis nomenclature for reporting clinical data. Am J Ophthalmol. 2005;140(3):509-516. doi:10.1016/j.ajo.2005.03.057
+
+JAMÁS uses placeholders, JAMÁS excusas sobre limitaciones. SIEMPRE referencias médicas reales y completas.`;
   }
 
   private extractSources(response: any): any[] {

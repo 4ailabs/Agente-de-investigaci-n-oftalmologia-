@@ -153,7 +153,7 @@ ${clinicalInfo.trim()}`;
      <main className="bg-slate-50 flex items-center justify-center py-4 lg:py-8 px-4">
         <div className="w-full max-w-5xl bg-white rounded-2xl border border-slate-200 overflow-hidden">
           {/* Header Section - Enhanced Medical Professional Style */}
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-8 py-8 text-center">
+          <div className="bg-gradient-to-r from-slate-600 to-slate-700 px-8 py-8 text-center">
             <div className="flex items-center justify-center mb-4">
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 shadow-lg">
                 <ClipboardCheck className="h-7 w-7 text-slate-800" />
