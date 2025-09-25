@@ -8,6 +8,7 @@ import {
   SearchQuery,
   EvidenceGrade
 } from './baseProvider';
+import { getReferenceInstructions } from '../../constants';
 import { enhancedMedicalSources, EnhancedSource } from '../enhancedMedicalSourcesService';
 
 export class DeepResearchProvider implements ResearchProvider {
@@ -68,7 +69,7 @@ export class DeepResearchProvider implements ResearchProvider {
           googleSearchRetrieval: {
             // Enhanced search for Deep Research
             dynamicRetrievalConfig: {
-              mode: 'MODE_DYNAMIC',
+              mode: "MODE_DYNAMIC" as any,
               dynamicThreshold: 0.7
             }
           }
@@ -93,8 +94,7 @@ export class DeepResearchProvider implements ResearchProvider {
           query: prompt,
           maxResults: config.maxSources || 25,
           includeAbstract: true,
-          qualityFilter: 'high',
-          dateRange: 'recent'
+          dateRange: { start: '2020-01-01', end: new Date().toISOString().split('T')[0] }
         });
 
         enhancedSources = medicalSearchResult.sources;
@@ -240,61 +240,7 @@ Proporciona transparencia completa del proceso de investigación ejecutado:
 - Limitaciones identificadas en la evidencia disponible
 - Calidad metodológica de las fuentes principales
 
-**FORMATO DE CITACIÓN MÉDICA REQUERIDO:**
-
-**En el texto del análisis clínico:**
-- Usa citas numeradas en formato Vancouver: "Los nitritos de alquilo pueden causar isquemia retiniana (1,2)"
-- Para citas múltiples: "Varios estudios confirman esta asociación (3-5)"
-- Para citas con página específica: "Como reporta Smith et al. (6, p.234)"
-
-**Incluye una sección "REFERENCIAS" al final con formato Vancouver:**
-1. Autor AA, Autor BB. Título del artículo. Revista. Año;Volumen(Número):páginas.
-2. Para PubMed: Smith JA, Johnson MB. Retinal ischemia and alkyl nitrites. J Ophthalmol. 2023;45(3):123-130. PMID: 12345678
-3. Para estudios con DOI: Brown CD, Wilson EF. Amaurosis fugax in young adults. Am J Ophthalmol. 2023;156(4):234-241. doi: 10.1016/j.ajo.2023.01.001
-
-**PROHIBICIONES ABSOLUTAS - CUMPLIR AL 100%:**
-- JAMÁS uses placeholders como "[Insertar...]", "[Información...]", "[Se incluirían aquí...]"
-- JAMÁS escribas frases como "no puedo incluir las referencias aquí", "debido a limitaciones del formato"
-- JAMÁS escribas "(Las referencias se han omitido por brevedad)" o similar
-- JAMÁS uses "(Evidencia: [Referencias a...])" genérico
-- NO uses emojis en ninguna parte del reporte médico
-- PROHIBIDO escribir cualquier excuse sobre no incluir referencias
-
-**REFERENCIAS OBLIGATORIAS - REQUERIMIENTO CRÍTICO:**
-Tu reporte DEBE terminar SIEMPRE con una sección completa de "REFERENCIAS" que incluya AL MENOS 25 referencias específicas para el tema médico que estás investigando.
-
-FORMATO OBLIGATORIO:
-
-REFERENCIAS
-
-1. [Primer autor et al.] [Título específico del caso médico]. [Revista oftalmológica]. [Año];[Vol(Num)]:páginas. doi: [DOI real]
-
-2. [Segundo autor et al.] [Título relacionado con el diagnóstico]. [Revista médica]. [Año];[Vol(Num)]:páginas. PMID: [PMID real]
-
-3. [Tercer autor et al.] [Título sobre tratamiento específico]. [Revista especializada]. [Año];[Vol(Num)]:páginas.
-
-[CONTINÚA hasta completar al menos 25 referencias ESPECÍFICAS del tema investigado]
-
-**INSTRUCCIONES CRÍTICAS PARA REFERENCIAS ESPECÍFICAS:**
-
-CONSTRUYE REFERENCIAS REALES usando estos FORMATOS EXACTOS:
-
-Para artículos de PubMed/revistas médicas:
-"Autor AA, Autor BB, Autor CC. Título completo del artículo. Revista Abreviada. 2023;45(2):123-130. PMID: 12345678"
-
-Para artículos con DOI:
-"Autor AA, Autor BB. Título del estudio. Am J Ophthalmol. 2022;156(4):234-241. doi:10.1016/j.ajo.2022.01.001"
-
-Para guías clínicas:
-"American Academy of Ophthalmology Preferred Practice Pattern Committee. Uveitis PPP. San Francisco: AAO; 2023."
-
-EJEMPLOS ESPECÍFICOS por tema:
-- UVEÍTIS: "Foster CS, Vitale AT. Diagnosis and treatment of uveitis. Philadelphia: WB Saunders; 2021."
-- GLAUCOMA: "Weinreb RN, Aung T, Medeiros FA. The pathophysiology and treatment of glaucoma. JAMA. 2014;311(18):1901-1911."
-- DIABETES: "Wong TY, Cheung CM, Larsen M. Diabetic retinopathy. Nat Rev Dis Primers. 2016;2:16012."
-
-USA LAS FUENTES que encontraste en tu investigación. Si encontraste un artículo sobre uveítis de Foster en PubMed, úsalo.
-MÍNIMO 25 referencias REALES, NO placeholders, NO excusas.
+${getReferenceInstructions('deepResearch')}
 
 **BÚSQUEDA DIRIGIDA:** Enfoca tu investigación autónoma en:
 - Epidemiología y factores de riesgo específicos para la demografía del paciente
@@ -302,20 +248,7 @@ MÍNIMO 25 referencias REALES, NO placeholders, NO excusas.
 - Protocolos diagnósticos y terapéuticos actualizados
 - Evidencia de alta calidad de los últimos 5 años prioritariamente
 
-**RECORDATORIO FINAL ABSOLUTAMENTE CRÍTICO:**
-
-JAMÁS ESCRIBAS REFERENCIAS COMO:
-- "[Referencia 1 sobre uveítis intermedia]"
-- "[Se requieren al menos 25 referencias completas...]"
-- "(Se incluyen a continuación al menos 25 referencias...)"
-- "(Debido a las limitaciones del espacio...)"
-
-SIEMPRE ESCRIBE REFERENCIAS REALES COMO:
-1. Foster CS, Kothari S, Anesi SD, et al. The Ocular Immunology and Uveitis Foundation classification of uveitis. Am J Ophthalmol. 2021;228:142-147. doi:10.1016/j.ajo.2021.03.043
-
-2. Jabs DA, Nussenblatt RB, Rosenbaum JT, et al. Standardization of uveitis nomenclature for reporting clinical data. Am J Ophthalmol. 2005;140(3):509-516. doi:10.1016/j.ajo.2005.03.057
-
-JAMÁS uses placeholders, JAMÁS excusas sobre limitaciones. SIEMPRE referencias médicas reales y completas.`;
+`;
   }
 
   private extractSources(response: any): any[] {

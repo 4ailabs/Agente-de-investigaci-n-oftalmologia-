@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { MedicalValidationService } from "../medicalValidation.js";
+import { getReferenceInstructions } from "../constants";
 
 // Sistema de caché inteligente para búsquedas
 interface SearchCache {
@@ -668,15 +669,9 @@ ${medicalSearchResult.sources.map((source, index) => `
 - Publicaciones recientes: ${medicalSearchResult.qualityMetrics.recentPublications}
 - Calidad promedio: ${medicalSearchResult.qualityMetrics.averageQuality}/100
 
-### INSTRUCCIONES PARA REFERENCIAS ###
-- Cita las fuentes en el texto usando formato [1], [2], [3], etc.
-- Incluye una sección de referencias al final con formato académico completo
-- Para cada referencia, incluye: autores, año, título, revista, DOI/URL cuando esté disponible
-- Prioriza las fuentes de mayor calidad y relevancia para el tema
-- **CRÍTICO:** Usa SOLO las fuentes reales listadas arriba, NO inventes referencias
-- **OBLIGATORIO:** Incluye las referencias reales de las fuentes encontradas
+${getReferenceInstructions('hybrid')}
 
-### REFERENCIAS REALES DISPONIBLES ###
+### FUENTES REALES DISPONIBLES ###
 Usa estas fuentes reales para crear las referencias:
 
 ${medicalSearchResult.sources.map((source, index) => `

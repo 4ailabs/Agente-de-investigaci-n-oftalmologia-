@@ -38,9 +38,8 @@ Al ejecutar cada paso de investigación, DEBES priorizar la búsqueda y el anál
 - PREFIERE fuentes de acceso abierto siempre que sea posible
 - Si una fuente requiere suscripción, indícalo claramente
 - Busca alternativas de acceso abierto antes de usar fuentes de pago
-- NUNCA incluyas referencias o fuentes como texto plano en el contenido
-- Las fuentes se manejan automáticamente por el sistema en la sección "Fuentes Consultadas"
-- Enfócate solo en el contenido médico, no en citar fuentes
+- Las fuentes se manejan automáticamente por el sistema
+- Enfócate en el contenido médico y el razonamiento clínico
 
 **RAZONAMIENTO BAYESIANO:**
 Para cada diagnóstico diferencial, considera:
@@ -54,7 +53,7 @@ Para cada diagnóstico diferencial, considera:
 2.  **Fase de Ejecución con Context Preservation:** Ejecuta cada paso preservando contexto médico, aplicando razonamiento bayesiano y actualizando diagnósticos diferenciales.
 3.  **Fase de Síntesis con Medical Reasoning:** Sintetiza evidencia aplicando principios de medicina basada en evidencia y razonamiento clínico.
 
-Tu comunicación es profesional, empática y basada en evidencia. DEBES citar fuentes y explicar el razonamiento clínico subyacente.`;
+Tu comunicación es profesional, empática y basada en evidencia. Explica el razonamiento clínico subyacente y utiliza el sistema de referencias unificado cuando sea apropiado.`;
 
 export const createResearchPlanPrompt = (userQuery: string): string => `
 ${SYSTEM_INSTRUCTION}
@@ -465,4 +464,136 @@ El reporte final debe ser DETALLADO y BASADO EN EVIDENCIA REAL:
 - **PROHIBIDO ABSOLUTAMENTE:** NO incluyas NINGUNA sección sobre investigación, búsquedas, fuentes, metadatos, o procesos de investigación. Estas secciones son FICTICIAS y están COMPLETAMENTE PROHIBIDAS.
 - **PERMITIDO:** Incluye referencias reales si tienes fuentes reales disponibles de la búsqueda médica.
 `;
+};
+
+// ============================================================================
+// SISTEMA UNIFICADO DE REFERENCIAS MÉDICAS
+// ============================================================================
+
+/**
+ * Sistema unificado para manejo de referencias médicas en toda la aplicación
+ * Elimina contradicciones entre diferentes servicios
+ */
+export const REFERENCE_SYSTEM = {
+  // Instrucciones base para referencias
+  baseInstructions: `
+**SISTEMA DE REFERENCIAS MÉDICAS UNIFICADO:**
+
+1. **FORMATO OBLIGATORIO:** Vancouver (numerado en texto, lista completa al final)
+2. **CITAS EN TEXTO:** Usa números entre paréntesis: (1), (2-5), (6, p.234)
+3. **SECCIÓN REFERENCIAS:** Al final del documento, numerada secuencialmente
+4. **FUENTES REALES:** Solo usa fuentes reales encontradas en la búsqueda
+5. **MÍNIMO:** 15 referencias para reportes completos, 5 para pasos individuales
+6. **MÁXIMO:** 30 referencias para evitar sobrecarga
+`,
+
+  // Formato específico para diferentes tipos de fuentes
+  formats: {
+    journal: "Autor AA, Autor BB, Autor CC. Título del artículo. Revista Abreviada. Año;Vol(Num):páginas. PMID: XXXXXXXX",
+    doi: "Autor AA, Autor BB. Título del estudio. Revista. Año;Vol(Num):páginas. doi:10.XXXX/XXXX",
+    guideline: "Organización. Título de la guía. Ciudad: Editorial; Año.",
+    book: "Autor AA. Título del libro. Edición. Ciudad: Editorial; Año. p. páginas.",
+    website: "Autor AA. Título de la página. Nombre del sitio web. [Internet]. Fecha de publicación [citado Fecha de acceso]. Disponible en: URL"
+  },
+
+  // Instrucciones específicas por modo de investigación
+  modeInstructions: {
+    deepResearch: `
+**DEEP RESEARCH - REFERENCIAS OBLIGATORIAS:**
+- MÍNIMO 25 referencias reales del tema específico investigado
+- Todas las referencias deben ser específicas del diagnóstico/tratamiento analizado
+- Prohibido usar referencias genéricas o de otros temas médicos
+- Formato Vancouver estricto con PMID/DOI cuando esté disponible
+`,
+
+    hybrid: `
+**HÍBRIDO - REFERENCIAS BALANCEADAS:**
+- MÍNIMO 20 referencias reales del tema investigado
+- Prioriza fuentes de alta calidad (PubMed, Cochrane, guías oficiales)
+- Incluye referencias de diferentes tipos (estudios, revisiones, guías)
+- Formato Vancouver con información completa
+`,
+
+    manual: `
+**MANUAL - REFERENCIAS FLEXIBLES:**
+- MÍNIMO 15 referencias reales del tema investigado
+- Adapta el número según la complejidad del caso
+- Prioriza fuentes más relevantes y accesibles
+- Formato Vancouver estándar
+`,
+
+    auto: `
+**AUTOMÁTICO - REFERENCIAS ADAPTATIVAS:**
+- MÍNIMO 15-25 referencias según complejidad detectada
+- Ajusta automáticamente según el tipo de caso
+- Prioriza fuentes de mayor calidad disponible
+- Formato Vancouver consistente
+`
+  },
+
+  // Prohibiciones absolutas
+  prohibitions: [
+    "JAMÁS uses placeholders como '[Referencia 1]', '[Insertar...]', '[Se incluirían aquí...]'",
+    "JAMÁS escribas excusas como 'no puedo incluir las referencias', 'debido a limitaciones'",
+    "JAMÁS uses referencias genéricas o de otros temas médicos",
+    "JAMÁS inventes referencias que no existen",
+    "JAMÁS uses referencias de poppers, nitritos o temas no relacionados",
+    "JAMÁS escribas secciones sobre procesos de investigación ficticios"
+  ],
+
+  // Instrucciones de calidad
+  qualityRequirements: [
+    "Prioriza fuentes de los últimos 5 años",
+    "Incluye al menos 5 fuentes de alta calidad (PubMed, Cochrane)",
+    "Balancea entre estudios originales y revisiones sistemáticas",
+    "Incluye guías clínicas oficiales cuando estén disponibles",
+    "Verifica que las referencias sean específicas del tema investigado"
+  ]
+};
+
+/**
+ * Genera instrucciones de referencias específicas para un modo de investigación
+ */
+export const getReferenceInstructions = (mode: 'deepResearch' | 'hybrid' | 'manual' | 'auto'): string => {
+  return `
+${REFERENCE_SYSTEM.baseInstructions}
+
+${REFERENCE_SYSTEM.modeInstructions[mode]}
+
+**FORMATOS ESPECÍFICOS:**
+${Object.entries(REFERENCE_SYSTEM.formats).map(([type, format]) => `- ${type.toUpperCase()}: ${format}`).join('\n')}
+
+**PROHIBICIONES ABSOLUTAS:**
+${REFERENCE_SYSTEM.prohibitions.map(prohibition => `- ${prohibition}`).join('\n')}
+
+**REQUISITOS DE CALIDAD:**
+${REFERENCE_SYSTEM.qualityRequirements.map(requirement => `- ${requirement}`).join('\n')}
+`;
+};
+
+/**
+ * Valida si una referencia cumple con el formato requerido
+ */
+export const validateReference = (reference: string): { valid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  // Verificar que no sea un placeholder
+  if (reference.includes('[Referencia') || reference.includes('[Insertar') || reference.includes('[Se incluirían')) {
+    errors.push('Contiene placeholder');
+  }
+  
+  // Verificar que tenga formato básico de Vancouver
+  if (!reference.match(/\d+\.\s+.+\.\s+.+\.\s+\d{4}/)) {
+    errors.push('No cumple formato Vancouver básico');
+  }
+  
+  // Verificar que no sea una excusa
+  if (reference.includes('no puedo incluir') || reference.includes('debido a limitaciones')) {
+    errors.push('Contiene excusa en lugar de referencia');
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors
+  };
 };
