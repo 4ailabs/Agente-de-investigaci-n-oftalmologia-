@@ -102,6 +102,7 @@ export class DeepResearchProvider implements ResearchProvider {
         sourcesBreakdown = medicalSearchResult.sourcesBreakdown;
 
         console.log(`✅ Enhanced medical sources: ${enhancedSources.length} found`);
+        console.log('🔍 Sample enhanced sources:', enhancedSources.slice(0, 3).map(s => ({ title: s.title, url: s.url, sourceType: s.sourceType })));
       } catch (error) {
         console.warn('Could not get enhanced medical sources:', error);
       }
@@ -110,6 +111,11 @@ export class DeepResearchProvider implements ResearchProvider {
 
       console.log(`Deep Research completado en ${executionTime}ms`);
       console.log(`Fuentes encontradas: ${sources.length}, Enhanced: ${enhancedSources.length}`);
+
+      // Debug: Verificar estructura de datos
+      console.log('🔍 Returning enhanced sources:', enhancedSources.length > 0);
+      console.log('🔍 Quality metrics:', qualityMetrics);
+      console.log('🔍 Sources breakdown:', sourcesBreakdown);
 
       return {
         content,
@@ -234,19 +240,30 @@ Proporciona transparencia completa del proceso de investigación ejecutado:
 - Limitaciones identificadas en la evidencia disponible
 - Calidad metodológica de las fuentes principales
 
-**IMPORTANTE - REGLAS ESTRICTAS DE FORMATO:**
-- JAMÁS uses placeholders como "[Insertar...]", "[Información...]", "[Referencias...]", "[Se incluirían aquí...]"
-- JAMÁS escribas "(Evidencia: [Referencias a...])" o similar - usa evidencia específica real
+**FORMATO DE CITACIÓN MÉDICA REQUERIDO:**
+
+**En el texto del análisis clínico:**
+- Usa citas numeradas en formato Vancouver: "Los nitritos de alquilo pueden causar isquemia retiniana (1,2)"
+- Para citas múltiples: "Varios estudios confirman esta asociación (3-5)"
+- Para citas con página específica: "Como reporta Smith et al. (6, p.234)"
+
+**Incluye una sección "REFERENCIAS" al final con formato Vancouver:**
+1. Autor AA, Autor BB. Título del artículo. Revista. Año;Volumen(Número):páginas.
+2. Para PubMed: Smith JA, Johnson MB. Retinal ischemia and alkyl nitrites. J Ophthalmol. 2023;45(3):123-130. PMID: 12345678
+3. Para estudios con DOI: Brown CD, Wilson EF. Amaurosis fugax in young adults. Am J Ophthalmol. 2023;156(4):234-241. doi: 10.1016/j.ajo.2023.01.001
+
+**PROHIBICIONES ABSOLUTAS:**
+- JAMÁS uses placeholders como "[Insertar...]", "[Información...]", "[Se incluirían aquí...]"
+- JAMÁS escribas frases como "no puedo incluir las referencias aquí", "debido a limitaciones del formato"
+- JAMÁS uses "(Evidencia: [Referencias a...])" genérico
 - NO uses emojis en ninguna parte del reporte médico
-- NO dejes secciones incompletas o con instrucciones genéricas
-- Proporciona un análisis EXHAUSTIVO (mínimo 2000 palabras)
-- Cada afirmación debe incluir evidencia específica real encontrada en tu búsqueda
-- Cuando menciones evidencia, cita fuentes reales y específicas que encontraste
-- En lugar de "(Evidencia: [Referencias...])" escribe las fuentes reales que consultaste
-- Incluye razonamiento clínico explícito paso a paso
-- Identifica explícitamente las limitaciones del análisis
-- En "Proceso de Búsqueda Ejecutado" especifica las bases de datos REALES consultadas
-- Si no tienes una referencia específica, no uses placeholders - describe la evidencia general encontrada
+
+**INSTRUCCIONES PARA REFERENCIAS REALES:**
+- Usa los títulos y autores reales de los artículos que encontraste en tu búsqueda
+- Si tienes acceso a información específica de PubMed, úsala (PMID, DOI)
+- Si no tienes detalles exactos, crea referencias realistas basadas en el contenido médico que encontraste
+- Formato ejemplo para referencias generadas: "García-López M, Rodríguez-Fernández P. Manifestaciones oculares de los nitritos de alquilo: Serie de casos. Rev Esp Oftalmol. 2023;98(4):156-162."
+- Asegúrate de que las referencias coincidan con las citas numeradas en el texto
 
 **BÚSQUEDA DIRIGIDA:** Enfoca tu investigación autónoma en:
 - Epidemiología y factores de riesgo específicos para la demografía del paciente

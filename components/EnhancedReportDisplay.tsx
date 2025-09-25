@@ -40,6 +40,14 @@ const EnhancedReportDisplay: React.FC<EnhancedReportDisplayProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'report' | 'sources' | 'steps'>('report');
 
+  // Debug logging
+  console.log('🔍 EnhancedReportDisplay Props:', {
+    sources: sources?.length || 0,
+    enhancedSources: enhancedSources?.length || 0,
+    qualityMetrics,
+    sourcesBreakdown
+  });
+
   const formatContent = (text: string) => {
     // Dividir el contenido en secciones basadas en headers
     const sections = text.split(/(?=^#{1,3}\s)/m).filter(section => section.trim());

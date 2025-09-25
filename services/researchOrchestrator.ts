@@ -118,6 +118,13 @@ export class ResearchOrchestrator {
     console.log(`✅ Deep Research completed in ${Date.now() - startTime}ms`);
 
     // Convert Deep Research result to InvestigationState format
+    console.log('🔍 Deep Research result before conversion:', {
+      sources: result.sources?.length || 0,
+      enhancedSources: result.enhancedSources?.length || 0,
+      hasQualityMetrics: !!result.qualityMetrics,
+      hasSourcesBreakdown: !!result.sourcesBreakdown
+    });
+
     return this.convertDeepResearchToInvestigation(result, request.query);
   }
 
@@ -250,7 +257,7 @@ export class ResearchOrchestrator {
       }
     ];
 
-    return {
+    const finalInvestigation = {
       originalQuery,
       plan: deepResearchSteps,
       currentStep: 3,
@@ -283,6 +290,15 @@ export class ResearchOrchestrator {
         deepResearchProcess: result.process
       }
     };
+
+    // Debug logging final state
+    console.log('🔍 Final InvestigationState created:', {
+      enhancedSourcesCount: finalInvestigation.enhancedSources?.length || 0,
+      hasQualityMetrics: !!finalInvestigation.qualityMetrics,
+      hasSourcesBreakdown: !!finalInvestigation.sourcesBreakdown
+    });
+
+    return finalInvestigation;
   }
 
   // Create transparency steps for hybrid mode
