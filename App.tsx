@@ -1815,7 +1815,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             {/* Desktop Layout */}
             <div className="hidden lg:flex flex-1 h-full">
                 {/* Sidebar: Steps Navigation */}
-                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm h-full min-w-0">
+                <div className="w-96 bg-white border-r border-slate-200 flex flex-col shadow-sm h-full min-w-0">
                     {/* Sidebar Header */}
                     <div className="p-4 border-b border-slate-200 bg-slate-50">
                         {/* Header - Medical Professional Style */}
@@ -1900,25 +1900,28 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                         </div>
 
 
-                        {/* Steps Navigation - Compact Enhanced */}
+                        {/* Steps Navigation - Optimized Layout */}
                         <div className="relative flex-1 min-h-0">
                             {/* Scroll Indicator - Top Gradient */}
                             <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-white to-transparent pointer-events-none z-10"></div>
                             
-                            <nav className="mt-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400 pl-2">
-                            <div className="bg-white p-3 rounded-lg border border-slate-200 mb-3 shadow-sm">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h3 className="text-sm font-bold text-slate-900">Plan de Investigación</h3>
-                                    <div className="flex items-center space-x-1 text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
-                                        <ClipboardCheck className="h-3 w-3" />
-                                        <span className="font-medium">Activo</span>
+                            <nav className="mt-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400 px-1">
+                            {/* Header Card - Fixed */}
+                            <div className="bg-white p-2 rounded-lg border border-slate-200 mb-2 shadow-sm">
+                                <div className="flex items-center justify-between mb-1">
+                                    <h3 className="text-xs font-bold text-slate-900 truncate">Plan de Investigación</h3>
+                                    <div className="flex items-center space-x-1 text-xs text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                                        <ClipboardCheck className="h-2.5 w-2.5" />
+                                        <span className="font-medium text-xs">Activo</span>
                                     </div>
                                 </div>
-                                <p className="text-xs text-slate-600">
+                                <p className="text-xs text-slate-600 truncate">
                                     Metodología sistemática
                                 </p>
                             </div>
-                            <div className="space-y-0.5">
+                            
+                            {/* Steps Container - Optimized */}
+                            <div className="space-y-1">
                                 {investigation.plan.map((step, index) => (
                                     <div key={step.id} className="relative">
                                         {/* Step Number Badge */}
@@ -1932,11 +1935,11 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                             </div>
                                         </div>
 
-                                        {/* Step Card */}
+                                        {/* Step Card - Optimized */}
                                         <button
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
                                             disabled={step.status === 'pending'}
-                                            className={`w-full text-left ml-2 p-1 rounded-lg transition-all duration-200 shadow-sm hover:shadow border ${
+                                            className={`w-full text-left ml-2 p-1.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow border min-h-[3rem] ${
                                                 activeView.type === 'step' && activeView.id === step.id
                                                     ? 'bg-blue-50 text-blue-800 border-blue-200 shadow'
                                                     : step.status === 'completed'
@@ -1946,12 +1949,15 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     : 'text-slate-500 bg-slate-50 border-slate-200 disabled:cursor-not-allowed opacity-75'
                                             }`}
                                         >
-                                           <div className="space-y-0">
-                                               <div className="flex items-start justify-between">
-                                                   <h4 className="text-xs font-medium pr-1 leading-tight break-words">
-                                                       {step.title || `Paso ${step.id}`}
+                                           <div className="flex flex-col h-full">
+                                               {/* Header Row */}
+                                               <div className="flex items-start justify-between mb-1">
+                                                   <h4 className="text-xs font-medium pr-2 leading-tight flex-1 min-w-0">
+                                                       <span className="block truncate">
+                                                           {step.title || `Paso ${step.id}`}
+                                                       </span>
                                                    </h4>
-                                                   <div className="flex items-center ml-1">
+                                                   <div className="flex items-center ml-1 flex-shrink-0">
                                                        {step.status === 'completed' && (
                                                            <span className="text-xs font-medium text-green-600">✓</span>
                                                        )}
@@ -1964,9 +1970,14 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                    </div>
                                                </div>
 
-                                               {/* Step Description/Summary - Compact */}
+                                               {/* Step Description/Summary - Optimized */}
                                                {step.result && step.status === 'completed' && (
-                                                   <div className="text-xs text-slate-500 line-clamp-1 leading-tight text-xs">
+                                                   <div className="text-xs text-slate-500 leading-tight flex-1 overflow-hidden" style={{
+                                                       display: '-webkit-box',
+                                                       WebkitLineClamp: 2,
+                                                       WebkitBoxOrient: 'vertical',
+                                                       wordBreak: 'break-word'
+                                                   }}>
                                                        {step.result}
                                                    </div>
                                                )}
@@ -1979,20 +1990,20 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                )}
                                            </div>
                                         </button>
-                                        {/* Action Buttons for Completed Steps */}
+                                        {/* Action Buttons for Completed Steps - Optimized */}
                                         {step.status === 'completed' && (
-                                            <div className="ml-3 mt-1 flex space-x-1">
+                                            <div className="ml-3 mt-1 flex space-x-1 max-w-full">
                                                 <button
                                                     onClick={() => handleCopyStep(step.id)}
-                                                    className="flex items-center space-x-1 px-2 py-1 text-xs text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded transition-colors"
+                                                    className="flex items-center space-x-1 px-1.5 py-0.5 text-xs text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded transition-colors flex-shrink-0"
                                                     title="Copiar este paso"
                                                 >
                                                     <Copy className="h-2 w-2" />
-                                                    <span>Copiar</span>
+                                                    <span className="hidden sm:inline">Copiar</span>
                                                 </button>
                                                 <button
                                                     onClick={() => handleOpenStepFeedback(step.id, step.title)}
-                                                    className={`flex items-center space-x-1 px-2 py-1 text-xs rounded transition-colors ${
+                                                    className={`flex items-center space-x-1 px-1.5 py-0.5 text-xs rounded transition-colors flex-shrink-0 ${
                                                         step.feedback
                                                             ? 'text-green-700 bg-green-100 hover:bg-green-200'
                                                             : 'text-blue-700 bg-blue-100 hover:bg-blue-200'
