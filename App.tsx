@@ -25,6 +25,7 @@ import MedicalImageUploader from './components/MedicalImageUploader';
 import ImageAnalysisResults from './components/ImageAnalysisResults';
 import ImageAnalysisAnnouncement from './components/ImageAnalysisAnnouncement';
 import ErrorBoundary from './components/ErrorBoundary';
+import ExpandableText from './components/ExpandableText';
 import { MedicalImageAnalysis } from './types/medicalImageTypes';
 import {
   Mic,
@@ -2134,30 +2135,15 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                      } else {
                                          // Clinical symptoms expandable card
                                          const symptoms = section.replace('Síntomas y Antecedentes Clínicos:', '').trim();
-                                         const isLong = symptoms.length > 100;
-                                         const [expanded, setExpanded] = React.useState(false);
-                                         const displayText = isLong && !expanded ? symptoms.substring(0, 100) + '...' : symptoms;
 
                                          return (
-                                             <div key={index} className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200 shadow-sm">
-                                                 <div className="flex items-center mb-3">
-                                                     <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mr-2">
-                                                         <ClipboardCheck className="h-3 w-3 text-purple-600" />
-                                                     </div>
-                                                     <div className="text-xs font-semibold text-purple-800">Motivo de Consulta</div>
-                                                 </div>
-                                                 <div className="text-xs text-purple-700 leading-relaxed">
-                                                     {displayText}
-                                                     {isLong && (
-                                                         <button
-                                                             className="block text-purple-600 hover:text-purple-800 font-semibold text-xs mt-2 transition-colors"
-                                                             onClick={() => setExpanded(!expanded)}
-                                                         >
-                                                             {expanded ? '← Ver menos' : 'Ver más →'}
-                                                         </button>
-                                                     )}
-                                                 </div>
-                                             </div>
+                                             <ExpandableText
+                                                 key={index}
+                                                 text={symptoms}
+                                                 maxLength={100}
+                                                 icon={<ClipboardCheck className="h-3 w-3 text-purple-600" />}
+                                                 label="Motivo de Consulta"
+                                             />
                                          );
                                      }
                                  }) : (
