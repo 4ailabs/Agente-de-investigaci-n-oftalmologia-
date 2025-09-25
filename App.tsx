@@ -1905,7 +1905,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                             {/* Scroll Indicator - Top Gradient */}
                             <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-white to-transparent pointer-events-none z-10"></div>
                             
-                            <nav className="mt-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400 px-1">
+                            <nav className="mt-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400 px-2">
                             {/* Header Card - Compact */}
                             <div className="bg-white p-2 rounded-lg border border-slate-200 mb-3 shadow-sm">
                                 <div className="flex items-center justify-between mb-1">
@@ -1920,26 +1920,15 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                 </p>
                             </div>
                             
-                            {/* Steps Container - Optimized */}
-                            <div className="space-y-2">
+                            {/* Steps Container - Contained */}
+                            <div className="space-y-2 w-full">
                                 {investigation.plan.map((step, index) => (
                                     <div key={step.id} className="relative">
-                                        {/* Step Number Badge */}
-                                        <div className="absolute -left-1 top-2 z-10">
-                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold border ${
-                                                step.status === 'completed' ? 'bg-green-500 border-green-600 text-white' :
-                                                step.status === 'in-progress' ? 'bg-blue-500 border-blue-600 text-white animate-pulse' :
-                                                'bg-slate-200 border-slate-300 text-slate-600'
-                                            }`}>
-                                                {step.status === 'completed' ? <Check className="h-2 w-2" /> : index + 1}
-                                            </div>
-                                        </div>
-
-                                        {/* Step Card - Auto-fit Height */}
+                                        {/* Step Card - Contained Width */}
                                         <button
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
                                             disabled={step.status === 'pending'}
-                                            className={`w-full text-left ml-2 p-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow border ${
+                                            className={`w-full text-left p-2 pl-6 rounded-lg transition-all duration-200 shadow-sm hover:shadow border relative max-w-full overflow-hidden ${
                                                 activeView.type === 'step' && activeView.id === step.id
                                                     ? 'bg-blue-50 text-blue-800 border-blue-200 shadow'
                                                     : step.status === 'completed'
@@ -1949,6 +1938,17 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     : 'text-slate-500 bg-slate-50 border-slate-200 disabled:cursor-not-allowed opacity-75'
                                             }`}
                                         >
+                                           {/* Step Number Badge - Inside Button */}
+                                           <div className="absolute -left-1 top-2 z-10">
+                                               <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold border ${
+                                                   step.status === 'completed' ? 'bg-green-500 border-green-600 text-white' :
+                                                   step.status === 'in-progress' ? 'bg-blue-500 border-blue-600 text-white animate-pulse' :
+                                                   'bg-slate-200 border-slate-300 text-slate-600'
+                                               }`}>
+                                                   {step.status === 'completed' ? <Check className="h-2 w-2" /> : index + 1}
+                                               </div>
+                                           </div>
+                                           
                                            <div className="flex flex-col space-y-1">
                                                {/* Header Row */}
                                                <div className="flex items-start justify-between">
@@ -1992,9 +1992,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                )}
                                            </div>
                                         </button>
-                                        {/* Action Buttons for Completed Steps - Compact */}
+                                        {/* Action Buttons for Completed Steps - Contained */}
                                         {step.status === 'completed' && (
-                                            <div className="ml-3 mt-2 flex space-x-1 max-w-full">
+                                            <div className="ml-6 mt-2 flex space-x-1 max-w-full">
                                                 <button
                                                     onClick={() => handleCopyStep(step.id)}
                                                     className="flex items-center space-x-1 px-2 py-1 text-xs text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded transition-colors flex-shrink-0"
