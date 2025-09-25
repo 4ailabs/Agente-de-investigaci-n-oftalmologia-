@@ -2019,27 +2019,30 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         )}
                                     </div>
                                 ))}
-                                {/* Final Report Card */}
+                                {/* Final Report Card - Contained */}
                                 {investigation.finalReport && (
                                     <div className="relative mt-2">
-                                        <div className="absolute -left-1 top-2 z-10">
-                                            <div className="w-5 h-5 bg-emerald-500 border border-emerald-600 rounded-full flex items-center justify-center">
-                                                <FileText className="h-2 w-2 text-white" />
-                                            </div>
-                                        </div>
-
                                         <button
                                             onClick={() => setActiveView({ type: "report", id: null })}
-                                            className={`w-full text-left ml-3 p-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow border ${
+                                            className={`w-full text-left p-2 pl-6 rounded-lg transition-all duration-200 shadow-sm hover:shadow border relative max-w-full overflow-hidden ${
                                                 activeView.type === "report"
                                                 ? "bg-emerald-50 text-emerald-800 border-emerald-200 shadow"
                                                 : "text-slate-700 hover:bg-slate-50 bg-white border-slate-200 hover:border-slate-300"
                                             }`}
                                         >
-                                            <div className="space-y-1">
+                                            {/* Final Report Badge - Inside Button */}
+                                            <div className="absolute -left-1 top-2 z-10">
+                                                <div className="w-5 h-5 bg-emerald-500 border border-emerald-600 rounded-full flex items-center justify-center">
+                                                    <FileText className="h-2 w-2 text-white" />
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="flex flex-col space-y-1">
                                                 <div className="flex items-center justify-between">
-                                                    <h4 className="text-xs font-semibold">Reporte Final</h4>
-                                                    <span className="text-xs font-medium text-emerald-600">✓</span>
+                                                    <h4 className="text-xs font-semibold flex-1 min-w-0">
+                                                        <span className="block">Reporte Final</span>
+                                                    </h4>
+                                                    <span className="text-xs font-medium text-emerald-600 flex-shrink-0">✓</span>
                                                 </div>
                                                 <div className="text-xs text-slate-600">
                                                     Análisis completo
