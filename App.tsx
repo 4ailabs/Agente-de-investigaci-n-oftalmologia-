@@ -1798,7 +1798,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
             {/* Desktop Layout */}
             <div className="hidden lg:flex flex-1 h-full">
                 {/* Sidebar: Steps Navigation */}
-                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm h-full">
+                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm h-full min-w-0">
                     {/* Sidebar Header */}
                     <div className="p-4 border-b border-slate-200 bg-slate-50">
                         {/* Header - Medical Professional Style */}
@@ -1813,10 +1813,10 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         <p className="text-sm text-slate-600 font-medium">Protocolo de Investigación</p>
                                     </div>
                                 </div>
-                                <div className="flex space-x-2">
+                                <div className="flex space-x-1 flex-shrink-0">
                                     <button 
                                         onClick={handleNewInvestigation} 
-                                        className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-all duration-200 shadow-sm"
+                                        className="flex items-center px-2 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-all duration-200 shadow-sm"
                                     >
                                         <Plus className="h-4 w-4 mr-1" />
                                         <span>Nuevo</span>
@@ -1824,7 +1824,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     {investigation?.isGenerating && (
                                         <button 
                                             onClick={handleCancelInvestigation} 
-                                            className="flex items-center px-3 py-2 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-all duration-200 shadow-sm"
+                                            className="flex items-center px-2 py-2 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-all duration-200 shadow-sm"
                                         >
                                             <X className="h-4 w-4 mr-1" />
                                             <span>Cancelar</span>
