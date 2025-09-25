@@ -156,14 +156,9 @@ ${clinicalInfo.trim()}`;
         <div className="w-full max-w-5xl bg-white rounded-2xl border border-slate-200 overflow-hidden">
           {/* Header Section - Minimalist */}
           <div className="bg-slate-100 px-8 py-8 text-center border-b border-slate-200">
-            <div className="flex items-center justify-center mb-4">
-              <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mr-4">
-                <ClipboardCheck className="h-7 w-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Sistema de Investigación Clínica</h1>
-                <p className="text-slate-600 text-sm lg:text-base font-medium">Especializada en Oftalmología</p>
-              </div>
+            <div className="text-center mb-4">
+              <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Sistema de Investigación Clínica</h1>
+              <p className="text-slate-600 text-sm lg:text-base font-medium">Especializada en Oftalmología</p>
             </div>
             <p className="text-slate-600 max-w-4xl mx-auto leading-relaxed text-base">
               Plataforma avanzada para análisis clínico basado en evidencia médica, protocolos de investigación sistemática y fuentes académicas verificadas.
