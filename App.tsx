@@ -484,6 +484,7 @@ const App: React.FC = () => {
 
   const [isCopied, setIsCopied] = useState(false);
   const [copiedStepId, setCopiedStepId] = useState<number | null>(null);
+  const [isMobileSidebarCollapsed, setIsMobileSidebarCollapsed] = useState(false);
   
   // Medical Context Engine State
   const [medicalContext, setMedicalContext] = useState<MedicalContext | null>(null);
@@ -1277,66 +1278,80 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
               <div className="max-w-7xl mx-auto py-2 sm:py-4 px-2 sm:px-4">
                 <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   {/* Mobile Control Panel */}
-                  <div className="bg-white p-4 sm:p-5 rounded-lg shadow-lg border-2 border-slate-200">
-                    {/* Header - Mobile */}
-                    <div className="pb-4 sm:pb-5 border-b-2 border-slate-300">
-                      <div className="flex justify-between items-center mb-3">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center mr-3">
-                            <ClipboardCheck className="h-5 w-5 text-white" />
-                          </div>
-                          <div>
-                            <h2 className="text-lg font-bold text-slate-900">Caso Clínico Activo</h2>
-                            <p className="text-xs text-slate-600 font-medium">Protocolo de Investigación</p>
-                          </div>
+                  <div className="bg-white rounded-lg shadow-lg border-2 border-slate-200">
+                    {/* Mobile Sidebar Header - Always Visible */}
+                    <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200">
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center mr-3">
+                          <ClipboardCheck className="h-5 w-5 text-white" />
                         </div>
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={handleNewInvestigation}
-                            className="flex items-center px-3 py-2 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-all duration-200"
-                          >
-                            <Plus className="h-4 w-4 mr-1" />
-                            <span>Nuevo</span>
-                                </button>
-                          {investigation?.isGenerating && (
-                            <button
-                              onClick={handleCancelInvestigation}
-                              className="flex items-center px-3 py-2 text-sm font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-all duration-200"
-                            >
-                              <X className="h-4 w-4 mr-1" />
-                            </button>
-                          )}
-                             </div>
-                        </div>
-
-                      {/* Patient Info - Mobile */}
-                      <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                        <div className="text-sm text-slate-800 space-y-2">
-                          {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
-                            if (index === 0) {
-                              return (
-                                <div key={index} className="font-bold text-slate-900 text-sm border-b border-slate-300 pb-2">
-                                  {section.trim()}
-                                </div>
-                              );
-                            } else {
-                              const symptoms = section.replace('Síntomas y Antecedentes Clínicos:', '').trim();
-                              const truncated = symptoms.length > 120 ? symptoms.substring(0, 120) + '...' : symptoms;
-                              return (
-                                <div key={index} className="text-slate-700">
-                                  <div className="text-sm font-semibold text-slate-600 mb-2">Motivo de Consulta:</div>
-                                  <div className="text-sm leading-relaxed" title={symptoms}>
-                                    {truncated}
-                                  </div>
-                                </div>
-                              );
-                            }
-                          }) : (
-                            <div className="text-sm text-slate-500 font-medium">Cargando información del caso...</div>
-                          )}
+                        <div>
+                          <h2 className="text-lg font-bold text-slate-900">Caso Clínico Activo</h2>
+                          <p className="text-xs text-slate-600 font-medium">Protocolo de Investigación</p>
                         </div>
                       </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => setIsMobileSidebarCollapsed(!isMobileSidebarCollapsed)}
+                          className="flex items-center justify-center w-10 h-10 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
+                          title={isMobileSidebarCollapsed ? "Mostrar panel de control" : "Ocultar panel de control"}
+                        >
+                          {isMobileSidebarCollapsed ? (
+                            <ArrowDown className="h-5 w-5 text-slate-700" />
+                          ) : (
+                            <ArrowUp className="h-5 w-5 text-slate-700" />
+                          )}
+                        </button>
+                        <button
+                          onClick={handleNewInvestigation}
+                          className="flex items-center px-3 py-2 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-all duration-200"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          <span>Nuevo</span>
+                        </button>
+                        {investigation?.isGenerating && (
+                          <button
+                            onClick={handleCancelInvestigation}
+                            className="flex items-center px-3 py-2 text-sm font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-all duration-200"
+                          >
+                            <X className="h-4 w-4 mr-1" />
+                          </button>
+                        )}
+                      </div>
                     </div>
+
+                    {/* Collapsible Content */}
+                    <div className={`transition-all duration-300 overflow-hidden ${
+                      isMobileSidebarCollapsed ? 'max-h-0' : 'max-h-none'
+                    }`}>
+                      <div className="p-4 sm:p-5">
+                        {/* Patient Info - Mobile */}
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 mb-5">
+                          <div className="text-sm text-slate-800 space-y-2">
+                            {investigation.originalQuery ? investigation.originalQuery.split('\n---\n').map((section, index) => {
+                              if (index === 0) {
+                                return (
+                                  <div key={index} className="font-bold text-slate-900 text-sm border-b border-slate-300 pb-2">
+                                    {section.trim()}
+                                  </div>
+                                );
+                              } else {
+                                const symptoms = section.replace('Síntomas y Antecedentes Clínicos:', '').trim();
+                                const truncated = symptoms.length > 120 ? symptoms.substring(0, 120) + '...' : symptoms;
+                                return (
+                                  <div key={index} className="text-slate-700">
+                                    <div className="text-sm font-semibold text-slate-600 mb-2">Motivo de Consulta:</div>
+                                    <div className="text-sm leading-relaxed" title={symptoms}>
+                                      {truncated}
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            }) : (
+                              <div className="text-sm text-slate-500 font-medium">Cargando información del caso...</div>
+                            )}
+                          </div>
+                        </div>
 
                     {/* Progress Indicator - Mobile */}
                     <div className="my-5">
@@ -1504,7 +1519,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                         </div>
                       </div>
                     )}
-                </div>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Mobile Content Area */}
                   <div className="bg-gradient-to-br from-white to-slate-50/30 p-6 rounded-xl shadow-lg border border-slate-200 min-h-[50vh] relative">
@@ -1901,7 +1918,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                     Metodología sistemática
                                 </p>
                             </div>
-                            <div className="space-y-1">
+                            <div className="space-y-0.5">
                                 {investigation.plan.map((step, index) => (
                                     <div key={step.id} className="relative">
                                         {/* Step Number Badge */}
@@ -1919,7 +1936,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                         <button
                                             onClick={() => setActiveView({ type: 'step', id: step.id })}
                                             disabled={step.status === 'pending'}
-                                            className={`w-full text-left ml-2 p-1.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow border ${
+                                            className={`w-full text-left ml-2 p-1 rounded-lg transition-all duration-200 shadow-sm hover:shadow border ${
                                                 activeView.type === 'step' && activeView.id === step.id
                                                     ? 'bg-blue-50 text-blue-800 border-blue-200 shadow'
                                                     : step.status === 'completed'
@@ -1929,9 +1946,9 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                     : 'text-slate-500 bg-slate-50 border-slate-200 disabled:cursor-not-allowed opacity-75'
                                             }`}
                                         >
-                                           <div className="space-y-0.5">
+                                           <div className="space-y-0">
                                                <div className="flex items-start justify-between">
-                                                   <h4 className="text-xs font-medium pr-1 leading-tight break-words text-xs">
+                                                   <h4 className="text-xs font-medium pr-1 leading-tight break-words">
                                                        {step.title || `Paso ${step.id}`}
                                                    </h4>
                                                    <div className="flex items-center ml-1">
@@ -1939,17 +1956,17 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                            <span className="text-xs font-medium text-green-600">✓</span>
                                                        )}
                                                        {step.status === 'in-progress' && (
-                                                           <Loader2 className="h-3 w-3 text-blue-600 animate-spin" />
+                                                           <Loader2 className="h-2.5 w-2.5 text-blue-600 animate-spin" />
                                                        )}
                                                        {step.status === 'pending' && (
-                                                           <Clock className="h-3 w-3 text-slate-500" />
+                                                           <Clock className="h-2.5 w-2.5 text-slate-500" />
                                                        )}
                                                    </div>
                                                </div>
 
                                                {/* Step Description/Summary - Compact */}
                                                {step.result && step.status === 'completed' && (
-                                                   <div className="text-xs text-slate-500 line-clamp-1 leading-tight">
+                                                   <div className="text-xs text-slate-500 line-clamp-1 leading-tight text-xs">
                                                        {step.result}
                                                    </div>
                                                )}

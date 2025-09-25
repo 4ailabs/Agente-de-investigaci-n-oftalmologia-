@@ -73,14 +73,18 @@ export class EnhancedMedicalSourcesService {
    * Búsqueda integrada en múltiples fuentes médicas (ACTUALIZADA)
    */
   async searchMedicalSources(params: MedicalSearchParams): Promise<EnhancedSearchResult> {
-    console.log(`🔍 Enhanced medical search (Multi-Source): "${params.query}"`);
+    console.log(`🔍 Enhanced medical search (Multi-Source): "${params.query.substring(0, 100)}..."`);
 
     const startTime = Date.now();
 
     try {
+      // Extraer términos médicos relevantes si la query es muy larga (Deep Research prompt)
+      const optimizedQuery = this.extractMedicalKeywords(params.query);
+      console.log(`🎯 Optimized query for external APIs: "${optimizedQuery}"`);
+
       // Usar el nuevo servicio multi-source
       const multiParams: MultiSourceSearchParams = {
-        query: params.query,
+        query: optimizedQuery,
         maxResultsPerSource: Math.ceil((params.maxResults || 25) / 4), // Distribuir entre fuentes
         maxTotalResults: params.maxResults || 25,
         includeAbstracts: params.includeAbstract !== false,
@@ -119,7 +123,7 @@ export class EnhancedMedicalSourcesService {
       const result: EnhancedSearchResult = {
         sources: sortedSources.slice(0, params.maxResults || 25),
         totalCount: multiResult.totalFound,
-        searchQuery: params.query,
+        searchQuery: optimizedQuery, // Use optimized query for transparency
         searchTime: multiResult.searchTime,
         sourcesBreakdown,
         qualityMetrics
@@ -566,6 +570,70 @@ Máximo ${maxResults} resultados.`;
     };
 
     return this.searchMedicalSources(params);
+  }
+
+  /**
+   * Extraer términos médicos relevantes de consultas largas
+   * Utilizado cuando la query original es un prompt de Deep Research muy largo
+   */
+  private extractMedicalKeywords(query: string): string {
+    // Si la query es corta (<200 chars), usarla tal como está
+    if (query.length < 200) {
+      return query;
+    }
+
+    console.log(`📝 Query length: ${query.length} chars - extracting medical keywords...`);
+
+    // Lista de términos médicos oftalmológicos relevantes
+    const medicalTerms = [
+      'amaurosis', 'fugax', 'retina', 'retinal', 'ischemia', 'ischemic', 'transient',
+      'vision', 'visual', 'blindness', 'ophthalmology', 'ophthalmic', 'eye', 'ocular',
+      'fundus', 'arterial', 'vascular', 'migraine', 'headache', 'glaucoma', 'macular',
+      'diabetic', 'hypertensive', 'poppers', 'nitrites', 'alkyl', 'substance', 'drug',
+      'diagnosis', 'differential', 'symptoms', 'treatment', 'therapy', 'pathology',
+      'etiology', 'epidemiology', 'prevalence', 'incidence', 'risk', 'factors',
+      'clinical', 'medical', 'patient', 'case', 'study', 'examination', 'test'
+    ];
+
+    // Extraer palabras de la consulta (limpiar puntuación y convertir a minúsculas)
+    const words = query.toLowerCase()
+      .replace(/[^\w\s\u00C0-\u017F]/g, ' ') // Conservar acentos
+      .split(/\s+/)
+      .filter(word => word.length > 2);
+
+    // Buscar términos médicos presentes en la consulta
+    const relevantTerms: string[] = [];
+    const foundTerms = new Set<string>();
+
+    // Primero, buscar términos médicos exactos
+    medicalTerms.forEach(term => {
+      if (words.some(word => word.includes(term) || term.includes(word))) {
+        if (!foundTerms.has(term)) {
+          relevantTerms.push(term);
+          foundTerms.add(term);
+        }
+      }
+    });
+
+    // Si no se encuentran suficientes términos médicos, extraer palabras clave generales
+    if (relevantTerms.length < 3) {
+      const commonWords = ['the', 'and', 'or', 'of', 'in', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'must', 'shall', 'para', 'con', 'por', 'una', 'uno', 'del', 'las', 'los', 'que', 'como', 'esta', 'este', 'son', 'ser'];
+
+      words.forEach(word => {
+        if (word.length > 3 && !commonWords.includes(word) && !foundTerms.has(word)) {
+          relevantTerms.push(word);
+          foundTerms.add(word);
+        }
+      });
+    }
+
+    // Construir consulta optimizada (máximo 8 términos para evitar URLs muy largas)
+    const optimizedQuery = relevantTerms.slice(0, 8).join(' ');
+
+    console.log(`🔍 Extracted keywords: ${relevantTerms.slice(0, 8).join(', ')}`);
+
+    // Si no se pudieron extraer términos relevantes, usar una búsqueda genérica
+    return optimizedQuery || 'ophthalmology retinal disorders';
   }
 
   /**
