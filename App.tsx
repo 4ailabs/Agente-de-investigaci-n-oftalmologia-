@@ -1790,7 +1790,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
 
                   {/* Mobile Content Area */}
                   <div className="bg-gradient-to-br from-white to-slate-50/30 p-6 rounded-xl shadow-lg border border-slate-200 min-h-[50vh] relative">
-                        {activeContent ? (
+                        {activeContent && activeContent.title ? (
                             <div>
                         {/* Header */}
                         <div className="flex justify-between items-start mb-6">
@@ -2558,7 +2558,7 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                       ref={contentRef}
                       className="flex-1 bg-slate-50/30 p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400"
                     >
-                        {activeContent ? (
+                        {activeContent && activeContent.title ? (
                             <div>
                                 {/* Enhanced Desktop Header with Rich Context */}
                                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
@@ -2692,16 +2692,16 @@ ${data.allergies?.map(allergy => `${allergy.substance} (${allergy.reaction})`).j
                                                         )}
                                                     </button>
                                                     <button
-                                                        onClick={() => handleOpenStepFeedback(activeView.id!, activeContent.title)}
+                                                        onClick={() => handleOpenStepFeedback(activeView.id!, activeContent?.title || '')}
                                                         className={`flex items-center space-x-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 shadow-sm ${
-                                                            activeContent.feedback
+                                                            activeContent?.feedback
                                                                 ? 'text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100'
                                                                 : 'text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100'
                                                         }`}
                                                         title="Agregar feedback del especialista (F)"
                                                     >
                                                         <Edit className="h-4 w-4" />
-                                                        <span>{activeContent.feedback ? 'Ver Feedback' : 'Add Feedback'}</span>
+                                                        <span>{activeContent?.feedback ? 'Ver Feedback' : 'Add Feedback'}</span>
                                                     </button>
                                                 </>
                                             )}
