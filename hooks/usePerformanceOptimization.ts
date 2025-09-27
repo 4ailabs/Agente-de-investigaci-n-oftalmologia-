@@ -87,7 +87,7 @@ export const usePerformanceOptimization = (
       for (const term of commonMedicalTerms) {
         const cacheKey = MedicalCacheUtils.generateMedicalKey(
           term, 
-          'gemini-1.5-pro', 
+          'gemini-1.5-flash', 
           ['oftalmología', 'diagnóstico']
         );
         

@@ -106,7 +106,7 @@ INSTRUCCIONES:
 - No agregues campos adicionales`;
 
       const model = genAI.getGenerativeModel({
-        model: 'gemini-1.5-pro',
+        model: 'gemini-1.5-flash',
         generationConfig: {
           temperature: 0.1,
           topK: 1,
@@ -176,7 +176,7 @@ CRITERIOS PARA RED FLAGS:
 - other: Otros signos de alarma específicos`;
 
       const model = genAI.getGenerativeModel({
-        model: 'gemini-1.5-pro',
+        model: 'gemini-1.5-flash',
         generationConfig: {
           temperature: 0.1,
           topK: 1,
