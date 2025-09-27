@@ -63,7 +63,7 @@ export class DeepResearchProvider implements ResearchProvider {
       
       // Execute Deep Research with Google Search
       const model = this.genAI.getGenerativeModel({ 
-        model: 'gemini-1.5-flash',
+        model: 'gemini-1.5-pro',
         generationConfig,
         tools: [{
           googleSearchRetrieval: {

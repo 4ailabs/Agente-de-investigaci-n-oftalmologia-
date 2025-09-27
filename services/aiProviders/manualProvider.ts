@@ -54,7 +54,7 @@ export class ManualResearchProvider implements ResearchProvider {
       const useSearch = config.searchDepth === 'comprehensive';
       
       const model = this.genAI.getGenerativeModel({ 
-        model: 'gemini-1.5-flash',
+        model: 'gemini-1.5-pro',
         generationConfig,
         ...(useSearch && { tools: [{
           googleSearchRetrieval: {}

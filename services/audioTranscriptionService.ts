@@ -50,7 +50,7 @@ export const transcribeAudio = async (audioBlob: Blob): Promise<TranscriptionRes
     
     // Usar la API correcta de Gemini para audio
     const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-1.5-pro',
       generationConfig: {
         temperature: 0.1,
         topK: 1,
@@ -172,7 +172,7 @@ export const extractMedicalInfo = async (transcription: string): Promise<{
   try {
     const genAI = getAI();
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
+      model: 'gemini-1.5-pro',
       generationConfig: {
         temperature: 0.1,
         topK: 1,

@@ -28,7 +28,7 @@ interface RelevanceMetrics {
 
 // Sistema híbrido Pro/Flash
 interface ModelSelection {
-  model: 'gemini-1.5-pro' | 'gemini-1.5-flash';
+  model: 'gemini-1.5-pro';
   reason: string;
   confidence: number;
 }
@@ -97,7 +97,7 @@ class MedicalModelClassifier {
       };
     } else {
       return {
-        model: 'gemini-1.5-flash',
+        model: 'gemini-1.5-pro',
         reason: `Tarea médica simple (score: ${medicalComplexityScore.toFixed(1)})`,
         confidence: Math.min(0.9, (5 - medicalComplexityScore) / 5)
       };
